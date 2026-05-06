@@ -1,0 +1,292 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+@import "flag-icons/css/flag-icons.min.css";
+
+:root {
+  /* =========================
+    BLUE
+  ========================= */
+  --blue-9: #17C9ED;
+  --blue-10: #00BEE2;
+  --blue-10a: #00BEE2FA;
+  --blue-10ab: #0086F0FA;
+  --blue-3a: #00C8FF25;
+  --blue-11: #007E9B;
+  --blue-11a: #007E9B;
+
+  /* =========================
+    GRAY
+  ========================= */
+  --gray-2: #F7F9FE;
+  --gray-3: #EDF1F7;
+  --gray-3a: #00398E12;
+  --gray-8a: #002A6E4F;
+  --gray-10: #788498;
+  --gray-11: #5B6575;
+  --gray-11a: #001029A4;
+  --gray-12: #1A202A;
+
+  /* =========================
+    NEUTRAL
+  ========================= */
+  --neutral-3a: #0000330F;
+  --neutral-5a: #0009321F;
+  --neutral-8a: #00083046;
+  --neutral-9a: #00051D74;
+  --neutral-11a: #0007149F;
+  --neutral-12: #1C2024;
+
+  /* =========================
+    GREEN
+  ========================= */
+  --green-3a: #00DB6623;
+  --green-5: #ACF0CE;
+  --green-6a: #00BE6B70;
+  --green-8: #00C485;
+  --green-10: #00CA8A;
+  --green-11a: #008051;
+  --green-12: #00432C;
+
+  /* =========================
+    CRIMSON / PINK
+  ========================= */
+  --crimson-11: #CB1D63;
+
+  --pink-3a: #F400FF17;
+  --pink-10: #A036AE;
+  --pink-11a: #850096CE;
+  --pink-11: #9C31AA;
+
+  --purple-10: #8347B9;
+
+  --orange-10a: #EF5F00;                      
+
+  /* =========================
+    ACCENT
+  ========================= */
+  --accent-8a: #00BADE;
+  --accent-10: #00BEE2;
+  --accent-11a: #007E9B;
+  --accent-12: #003D4C;
+
+  /* =========================
+    BASE
+  ========================= */
+  --background: #EDF1F7;
+  --border: #0009321F;
+  --text-muted: #00051D74;
+
+  /* =========================
+    PRIMARY
+  ========================= */
+  --primary: #17C9ED;
+  --sidebar-primary: #0F172A;
+
+  /* =========================
+    SEMANTIC COLORS
+  ========================= */
+  --success: #4BB543;
+  --success-600: #4BB543;
+
+  --warning: #AB6400;
+  --warning-2a: #F4D10016;
+  --warning-11a: #AB6400;
+
+  --info: #00749E;
+  --info-3a: #00B3EE1E;
+  --info-11a: #00749E;
+
+  --error: #C40006D3;
+  --error-3a: #F3000D14;
+  --error-8a: #D2000571;
+  --error-11a: #C40006D3;
+}
+
+@theme inline {
+  
+  /* Fonts */
+  --font-display: var(--font-sf-pro), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: var(--font-sf-pro), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans: var(--font-sf-pro), system-ui, sans-serif;
+  --font-geist-sans: var(--font-geist-sans);
+  --font-mono: "Geist Mono", monospace;
+
+/* BASE */
+  --color-background: var(--background);
+  --color-border: var(--border);
+  --color-text-muted: var(--text-muted);
+
+  /* BLUE */
+  --color-blue-9: var(--blue-9);
+  --color-blue-10: var(--blue-10);
+  --color-blue-10a: var(--blue-10a);
+  --color-blue-3a: var(--blue-3a);
+  --color-blue-11: var(--blue-11);
+  --color-blue-11a: var(--blue-11a);
+  --color-blue-10ab: var(--blue-10ab);
+
+  /* GRAY */
+  --color-gray-3: var(--gray-3);
+  --color-gray-3a: var(--gray-3a);
+  --color-gray-8a: var(--gray-8a);
+  --color-gray-10: var(--gray-10);
+  --color-gray-11: var(--gray-11);
+  --color-gray-11a: var(--gray-11a);
+  --color-gray-12: var(--gray-12);
+
+  /* NEUTRAL */
+  --color-neutral-3a: var(--neutral-3a);
+  --color-neutral-5a: var(--neutral-5a);
+  --color-neutral-8a: var(--neutral-8a);
+  --color-neutral-9a: var(--neutral-9a);
+  --color-neutral-11a: var(--neutral-11a);
+  --color-neutral-12: var(--neutral-12);
+
+  /* GREEN */
+  --color-green-3a: var(--green-3a);
+  --color-green-5: var(--green-5);
+  --color-green-6a: var(--green-6a);
+  --color-green-8: var(--green-8);
+  --color-green-10: var(--green-10);
+  --color-green-11a: var(--green-11a);
+  --color-green-12: var(--green-12);
+
+  /* CRIMSON / PINK */
+  --color-crimson-11: var(--crimson-11);
+  --color-pink-3a: var(--pink-3a);
+  --color-pink-10: var(--pink-10);
+  --color-pink-11a: var(--pink-11a);
+  --color-pink-11: var(--pink-11);
+
+  --color-purple-10: var(--purple-10);
+
+  --color-orange-10a: var(--orange-10a);
+
+  /* ACCENT */
+  --color-accent-8a: var(--accent-8a);
+  --color-accent-10: var(--accent-10);
+  --color-accent-11a: var(--accent-11a);
+  --color-accent-12: var(--accent-12);
+
+  /* PRIMARY */
+  --color-primary: var(--primary);
+  --color-secondary: var(--gray-2);
+  --color-background: var(--background);
+  --color-foreground: #ffffff;
+  --color-border: var(--border);
+
+  --color-sidebar-primary: var(--sidebar-primary);
+
+  --color-text: var(--gray-12);
+  --color-text-alt: #ffffff;
+  --color-text-muted: var(--gray-10);
+
+  /* SEMANTIC */
+  --color-success: var(--success);
+  --color-success-600: var(--success-600);
+
+  --color-warning: var(--warning);
+  --color-warning-2a: var(--warning-2a);
+  --color-warning-11a: var(--warning-11a);
+
+  --color-info: var(--info);
+  --color-info-3a: var(--info-3a);
+  --color-info-11a: var(--info-11a);
+
+  --color-error: var(--error);
+  --color-error-3a: var(--error-3a);
+  --color-error-8a: var(--error-8a);
+  --color-error-11a: var(--error-11a);
+
+
+}
+
+.dark {
+  /* =========================
+    BASE SURFACES
+  ========================= */
+  --background: #0B0F17;        /* deep slate navy */
+  --border: #1B2433;           /* subtle separation */
+  --text-muted: #8A93A6;
+
+  /* foreground = cards / elevated surfaces */
+  --foreground: #111827;
+
+  /* =========================
+    TEXT COLORS
+  ========================= */
+  --gray-12: #E6EAF2;
+  --gray-11: #B6C0D1;
+  --gray-10: #8A93A6;
+
+  --neutral-12: #E8ECF5;
+  --neutral-11a: #A3ADC2;
+  --neutral-9a: #6B768A;
+
+  /* =========================
+    SURFACE OVERRIDES
+  ========================= */
+  --gray-2: #111827;   /* cards */
+  --gray-3: #141B2A;   /* elevated cards */
+  --gray-3a: #FFFFFF0A;
+  --gray-8a: #FFFFFF1A;
+
+  --neutral-3a: #FFFFFF0A;
+  --neutral-5a: #FFFFFF14;
+  --neutral-8a: #FFFFFF22;
+
+  /* =========================
+    PRIMARY (keep brand consistent)
+  ========================= */
+  --primary: #17C9ED;
+  --blue-9: #17C9ED;
+  --blue-10: #00BEE2;
+  --blue-10a: #00BEE2E6;
+  --blue-11: #56D9F5;
+
+  /* soften glow in dark mode */
+  --blue-3a: #17C9ED1A;
+
+  /* =========================
+    ACCENT (slightly brighter in dark UI)
+  ========================= */
+  --accent-10: #2DD4FF;
+  --accent-11a: #00A7D6;
+  --accent-12: #0A2A36;
+
+  /* =========================
+    SEMANTIC COLORS (adjusted for dark contrast)
+  ========================= */
+  --success: #22C55E;
+  --success-600: #16A34A;
+
+  --warning: #FBBF24;
+  --warning-2a: #FBBF2420;
+
+  --info: #38BDF8;
+  --info-3a: #38BDF820;
+
+  --error: #F87171;
+  --error-3a: #F8717120;
+
+  /* =========================
+    SPECIAL COLORS
+  ========================= */
+  --crimson-11: #FB4E7C;
+  --pink-11: #D946EF;
+  --purple-10: #A855F7;
+  --orange-10a: #FB923C;
+
+  /* =========================
+    SURFACE / LAYOUT OVERRIDES
+  ========================= */
+  --sidebar-primary: #0F172A;
+}
+
+@layer base {
+  body {
+    /* @apply bg-background text-foreground; */
+    font-family: var(--font-body);
+  }
+}
+
