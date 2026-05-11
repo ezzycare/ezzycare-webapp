@@ -313,10 +313,13 @@ const Dropdown = ({
                       )}
 
                       {active && (
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-primary" onClick={(e) => {
-                          e.stopPropagation();
-                          toggleValue(option.value);
-                        }}>
+                        <span
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-primary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleValue(option.value);
+                          }}
+                        >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="16"
