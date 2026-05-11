@@ -5,11 +5,11 @@ import {
   geistSans,
   sfProDisplay,
   playfairDisplay,
+  inter,
 } from '@/lib/fonts';
 import QueryProvider from '@/components/Base/QueryProvider';
-import NavBar from '@/components/Base/Nav';
 import SplashScreen from '@/components/Base/SplashScreen';
-import Footer from '@/components/Landing/Footer';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Ezzycare | Find Doctors,  Lab Tests & Medicine Delivery',
@@ -36,7 +36,16 @@ export default function RootLayout({
     <html
       suppressHydrationWarning
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${sfProDisplay.variable} ${playfairDisplay.variable} h-full antialiased`}
+      className={cn(
+        'h-full',
+        'antialiased',
+        geistSans.variable,
+        geistMono.variable,
+        sfProDisplay.variable,
+        playfairDisplay.variable,
+        inter.variable,
+        'font-sans'
+      )}
     >
       <body className="min-h-full flex flex-col">
         <QueryProvider>

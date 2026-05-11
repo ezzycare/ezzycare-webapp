@@ -184,10 +184,10 @@ export default function BaseTable<T extends Record<string, any>>({
 
   return (
     <div
-      className={`w-full rounded-2xl border border-border bg-white overflow-hidden -z-1 min-h-75 ${className}`}
+      className={`w-full rounded-2xl bg-surface-card overflow-hidden -z-1 min-h-75 ${className}`}
     >
       {/* TOP BAR */}
-      <div className="flex flex-col gap-4 border-b border-border p-4 md:flex-row md:items-center md:justify-between">
+      {/* <div className="flex flex-col gap-4 border-b border-border p-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-1 items-center gap-3">
           {searchable && (
             <input
@@ -208,11 +208,11 @@ export default function BaseTable<T extends Record<string, any>>({
         </div>
 
         {children}
-      </div>
+      </div> */}
 
       {/* HEADER */}
       <div
-        className="grid border-b border-border bg-white px-4 py-3"
+        className="grid border-b border-gray-3 bg-gray-2 px-4 py-4 text-text-muted"
         style={{
           gridTemplateColumns,
         }}
@@ -227,9 +227,9 @@ export default function BaseTable<T extends Record<string, any>>({
               onClick={() =>
                 column.sortable && handleSort(String(column.field))
               }
-              className={`flex items-center gap-2 text-left text-xs font-semibold uppercase tracking-wide text-text ${
+              className={`bg-gray-2 flex items-center gap-2 text-left text-text-muted text-xs font-semibold uppercase tracking-wide ${
                 column.sortable
-                  ? 'cursor-pointer hover:text-white'
+                  ? 'cursor-pointer hover:text-text'
                   : 'cursor-default'
               } ${column.className || ''}`}
             >
@@ -250,9 +250,9 @@ export default function BaseTable<T extends Record<string, any>>({
       </div>
 
       {/* BODY */}
-      <div className="divide-y divide-border">
+      <div className="divide-y divide-gray-3">
         {processedData.length === 0 && (
-          <div className="flex items-center justify-center py-16 text-sm text-text">
+          <div className="flex items-center justify-center py-3 text-sm text-text">
             {emptyState}
           </div>
         )}
@@ -266,7 +266,7 @@ export default function BaseTable<T extends Record<string, any>>({
             <div
               key={index}
               onClick={() => onRowClick?.(row)}
-              className="grid items-center px-4 py-4 transition-colors hover:bg-primary/10"
+              className="grid items-center px-4 py-3 transition-colors hover:bg-primary/10"
               style={{
                 gridTemplateColumns,
               }}
@@ -277,7 +277,7 @@ export default function BaseTable<T extends Record<string, any>>({
                 return (
                   <div
                     key={String(column.field)}
-                    className={`text-sm text-text ${column.className || ''}`}
+                    className={`text-sm text-text-muted ${column.className || ''}`}
                   >
                     {column.render
                       ? column.render(value, row, index)

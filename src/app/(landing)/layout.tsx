@@ -7,7 +7,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="bg-foreground">
+    <div className="bg-surface-card">
       <header className="w-full flex pr-2 pl-5 sm:px-5 lg:px-0">
         <NavBar />
       </header>

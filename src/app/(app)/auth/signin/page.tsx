@@ -1,13 +1,16 @@
-import { Button } from '@/components/Ui/Button';
+'use client';
+
 import FancyButton from '@/components/Ui/FancyButton';
 import { PasswordInput, TextInput } from '@/components/Ui/TextInput';
 import { Cross1Icon, EnvelopeClosedIcon } from '@radix-ui/react-icons';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 const SignIn = () => {
+  const { push } = useRouter();
   return (
     <div className="flex justify-center items-center min-h-[90vh] w-full">
-      <div className="bg-foreground w-full max-w-117 p-8.5 rounded-[14px] relative">
+      <div className="bg-surface-card w-full max-w-117 p-8.5 rounded-[14px] relative">
         <Cross1Icon className="absolute top-6 right-6 cursor-pointer" />
         <h1 className="text-2xl text-text font-medium ">Login</h1>
         <p className="text-sm text-text/50 mt-1.5">login to your account</p>
@@ -23,6 +26,7 @@ const SignIn = () => {
         <FancyButton
           className="w-full mt-5 h-12 flex justify-center"
           variant="primary"
+          onClick={push('/dashboard')}
         >
           Login
         </FancyButton>

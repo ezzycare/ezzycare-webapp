@@ -102,7 +102,7 @@ const Dropdown = ({
             px-4 py-3
             rounded-xl
             border
-            bg-foreground
+            bg-surface-card
             transition-all
             flex items-center justify-between gap-3
             text-left

@@ -104,7 +104,7 @@ const DashNav = () => {
   return (
     <div
       className={clsx(
-        'w-72.5 min-h-screen flex flex-col bg-foreground border-r border-r-gray-3',
+        'w-72.5 min-h-screen flex flex-col bg-surface-card border-r border-r-gray-3',
         'absolute -left-73.75 top-0 bottom-0 lg:relative lg:left-0'
       )}
     >

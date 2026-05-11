@@ -13,7 +13,7 @@ import NavBar from '@/components/Base/Nav';
 
 export default function Home() {
   return (
-    <main className="flex flex-col w-full bg-foreground">
+    <main className="flex flex-col w-full bg-surface-card">
       <header className="w-full flex pr-2 pl-5 sm:px-5 lg:px-0">
         <NavBar />
       </header>

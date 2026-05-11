@@ -42,7 +42,7 @@ const TextInput = ({
           {...props}
           value={props.type === 'password' ? '************' : props.value}
           className={`${clsx(
-            'w-full border border-neutral-3a h-14 bg-foreground',
+            'w-full border border-neutral-3a h-14 bg-surface-card',
             'text-text text-sm rounded-xl px-4 py-4 outline-none',
             'focus:border-primary transition placeholder:text-neutral-8a'
           )}
@@ -82,7 +82,7 @@ const PhoneInput = ({ label = 'Phone Number', ...props }: PhoneInputProps) => {
       <div
         className={clsx(
           'flex items-center border border-neutral-3a rounded-lg',
-          'bg-foreground focus-within:border-primary transition'
+          'bg-surface-card focus-within:border-primary transition'
         )}
       >
         {/* COUNTRY SELECT */}
@@ -90,7 +90,7 @@ const PhoneInput = ({ label = 'Phone Number', ...props }: PhoneInputProps) => {
           onClick={() => setOpen(!open)}
           className={clsx(
             'flex items-center gap-2 px-3 py-3 border-r border-neutral-3a cursor-pointer select-none',
-            'bg-foreground text-text rounded-xl'
+            'bg-surface-card text-text rounded-xl'
           )}
         >
           <span className={`fi fi-${country.code} fis w-5 h-4`} />
@@ -101,7 +101,7 @@ const PhoneInput = ({ label = 'Phone Number', ...props }: PhoneInputProps) => {
         <input
           {...props}
           className={clsx(
-            'w-full border-r border-neutral-3a h-13.5 bg-foreground',
+            'w-full border-r border-neutral-3a h-13.5 bg-surface-card',
             'text-text text-sm rounded-xl px-4 py-4 outline-none',
             'placeholder:text-neutral-8a rounded-r-lg'
           )}
@@ -112,7 +112,7 @@ const PhoneInput = ({ label = 'Phone Number', ...props }: PhoneInputProps) => {
       {open && (
         <div
           className={clsx(
-            'absolute z-50 mt-1 w-full bg-foreground border',
+            'absolute z-50 mt-1 w-full bg-surface-card border',
             'border-neutral-3a rounded-lg shadow-lg overflow-hidden'
           )}
         >

@@ -1,55 +1,56 @@
-import React from 'react';
-import clsx from 'clsx';
+import { Button as ButtonPrimitive } from "@base-ui/react/button"
+import { cva, type VariantProps } from "class-variance-authority"
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline';
-type ButtonColor = string; // optional override (e.g. "bg-blue-10")
+import { cn } from "@/lib/utils"
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
-  variant?: ButtonVariant;
-  color?: ButtonColor; // overrides primary background only
-  className?: string;
-}
+const buttonVariants = cva(
+  "group/button inline-flex shrink-0 items-center justify-center rounded-4xl border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-surface-card hover:bg-primary/80",
+        outline:
+          "border-border bg-background hover:bg-muted hover:text-surface-card aria-expanded:bg-muted aria-expanded:text-surface-card dark:bg-transparent dark:hover:bg-input/30",
+        secondary:
+          "bg-secondary text-secondary-surface-card hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-surface-card",
+        ghost:
+          "hover:bg-muted hover:text-surface-card aria-expanded:bg-muted aria-expanded:text-surface-card dark:hover:bg-muted/50",
+        destructive:
+          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default:
+          "h-9 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
+        xs: "h-6 gap-1 px-2.5 text-xs has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-8 gap-1 px-3 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        lg: "h-10 gap-1.5 px-4 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
+        icon: "size-9",
+        "icon-xs": "size-6 [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-8",
+        "icon-lg": "size-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
 
-export function Button({
-  children,
-  variant = 'primary',
-  color,
-  className = '',
-  disabled,
+function Button({
+  className,
+  variant = "default",
+  size = "default",
   ...props
-}: ButtonProps) {
-  const baseStyles = clsx(
-    'py-3 px-5 rounded-lg transition font-medium inline-flex',
-    'items-center justify-center text-sm cursor-pointer'
-  );
-
-  const variants: Record<ButtonVariant, string> = {
-    primary: 'bg-primary text-white hover:opacity-90',
-    secondary: 'bg-gray-3a text-gray-12 hover:bg-gray-8a',
-    outline: 'border border-gray-8a text-gray-11 hover:bg-gray-11/5',
-  };
-
-  const disabledStyles =
-    'disabled:bg-neutral-3a disabled:text-neutral-8a disabled:cursor-not-allowed';
-
-  // Only override PRIMARY background if color is provided
-  const colorOverride =
-    variant === 'primary' && color ? `${color} text-white` : '';
-
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
   return (
-    <button
-      disabled={disabled}
-      className={`
-        ${baseStyles}
-        ${variants[variant]}
-        ${colorOverride}
-        ${disabledStyles}
-        ${className}
-      `}
+    <ButtonPrimitive
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-    >
-      {children}
-    </button>
-  );
+    />
+  )
 }
+
+export { Button, buttonVariants }

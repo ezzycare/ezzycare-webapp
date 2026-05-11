@@ -105,7 +105,7 @@ const RadioItem = ({ name, option, checked, onChange }: RadioItemProps) => {
             absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
             w-2.5 h-2.5
             rounded-full
-            bg-foreground
+            bg-surface-card
             transition-all duration-200
             opacity-100
             ${checked ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}

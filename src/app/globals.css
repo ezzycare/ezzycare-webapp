@@ -1,17 +1,19 @@
 @import "tailwindcss";
-@import "@heroui/styles"; 
 @import "flag-icons/css/flag-icons.min.css";
 
 :root {
+
+  --surface-card: #ffffff;
   /* =========================
     BLUE
   ========================= */
   --blue-1: #F9FDFE;
+  --blue-2a: #00B7DB0E;
+  --blue-3a: #00C8FF25;
   --blue-9: #17C9ED;
   --blue-10: #00BEE2;
   --blue-10a: #00BEE2FA;
   --blue-10ab: #0086F0FA;
-  --blue-3a: #00C8FF25;
   --blue-11: #007E9B;
   --blue-11a: #007E9B;
 
@@ -73,7 +75,7 @@
   /* =========================
     BASE
   ========================= */
-  --background: #EDF1F7;
+  --background: #F8F8F8;
   --border: #0009321F;
   --text-muted: #00051D74;
 
@@ -110,6 +112,7 @@
   --font-body: var(--font-sf-pro), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-sans: var(--font-sf-pro), system-ui, sans-serif;
   --font-geist-sans: var(--font-geist-sans);
+  --font-inter: var(--font-inter);
   --font-mono: "Geist Mono", monospace;
 
 /* BASE */
@@ -118,11 +121,12 @@
   --color-text-muted: var(--text-muted);
 
   /* BLUE */
-  --color-blue-8: var(--blue-8);
+  --color-blue-1: var(--blue-1);
+  --color-blue-2a: var(--blue-2a);
+  --color-blue-3a: var(--blue-3a);
   --color-blue-9: var(--blue-9);
   --color-blue-10: var(--blue-10);
   --color-blue-10a: var(--blue-10a);
-  --color-blue-3a: var(--blue-3a);
   --color-blue-11: var(--blue-11);
   --color-blue-11a: var(--blue-11a);
   --color-blue-10ab: var(--blue-10ab);
@@ -175,6 +179,7 @@
   --color-primary: var(--primary);
   --color-secondary: var(--gray-2);
   --color-background: var(--background);
+  --color-surface-card: var(--surface-card);
   --color-foreground: #ffffff;
   --color-border: var(--border);
 
@@ -205,6 +210,8 @@
 }
 
 .dark {
+  --surface-card: #111827;
+
   /* =========================
     BASE SURFACES
   ========================= */
