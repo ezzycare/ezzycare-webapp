@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
-import Script from 'next/script';
-
 import './globals.css';
 import { geistMono, geistSans, sfProDisplay } from '@/lib/fonts';
+import QueryProvider from '@/components/Base/QueryProvider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -16,21 +15,15 @@ export default function RootLayout({
 }>) {
   return (
     <html
+      suppressHydrationWarning
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${sfProDisplay.variable} h-full antialiased`}
     >
-      <Script id="theme-init" strategy="beforeInteractive">
-        {`
-          try {
-            const theme = localStorage.getItem('theme');
-            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (theme === 'dark' || (!theme && systemDark)) {
-              document.documentElement.classList.add('dark');
-            }
-          } catch (_) {}
-        `}
-      </Script>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <QueryProvider>
+          <div className="flex-1 flex flex-col">{children}</div>
+        </QueryProvider>
+      </body>
     </html>
   );
 }
