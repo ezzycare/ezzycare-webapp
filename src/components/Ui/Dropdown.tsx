@@ -1,5 +1,6 @@
 'use client';
 
+import { useClickOutside } from '@/hooks/useClickoutside';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface SelectOption {
@@ -34,8 +35,6 @@ const Dropdown = ({
   error,
   className = '',
 }: DropdownProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
 
@@ -82,22 +81,7 @@ const Dropdown = ({
     }
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setOpen(false);
-      }
-    };
-
-    window.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      window.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  const containerRef = useClickOutside(() => setOpen(false));
 
   return (
     <div className={`w-full space-y-2 ${className}`} ref={containerRef}>
@@ -114,7 +98,7 @@ const Dropdown = ({
           disabled={disabled}
           onClick={() => setOpen((prev) => !prev)}
           className={`
-            w-full h-[48px]
+            w-full h-14
             px-4 py-3
             rounded-xl
             border

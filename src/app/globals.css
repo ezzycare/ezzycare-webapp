@@ -1,10 +1,12 @@
 @import "tailwindcss";
+@import "@heroui/styles"; 
 @import "flag-icons/css/flag-icons.min.css";
 
 :root {
   /* =========================
     BLUE
   ========================= */
+  --blue-1: #F9FDFE;
   --blue-9: #17C9ED;
   --blue-10: #00BEE2;
   --blue-10a: #00BEE2FA;
@@ -116,6 +118,7 @@
   --color-text-muted: var(--text-muted);
 
   /* BLUE */
+  --color-blue-8: var(--blue-8);
   --color-blue-9: var(--blue-9);
   --color-blue-10: var(--blue-10);
   --color-blue-10a: var(--blue-10a);
@@ -125,6 +128,7 @@
   --color-blue-10ab: var(--blue-10ab);
 
   /* GRAY */
+  --color-gray-2: var(--gray-2);
   --color-gray-3: var(--gray-3);
   --color-gray-3a: var(--gray-3a);
   --color-gray-8a: var(--gray-8a);
@@ -177,7 +181,7 @@
   --color-sidebar-primary: var(--sidebar-primary);
 
   --color-text: var(--gray-12);
-  --color-text-alt: #ffffff;
+  --color-text-alt: var(--gray-11);
   --color-text-muted: var(--gray-10);
 
   /* SEMANTIC */

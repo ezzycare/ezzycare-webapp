@@ -1,0 +1,11 @@
+.title-italics, .title-blue {
+  font-family: var(--font-playfair-display);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.title-blue {
+  color: var(--color-primary-text);
+}
+
+

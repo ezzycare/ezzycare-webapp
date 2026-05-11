@@ -1,5 +1,5 @@
 import localFont from 'next/font/local';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, Playfair_Display } from 'next/font/google';
 
 export const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -8,6 +8,11 @@ export const geistSans = Geist({
 
 export const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
+  subsets: ['latin'],
+});
+
+export const playfairDisplay = Playfair_Display({
+  variable: '--font-playfair-display',
   subsets: ['latin'],
 });
 

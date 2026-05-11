@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function debounce<F extends (...args: any[]) => void>(
   func: F,
   delay = 300,
@@ -23,8 +24,10 @@ export function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export const ridersStatusColors = {
-  active: { border: '#D9F7BE', background: '#F6FFED', text: '#389E0D' },
-  offline: { border: '#D9D9D9', background: '#F5F5F5', text: 'rgba(0, 0, 0, 0.65)' },
-  busy: { border: '#FFF1B8', background: '#FFFBE6', text: '#FAAD14' },
+export const getInitials = (name: string) => {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase();
 };

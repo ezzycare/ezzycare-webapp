@@ -2,6 +2,12 @@
 
 import { countries } from '@/utils';
 import React, { useState } from 'react';
+import clsx from 'clsx';
+import {
+  EyeClosedIcon,
+  EyeOpenIcon,
+  LockClosedIcon,
+} from '@radix-ui/react-icons';
 
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -20,39 +26,34 @@ const TextInput = ({
   return (
     <div className="w-full space-y-2">
       {label && (
-        <label className="text-xs text-text uppercase tracking-wide">
+        <label className="text-sm font-medium text-text tracking-wide">
           {label}
         </label>
       )}
 
       <div className="relative w-full">
         {leftIcon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-10">
+          <div className="absolute left-2 top-1/2 -translate-y-1/2 text-neutral-11a">
             {leftIcon}
           </div>
         )}
 
         <input
           {...props}
-          className={`
-            w-full
-            border border-neutral-3a
-            bg-background
-            text-text
-            rounded-lg
-            px-4 py-3
-            ${leftIcon ? 'pl-10' : ''}
-            ${rightIcon ? 'pr-10' : ''}
-            outline-none
-            focus:border-primary
-            transition
-            placeholder:text-neutral-8a
+          value={props.type === 'password' ? '************' : props.value}
+          className={`${clsx(
+            'w-full border border-neutral-3a h-14 bg-foreground',
+            'text-text text-sm rounded-xl px-4 py-4 outline-none',
+            'focus:border-primary transition placeholder:text-neutral-8a'
+          )}
+            ${leftIcon ? 'pl-8' : ''}
+            ${rightIcon ? 'pr-8' : ''}
             ${className}
           `}
         />
 
         {rightIcon && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-10">
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-11a">
             {rightIcon}
           </div>
         )}
@@ -72,38 +73,49 @@ const PhoneInput = ({ label = 'Phone Number', ...props }: PhoneInputProps) => {
   return (
     <div className="w-full space-y-2 relative">
       {label && (
-        <label className="text-xs text-text uppercase tracking-wide">
+        <label className="text-sm font-medium text-text tracking-wide">
           {label}
         </label>
       )}
 
       {/* INPUT WRAPPER */}
-      <div className="flex items-center border border-neutral-3a rounded-lg bg-background focus-within:border-primary transition">
+      <div
+        className={clsx(
+          'flex items-center border border-neutral-3a rounded-lg',
+          'bg-foreground focus-within:border-primary transition'
+        )}
+      >
         {/* COUNTRY SELECT */}
         <div
           onClick={() => setOpen(!open)}
-          className="flex items-center gap-2 px-3 py-3 border-r border-neutral-3a cursor-pointer select-none bg-background
-            text-text"
+          className={clsx(
+            'flex items-center gap-2 px-3 py-3 border-r border-neutral-3a cursor-pointer select-none',
+            'bg-foreground text-text rounded-xl'
+          )}
         >
           <span className={`fi fi-${country.code} fis w-5 h-4`} />
-          <span className="text-sm text-text">{country.dial}</span>
+          <span className="text-sm text-neutral-11a">{country.dial}</span>
         </div>
 
         {/* INPUT */}
         <input
           {...props}
-          className="
-            w-full px-4 py-3 bg-background
-            text-text outline-none
-            placeholder:text-neutral-8a
-            rounded-r-lg
-          "
+          className={clsx(
+            'w-full border-r border-neutral-3a h-13.5 bg-foreground',
+            'text-text text-sm rounded-xl px-4 py-4 outline-none',
+            'placeholder:text-neutral-8a rounded-r-lg'
+          )}
         />
       </div>
 
       {/* DROPDOWN */}
       {open && (
-        <div className="absolute z-50 mt-2 w-full bg-background border border-neutral-3a rounded-lg shadow-lg overflow-hidden">
+        <div
+          className={clsx(
+            'absolute z-50 mt-1 w-full bg-foreground border',
+            'border-neutral-3a rounded-lg shadow-lg overflow-hidden'
+          )}
+        >
           {countries.map((c) => (
             <div
               key={c.code}
@@ -114,8 +126,8 @@ const PhoneInput = ({ label = 'Phone Number', ...props }: PhoneInputProps) => {
               className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-3a cursor-pointer"
             >
               <span className={`fi fi-${c.code} fis w-5 h-4`} />
-              <span className="text-sm text-primary">{c.name}</span>
-              <span className="ml-auto text-neutral-10">{c.dial}</span>
+              <span className="text-sm text-text">{c.name}</span>
+              <span className="ml-auto text-xs text-neutral-11a">{c.dial}</span>
             </div>
           ))}
         </div>
@@ -139,13 +151,14 @@ const PasswordInput = ({
       label={label}
       type={show ? 'text' : 'password'}
       className={className}
+      leftIcon={<LockClosedIcon className="text-neutral-11a" />}
       rightIcon={
         <button
           type="button"
           onClick={() => setShow(!show)}
-          className="text-xs text-neutral-11 hover:text-foreground"
+          className="text-xs cursor-pointer text-neutral-11a"
         >
-          {show ? 'Hide' : 'Show'}
+          {show ? <EyeOpenIcon /> : <EyeClosedIcon />}
         </button>
       }
     />

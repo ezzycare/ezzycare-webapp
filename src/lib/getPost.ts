@@ -1,0 +1,30 @@
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+import { allPosts } from '@/data/blog';
+
+export function getPost(id: number) {
+  console.log({ id });
+  const postMeta = allPosts.find((p) => p.id === id);
+
+  if (!postMeta) {
+    throw new Error(`Post with id ${id} not found`);
+  }
+
+  const filePath = path.join(
+    process.cwd(),
+    'src/data/postsContent',
+    // `${id}.md`
+    `1.md`
+  );
+
+  const fileContent = fs.readFileSync(filePath, 'utf8');
+
+  const { data, content } = matter(fileContent);
+
+  return {
+    ...(postMeta ?? {}),
+    frontmatter: data,
+    content,
+  };
+}

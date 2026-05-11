@@ -31,7 +31,7 @@ const RadioGroup = ({
   return (
     <fieldset className={`w-full space-y-2 ${className}`}>
       {label && (
-        <legend className="text-xs text-text uppercase tracking-wide mb-3">
+        <legend className="text-xs text-text text-medium tracking-wide mb-3">
           {label}
         </legend>
       )}
@@ -91,21 +91,21 @@ const RadioItem = ({ name, option, checked, onChange }: RadioItemProps) => {
           relative mt-0.5 shrink-0
           w-4.5 h-4.5
           rounded-full
-          border border-neutral-3a
           bg-background
+          border
           transition
           peer-focus-visible:border-primary
           group-hover:border-primary
-          ${checked ? 'border-primary' : 'border-neutral-3a'}
+          ${checked ? 'border-primary bg-primary' : 'border-neutral-3a'}
         `}
       >
         {/* Inner dot */}
         <span
           className={`
             absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-            w-3 h-3
+            w-2.5 h-2.5
             rounded-full
-            bg-primary
+            bg-foreground
             transition-all duration-200
             opacity-100
             ${checked ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}
@@ -117,7 +117,7 @@ const RadioItem = ({ name, option, checked, onChange }: RadioItemProps) => {
       {(option.label || option.description) && (
         <span className="flex flex-col gap-0.5">
           {option.label && (
-            <span className="text-xs text-text uppercase tracking-wide">
+            <span className="text-xs text-text tracking-wide">
               {option.label}
             </span>
           )}
