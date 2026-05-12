@@ -30,7 +30,7 @@ const Tabs = ({
   }, [active]);
 
   return (
-    <div className="relative flex w-fit bg-gray-100" role="tablist">
+    <div className="relative flex w-fit" role="tablist">
       <div
         className="absolute top-[calc(100%-2px)] bg-primary h-0.5 transition-all duration-300 ease-out"
         style={{
@@ -47,7 +47,7 @@ const Tabs = ({
           }}
           onClick={() => setActive(i)}
           className={`relative z-10 p-2 sm:px-4 py-2.5 text-xs md:text-sm transition-colors 
-              duration-300 cursor-pointer border-b border-border ${
+              duration-300 cursor-pointer border-b border-border1 ${
                 active === i ? 'text-text font-medium' : 'text-text-muted'
               }`}
           role="tab"

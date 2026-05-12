@@ -26,7 +26,7 @@ const SignIn = () => {
         <FancyButton
           className="w-full mt-5 h-12 flex justify-center"
           variant="primary"
-          onClick={push('/dashboard')}
+          onClick={() => push('/dashboard')}
         >
           Login
         </FancyButton>

@@ -2,25 +2,14 @@
 
 // import { redirect } from 'next/navigation';
 import Tabs from '@/components/Base/Tabs';
-import BaseTable from '@/components/Ui/Table';
 import {
   CreditCardIconLocal,
   HospitalIconLocal,
 } from '@/icons/DashboardNavIcons';
 import PeopleIconLocal from '@/icons/PeopleIcon';
-import { EyeOpenIcon } from '@radix-ui/react-icons';
 import React from 'react';
-
-type StatusType = 'pending' | 'approved' | 'inactive';
-const statusColor = (status: StatusType): string => {
-  const statuses = {
-    pending: 'bg-warning-2a text-warning-11a',
-    approved: 'bg-success/10 text-success',
-    inactive: 'bg-red-2a text-red-11a',
-  };
-
-  return statuses[status] as string;
-};
+import { DoctorType } from '@/types/doctors';
+import DoctorsTable from '@/components/Dashboard/DoctorsTable';
 
 // const authenticated = false;
 const Dashboard = () => {
@@ -77,24 +66,13 @@ const Dashboard = () => {
     },
   ];
 
-  type RegistrationType = {
-    id: number;
-    name: string;
-    email: string;
-    registeredOn: string;
-    status: string;
-  };
-
-  const registrations: RegistrationType[] = Array.from(
-    { length: 10 },
-    (_, i) => ({
-      id: i + 1,
-      name: 'Blessing Alfred',
-      email: 'blealf@gmail.com',
-      registeredOn: '2025-03-12',
-      status: i % 2 === 0 ? 'pending' : 'approved',
-    })
-  );
+  const registrations: DoctorType[] = Array.from({ length: 10 }, (_, i) => ({
+    id: i + 1,
+    name: 'John Doe',
+    email: 'emory hospital@gmail.com',
+    createdAt: '2023-01-01',
+    status: i % 2 === 0 ? 'pending' : 'active',
+  }));
 
   return (
     <div className="p-7.5">
@@ -152,55 +130,7 @@ const Dashboard = () => {
             setActiveIndex={(index) => console.log('Active tab index:', index)}
           />
           <div className="mt-4">
-            <BaseTable<RegistrationType>
-              data={registrations}
-              searchable={false}
-              columns={[
-                {
-                  field: 'name',
-                  label: 'User',
-                  sortable: false,
-                },
-
-                {
-                  field: 'email',
-                  label: 'Email',
-                  sortable: false,
-                },
-
-                {
-                  field: 'registeredOn',
-                  label: 'Registered On',
-                },
-                {
-                  field: 'status',
-                  label: 'Status',
-                  render: (value: string) => (
-                    <div
-                      className={`inline-flex rounded-full px-3 py-1 text-xs capitalize font-medium ${statusColor(
-                        value as StatusType
-                      )}`}
-                    >
-                      {value}
-                    </div>
-                  ),
-                },
-
-                {
-                  field: 'actions',
-                  label: 'Actions',
-
-                  render: () => (
-                    <div
-                      className={`inline-flex gap-2 rounded-full px-3 py-1 text-xs font-medium border border-border`}
-                    >
-                      <EyeOpenIcon className="text-gray-500" />
-                      <span>View</span>
-                    </div>
-                  ),
-                },
-              ]}
-            ></BaseTable>
+            <DoctorsTable data={registrations} />
           </div>
         </div>
       </div>

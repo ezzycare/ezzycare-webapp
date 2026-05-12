@@ -8,7 +8,7 @@ const Card = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className={`p-[17px] border border-border1 rounded-lg ${className}`}>
+    <div className={`p-[17px] border border-border11 rounded-lg ${className}`}>
       {children}
     </div>
   );

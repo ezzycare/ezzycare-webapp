@@ -17,7 +17,7 @@ export default function ThemeToggle() {
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
       className="
         w-12 h-7 flex items-center
-        bg-surface border border-border
+        bg-surface border border-border1
         rounded-full p-1
         transition
       "

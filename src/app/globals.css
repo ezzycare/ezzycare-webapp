@@ -24,6 +24,7 @@
   --gray-2: #F7F9FE;
   --gray-3: #EDF1F7;
   --gray-3a: #00398E12;
+  --gray-4: #E4E9F1;
   --gray-8a: #002A6E4F;
   --gray-10: #788498;
   --gray-11: #5B6575;
@@ -116,11 +117,6 @@
   --font-inter: var(--font-inter);
   --font-mono: "Geist Mono", monospace;
 
-/* BASE */
-  --color-background: var(--background);
-  --color-border: var(--border);
-  --color-text-muted: var(--text-muted);
-
   /* BLUE */
   --color-blue-1: var(--blue-1);
   --color-blue-2a: var(--blue-2a);
@@ -177,12 +173,15 @@
   --color-accent-12: var(--accent-12);
 
   /* PRIMARY */
+  /* BASE */
   --color-primary: var(--primary);
   --color-secondary: var(--gray-2);
   --color-background: var(--background);
-  --color-surface-card: var(--surface-card);
   --color-foreground: #ffffff;
-  --color-border: var(--border);
+  --color-surface-card: var(--surface-card);
+
+  --color-border1: var(--border);
+  --color-border2: var(--gray-4);
 
   --color-sidebar-primary: var(--sidebar-primary);
 

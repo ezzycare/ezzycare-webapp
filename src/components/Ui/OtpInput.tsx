@@ -108,7 +108,7 @@ const OtpInput: React.FC<OtpInputProps> = ({
             onKeyDown={(e) => handleKeyDown(e, index)}
             // @ts-expect-error - This is safe because we ensure the ref array is always the correct length
             ref={(el) => (inputsRef.current[index] = el)}
-            className={`${responsive ? 'min-w-8' : 'w-8'} h-10 text-sm text-center bg-border focus:outline-primary`}
+            className={`${responsive ? 'min-w-8' : 'w-8'} h-10 text-sm text-center bg-border1 focus:outline-primary`}
           />
         ))}
       </div>

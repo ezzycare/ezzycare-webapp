@@ -16,7 +16,7 @@ const Toggle = ({
     setCurrentState(val);
   };
   return (
-    <div className="h-[28px] w-fit rounded bg-border p-1 flex gap-x-1 justify-center items-center">
+    <div className="h-[28px] w-fit rounded bg-border1 p-1 flex gap-x-1 justify-center items-center">
       {states?.map((state, i) => (
         <div
           key={i}

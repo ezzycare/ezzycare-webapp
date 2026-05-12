@@ -31,3 +31,21 @@ export const getInitials = (name: string) => {
     .join('')
     .toUpperCase();
 };
+
+export type StatusType =
+  | 'pending'
+  | 'approved'
+  | 'active'
+  | 'suspended'
+  | 'inactive';
+export const statusColor = (status: StatusType): string => {
+  const statuses = {
+    pending: 'bg-warning-2a text-warning-11a',
+    approved: 'bg-success/10 text-success',
+    active: 'bg-success/10 text-success',
+    suspended: 'bg-error-3a text-error',
+    inactive: 'bg-error-3a text-error',
+  };
+
+  return statuses[status] as string;
+};

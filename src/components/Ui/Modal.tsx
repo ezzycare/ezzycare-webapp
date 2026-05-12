@@ -1,24 +1,23 @@
 'use client';
 
-import { ReactNode, useEffect, useRef, MouseEvent, KeyboardEvent } from 'react';
+import { cn } from '@/lib/utils';
+import { Cross1Icon } from '@radix-ui/react-icons';
+import { KeyboardEvent, MouseEvent, ReactNode, useEffect, useRef } from 'react';
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
-
   title?: string;
   description?: string;
-
   children: ReactNode;
-
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
-
   closeOnBackdrop?: boolean;
   closeOnEscape?: boolean;
-
   showCloseButton?: boolean;
-
+  containerClassName?: string;
+  headerClassName?: string;
   className?: string;
+  contentClassName?: string;
 }
 
 const sizeClasses = {
@@ -35,15 +34,14 @@ const Modal = ({
   title,
   description,
   children,
-
   size = 'md',
-
   closeOnBackdrop = true,
   closeOnEscape = true,
-
   showCloseButton = true,
-
+  containerClassName = '',
+  headerClassName = '',
   className = '',
+  contentClassName = '',
 }: ModalProps) => {
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -90,26 +88,26 @@ const Modal = ({
       role="dialog"
       aria-modal="true"
       onClick={handleBackdropClick}
-      className="
+      className={cn(`
         fixed inset-0 z-50
         flex items-center justify-center
-        bg-black/60
-        backdrop-blur-sm
+        bg-[#00083046]
         p-4
         animate-in fade-in duration-200
-      "
+        ${containerClassName}
+      `)}
     >
       <div
         ref={panelRef}
         className={`
           relative w-full
-          rounded-3xl
+          rounded-[14px]
           border border-neutral-3a
-          bg-background
+          bg-surface-card
           shadow-2xl
           overflow-hidden
+          p-8.5
           animate-in zoom-in-95 duration-200
-
           ${sizeClasses[size]}
           ${className}
         `}
@@ -117,21 +115,16 @@ const Modal = ({
         {/* Header */}
         {(title || description || showCloseButton) && (
           <div
-            className="
-              flex items-start justify-between gap-4
-              px-6 py-5
-              border-b border-neutral-3a
-            "
+            className={`flex items-start justify-between gap-4
+              mt-3.5 ${headerClassName}`}
           >
             <div className="space-y-1">
               {title && (
-                <h2 className="text-sm text-text uppercase tracking-wide">
-                  {title}
-                </h2>
+                <h2 className="text-2xl text-text font-medium">{title}</h2>
               )}
 
               {description && (
-                <p className="text-sm text-neutral-8a leading-relaxed">
+                <p className="text-sm text-text-muted leading-relaxed">
                   {description}
                 </p>
               )}
@@ -142,26 +135,25 @@ const Modal = ({
                 type="button"
                 onClick={onClose}
                 aria-label="Close modal"
-                className="
+                className={cn(`
+                  absolute top-4 right-4
                   shrink-0
-                  w-9 h-9
+                  w-8 h-8
                   rounded-full
-                  border border-neutral-3a
                   flex items-center justify-center
-                  text-neutral-8a
-                  transition-all
+                  hover:border
                   hover:border-primary
                   hover:text-primary
-                "
+                  cursor-pointer`)}
               >
-                ✕
+                <Cross1Icon className="w-4 h-4 text-text" />
               </button>
             )}
           </div>
         )}
 
         {/* Body */}
-        <div className="p-6">{children}</div>
+        <div className={`${contentClassName}`}>{children}</div>
       </div>
     </div>
   );

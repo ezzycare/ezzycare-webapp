@@ -1,85 +1,22 @@
+'use client';
+
+import { Button } from '@/components/Ui/Button';
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { ReactNode, useMemo, useState } from 'react';
-import Dropdown from './Dropdown';
-
-type SortDirection = 'asc' | 'desc' | null;
-
-type Column<T> = {
-  field: keyof T | string;
-  label: string;
-  sortable?: boolean;
-  width?: string;
-  className?: string;
-
-  /**
-   * Custom cell renderer
-   */
-  render?: (value: any, row: T, index: number) => ReactNode;
-
-  /**
-   * Custom header renderer
-   */
-  headerRender?: () => ReactNode;
-
-  /**
-   * Filter function for this column
-   */
-  filterFn?: (row: T, query: string) => boolean;
-};
-
-type FilterOption<T> = {
-  label: string;
-  value: string;
-  fn: (row: T) => boolean;
-};
-
-type BaseTableProps<T> = {
-  data: T[];
-  columns: Column<T>[];
-
-  /**
-   * Global Search
-   */
-  searchable?: boolean;
-  searchPlaceholder?: string;
-
-  /**
-   * Filters
-   */
-  filters?: FilterOption<T>[];
-
-  /**
-   * Custom Row Renderer
-   */
-  rowRender?: (row: T, columns: Column<T>[], index: number) => ReactNode;
-
-  /**
-   * Extra content
-   */
-  children?: ReactNode;
-
-  /**
-   * Empty state
-   */
-  emptyState?: ReactNode;
-
-  /**
-   * Row click
-   */
-  onRowClick?: (row: T) => void;
-
-  /**
-   * Styling
-   */
-  className?: string;
-};
+import Dropdown from '@/components/Ui/Dropdown';
+import { TextInput } from '@/components/Ui/TextInput';
+import { cn } from '@/lib/utils';
+import { BaseTableProps, SortDirection } from '@/types/table';
+import { SearchIcon } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 export default function BaseTable<T extends Record<string, any>>({
+  titleComponent,
   data,
   columns,
   searchable = true,
   searchPlaceholder = 'Search...',
   filters = [],
+  filterLabel,
   rowRender,
   children,
   emptyState = 'No data available',
@@ -88,6 +25,7 @@ export default function BaseTable<T extends Record<string, any>>({
 }: BaseTableProps<T>) {
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [selectedFilter, setSelectedFilter] = useState<string>('all');
 
   const [sortConfig, setSortConfig] = useState<{
     field: string | null;
@@ -187,32 +125,56 @@ export default function BaseTable<T extends Record<string, any>>({
       className={`w-full rounded-2xl bg-surface-card overflow-hidden -z-1 min-h-75 ${className}`}
     >
       {/* TOP BAR */}
-      {/* <div className="flex flex-col gap-4 border-b border-border p-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-1 items-center gap-3">
+      <div
+        className={cn(
+          `flex flex-col gap-4 p-4 pb-6
+          md:flex-row md:items-center md:justify-between`
+        )}
+      >
+        <div className="flex flex-1 items-center gap-3 flex-wrap">
+          {titleComponent && <div className="mr-auto">{titleComponent}</div>}
+
           {searchable && (
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={searchPlaceholder}
-              className="h-11 w-full rounded-xl border border-border bg-white px-4 text-sm text-text outline-none focus:border-primary"
-            />
+            <div className="min-w-50! max-w-76.5! ml-auto">
+              <TextInput
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={searchPlaceholder}
+                leftIcon={
+                  <SearchIcon size={18} className="text-text-muted ml-2" />
+                }
+                className={cn(`
+                  h-9! rounded-xl border border-border2 bg-surface-card 
+                  px-4 pl-10! text-sm text-text outline-none focus:border-primary 
+                `)}
+              />
+            </div>
           )}
 
           {filters.length > 0 && (
-            <Dropdown
-              options={filters}
-              value={activeFilter}
-              onChange={(value) => setActiveFilter(String(value))}
-            />
+            <div className="flex items-center gap-3">
+              <Dropdown
+                placeholder={filterLabel || 'Filter'}
+                options={filters}
+                value={selectedFilter}
+                onChange={(value) => setSelectedFilter(String(value))}
+              />
+              <Button
+                className="h-9! bg-blue-3a! text-primary! text-xs font-semibold"
+                onClick={() => setActiveFilter(selectedFilter)}
+              >
+                Apply Filter
+              </Button>
+            </div>
           )}
         </div>
 
         {children}
-      </div> */}
+      </div>
 
       {/* HEADER */}
       <div
-        className="grid border-b border-gray-3 bg-gray-2 px-4 py-4 text-text-muted"
+        className="grid border-b border-gray-3 bg-gray-2 px-4 py-4 text-text-muted rounded-xl"
         style={{
           gridTemplateColumns,
         }}
@@ -227,11 +189,13 @@ export default function BaseTable<T extends Record<string, any>>({
               onClick={() =>
                 column.sortable && handleSort(String(column.field))
               }
-              className={`bg-gray-2 flex items-center gap-2 text-left text-text-muted text-xs font-semibold uppercase tracking-wide ${
-                column.sortable
-                  ? 'cursor-pointer hover:text-text'
-                  : 'cursor-default'
-              } ${column.className || ''}`}
+              className={cn(`bg-gray-2 flex items-center gap-2 text-left text-text-muted 
+                text-xs font-semibold capitalize tracking-wide 
+                ${
+                  column.sortable
+                    ? 'cursor-pointer hover:text-text'
+                    : 'cursor-default'
+                } ${column.className || ''}`)}
             >
               {column.headerRender ? column.headerRender() : column.label}
 
