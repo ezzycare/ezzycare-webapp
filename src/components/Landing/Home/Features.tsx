@@ -46,7 +46,7 @@ const Features = () => {
   const featuresContainerRef = React.useRef(null);
   const featuresWrapperRef = React.useRef<HTMLDivElement | null>(null);
 
-  const [activeIndex, setActiveIndex] = useState(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   useGSAP(
     () => {

@@ -12,6 +12,9 @@ import SplashScreen from '@/components/Base/SplashScreen';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
+  // metadataBase: new URL('https://ezzycare.com'),
+  metadataBase: new URL('http://localhost:3000'),
+
   title: 'Ezzycare | Find Doctors,  Lab Tests & Medicine Delivery',
   description: 'Ezzycare | Find Doctors,  Lab Tests & Medicine Delivery',
   openGraph: {
