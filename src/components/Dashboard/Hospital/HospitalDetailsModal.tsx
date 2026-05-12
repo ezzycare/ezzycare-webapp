@@ -53,7 +53,7 @@ const HospitalDetailsModal = ({
         className="min-h-screen max-h-screen rounded-none! p-0!"
       >
         <div
-          className="space-y-4 flex w-full flex-col max-h-[calc(100vh-4rem)] overflow-auto p-5 pb-20"
+          className="space-y-4 flex w-full flex-col max-h-[calc(100vh-4rem)] overflow-auto px-5 pb-20"
           style={{
             scrollbarWidth: 'thin',
             scrollbarColor: '#17C9ED #00398E12',

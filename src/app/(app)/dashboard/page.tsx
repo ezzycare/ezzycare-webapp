@@ -2,18 +2,37 @@
 
 // import { redirect } from 'next/navigation';
 import Tabs from '@/components/Base/Tabs';
+import DoctorsTable from '@/components/Dashboard/DoctorsTable';
+import HospitalsTable from '@/components/Dashboard/Hospital/HospitalsTable';
 import {
   CreditCardIconLocal,
   HospitalIconLocal,
 } from '@/icons/DashboardNavIcons';
 import PeopleIconLocal from '@/icons/PeopleIcon';
-import React from 'react';
 import { DoctorType } from '@/types/doctors';
-import DoctorsTable from '@/components/Dashboard/DoctorsTable';
+import { HospitalType } from '@/types/hospitals';
+import React from 'react';
 
-// const authenticated = false;
 const Dashboard = () => {
-  // if (!authenticated) redirect('/auth');
+  const [activeTab, setActiveTab] = React.useState(0);
+  const tabs = [
+    {
+      name: 'Doctors',
+      component: <DoctorsTable data={registrations} />,
+    },
+    {
+      name: 'Hospitals',
+      component: <HospitalsTable data={hospitals} />,
+    },
+    {
+      name: 'Agents',
+      component: <DoctorsTable data={registrations} />,
+    },
+    {
+      name: 'Care Seekers',
+      component: <HospitalsTable data={hospitals} />,
+    },
+  ];
 
   const totals = [
     {
@@ -65,14 +84,6 @@ const Dashboard = () => {
       icon: <PeopleIconLocal className="text-orange-10a" />,
     },
   ];
-
-  const registrations: DoctorType[] = Array.from({ length: 10 }, (_, i) => ({
-    id: i + 1,
-    name: 'John Doe',
-    email: 'emory hospital@gmail.com',
-    createdAt: '2023-01-01',
-    status: i % 2 === 0 ? 'pending' : 'active',
-  }));
 
   return (
     <div className="p-7.5">
@@ -127,11 +138,9 @@ const Dashboard = () => {
         <div>
           <Tabs
             tabItems={['Doctors', 'Hospitals', 'Agents', 'Care Seekers']}
-            setActiveIndex={(index) => console.log('Active tab index:', index)}
+            setActiveIndex={(index) => setActiveTab(index)}
           />
-          <div className="mt-4">
-            <DoctorsTable data={registrations} />
-          </div>
+          <div className="mt-4">{tabs[activeTab].component}</div>
         </div>
       </div>
     </div>
@@ -147,3 +156,29 @@ const IconBase = ({ children }: { children: React.ReactNode }) => {
     </div>
   );
 };
+
+const registrations: DoctorType[] = Array.from({ length: 10 }, (_, i) => ({
+  id: i + 1,
+  name: 'John Doe',
+  email: 'emoryhospital@gmail.com',
+  createdAt: '2023-01-01',
+  status: i % 2 === 0 ? 'pending' : 'active',
+}));
+
+const getStatus = (): string => {
+  const rand = Math.random();
+
+  if (rand < 0.5) return 'active';
+  if (rand < 0.8) return 'pending';
+  return 'suspended';
+};
+
+const hospitals: HospitalType[] = Array.from({ length: 10 }, (_, i) => ({
+  id: i + 1,
+  // name: 'Emory hospital',
+  name: `Emory hospital ${i + 1}`,
+  email: 'emoryhospital@gmail.com',
+  phoneNumber: '08169192646',
+  address: 'Highlevel, Makurdi, Benue State',
+  status: getStatus(),
+}));
