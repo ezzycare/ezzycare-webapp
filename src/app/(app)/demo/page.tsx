@@ -64,14 +64,20 @@ const Page = () => {
               searchable
               filters={[
                 {
-                  label: 'Active',
-                  value: 'active',
-                  fn: (row) => row.status === 'active',
-                },
-                {
-                  label: 'Inactive',
-                  value: 'inactive',
-                  fn: (row) => row.status === 'inactive',
+                  label: 'Status',
+                  key: 'status',
+                  options: [
+                    {
+                      label: 'Active',
+                      value: 'active',
+                    },
+                    {
+                      label: 'Inactive',
+                      value: 'inactive',
+                    },
+                  ],
+                  fn: (row: User, value: string) =>
+                    row.status === value?.toLowerCase(),
                 },
               ]}
               columns={[

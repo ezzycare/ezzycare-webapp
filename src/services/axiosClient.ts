@@ -1,5 +1,4 @@
 import { handleLogout } from '@/apiQuery/auth/logout';
-import toaster from '@/components/Base/Toast/ToastItem';
 import { general } from '@/enums';
 import axios from 'axios';
 
@@ -66,7 +65,7 @@ axiosClient.interceptors.response.use(
 
     if (status === 401) {
       console.warn('[Axios] Unauthorized – maybe redirect to login.');
-      toaster.error(error.response?.data.message);
+      // toaster.error(error.response?.data.message);
       await handleLogout();
     }
 
