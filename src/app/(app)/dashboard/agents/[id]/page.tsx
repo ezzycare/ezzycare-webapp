@@ -10,7 +10,7 @@ const AgentDetail = async ({ params }: AgentDetailPageProps) => {
   const { id } = await params;
 
   const agent = {
-    id,
+    id: 1,
     name: 'John Smith',
     email: 'jsmith@gmail.com',
     phoneNumber: '08069192646',

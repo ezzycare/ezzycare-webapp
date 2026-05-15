@@ -70,6 +70,15 @@ const Doctors = () => {
     specialty: getSpecialty(),
     createdAt: '2023-01-01',
     status: getStatus(),
+    address: 'Highlevel, Makurdi, Benue State',
+    medicalCertificate: 'MD',
+    practiceLicense: '12345',
+    specialtyCertificate: '12345',
+    licenseExpiryDate: '12 May 2035',
+    qualifications: ['MD', 'FAAP'],
+    university: 'University of California, San Francisco',
+    dateGraduated: '12 May 2015',
+    about: `Dr. Rodriguez is passionate about child health and development.`,
   }));
 
   const meta = {

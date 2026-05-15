@@ -2,14 +2,14 @@
 
 import FancyButton from '@/components/Ui/FancyButton';
 import { FolderIconLocal } from '@/icons/FolderIconLocal';
+import { DoctorType } from '@/types/doctors';
 import { EnvelopeClosedIcon } from '@radix-ui/react-icons';
 import { ArrowLeft, Briefcase, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import EditDoctorModal from './EditDoctorModal';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const DoctorDetails = ({ doctor }: { doctor: any }) => {
+const DoctorDetails = ({ doctor }: { doctor: DoctorType }) => {
   const [openEditModal, setOpenEditModal] = React.useState(false);
   return (
     <div>

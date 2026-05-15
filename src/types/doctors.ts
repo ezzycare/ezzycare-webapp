@@ -5,7 +5,13 @@ export type DoctorType = {
   phoneNumber: string;
   createdAt: string;
   specialty: string;
+  university: string;
+  qualifications: string[];
+  dateGraduated: string;
+  about: string;
+  address: string;
   experience: string;
+  licenseExpiryDate: string;
   assignedHospital?: string | undefined;
   status: string;
 };

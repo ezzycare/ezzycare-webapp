@@ -10,7 +10,7 @@ const DoctorDetail = async ({ params }: DoctorDetailPageProps) => {
   const { id } = await params;
 
   const doctor = {
-    id: id,
+    id: 1,
     qualifications: ['MD', 'FAAP'],
     name: 'Emily Rodriguez',
     email: 'emoryhospital@gmail.com',
@@ -27,6 +27,8 @@ const DoctorDetail = async ({ params }: DoctorDetailPageProps) => {
     practiceLicense: '12345',
     specialtyCertificate: '12345',
     licenseExpiryDate: '12 May 2035',
+    createdAt: '2023-01-01',
+    status: 'active',
   };
 
   return (

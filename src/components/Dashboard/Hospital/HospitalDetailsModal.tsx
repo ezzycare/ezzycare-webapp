@@ -6,6 +6,7 @@ import FancyButton from '@/components/Ui/FancyButton';
 import Modal from '@/components/Ui/Modal';
 import TextArea from '@/components/Ui/TextArea';
 import { TextInput } from '@/components/Ui/TextInput';
+import { useToaster } from '@/hooks/useToaster';
 import { cn } from '@/lib/utils';
 import { HospitalType } from '@/types/hospitals';
 import { CircleX, Plus } from 'lucide-react';
@@ -29,6 +30,8 @@ const HospitalDetailsModal = ({
   const [serviceList, setServiceList] = useState<string[]>([]);
   const [serviceText, setServiceText] = useState<string>('');
   const [operatinghours, setOperatingHours] = useState<OperatingHour[]>([]);
+
+  const toaster = useToaster();
 
   const handleAddService = (service: string) => {
     if (serviceList.includes(service)) return;
@@ -155,7 +158,10 @@ const HospitalDetailsModal = ({
             <FancyButton
               variant="primary"
               className="w-full"
-              onClick={() => setOpenModal(false)}
+              onClick={() => {
+                toaster.success('Patient Updated successfully');
+                setOpenModal(false);
+              }}
             >
               Save changes
             </FancyButton>

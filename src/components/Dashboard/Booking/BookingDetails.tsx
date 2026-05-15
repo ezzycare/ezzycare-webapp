@@ -1,6 +1,7 @@
 'use client';
 
 import FancyButton from '@/components/Ui/FancyButton';
+import StatusText from '@/components/Ui/StatusText';
 import { ClockIconLocal } from '@/icons/DashboardIcons';
 import {
   CalendarIconLocal,
@@ -8,9 +9,7 @@ import {
   StethoscopeIconLocal,
   UserIconLocal,
 } from '@/icons/DashboardNavIcons';
-import { FolderIconLocal } from '@/icons/FolderIconLocal';
 import { BookingType } from '@/types/bookings';
-import { statusColor, StatusType } from '@/utils/helper';
 import {
   ArrowLeft,
   Briefcase,
@@ -37,13 +36,7 @@ const BookingDetails = ({ booking }: { booking: BookingType }) => {
         <div>
           <div className="flex items-center gap-4">
             <h3 className="text-text text-2xl font-medium">Booking Details</h3>
-            <p
-              className={`inline-flex rounded-full px-3 py-1 text-xs capitalize font-medium ${statusColor(
-                booking.status as StatusType
-              )}`}
-            >
-              {booking.status}
-            </p>
+            <StatusText value={booking.status} />
           </div>
 
           <div className="flex items-center gap-2.5 mt-3 text-sm">
@@ -189,17 +182,3 @@ const BookingDetails = ({ booking }: { booking: BookingType }) => {
 };
 
 export default BookingDetails;
-
-const ViewFileButton = () => {
-  return (
-    <div className="flex items-center gap-1.5 mt-2.5">
-      <FolderIconLocal />
-      <FancyButton
-        variant="outline"
-        className="py-1! px-2.5! text-text! hover:text-surface-card!"
-      >
-        View File
-      </FancyButton>
-    </div>
-  );
-};

@@ -2,15 +2,15 @@
 
 import { Button } from '@/components/Ui/Button';
 import FancyButton from '@/components/Ui/FancyButton';
+import StatusText from '@/components/Ui/StatusText';
 import { UserIconLocal } from '@/icons/DashboardNavIcons';
-import { FolderIconLocal } from '@/icons/FolderIconLocal';
+import { AgentType } from '@/types/agents';
 import { ArrowLeft, Edit } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import EditAgentModal from './EditAgentModal';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const AgentDetails = ({ agent }: { agent: any }) => {
+const AgentDetails = ({ agent }: { agent: AgentType }) => {
   const [openEditModal, setOpenEditModal] = React.useState(false);
   return (
     <div>
@@ -26,9 +26,7 @@ const AgentDetails = ({ agent }: { agent: any }) => {
         <div>
           <div className="flex items-center gap-4">
             <h3 className="text-text text-2xl font-medium">Agent Details</h3>
-            <p className="text-xs text-warning-11a py-1.5 px-2.5 bg-warning-3a rounded-lg">
-              Pending
-            </p>
+            <StatusText value={agent.status} />
           </div>
 
           <div className="flex items-center gap-2.5 mt-3 text-sm">
@@ -100,17 +98,3 @@ const AgentDetails = ({ agent }: { agent: any }) => {
 };
 
 export default AgentDetails;
-
-const ViewFileButton = () => {
-  return (
-    <div className="flex items-center gap-1.5 mt-2.5">
-      <FolderIconLocal />
-      <FancyButton
-        variant="outline"
-        className="py-1! px-2.5! text-text! hover:text-surface-card!"
-      >
-        View File
-      </FancyButton>
-    </div>
-  );
-};
