@@ -95,6 +95,8 @@
 
   --warning: #AB6400;
   --warning-2a: #F4D10016;
+  --warning-3a: #FFDE003D;
+  --warning-8a: #DA8A00C9;
   --warning-11a: #AB6400;
 
   --info: #00749E;
@@ -105,6 +107,7 @@
   --error-3a: #F3000D14;
   --error-8a: #D2000571;
   --error-11a: #C40006D3;
+
 }
 
 @theme inline {
@@ -195,6 +198,8 @@
 
   --color-warning: var(--warning);
   --color-warning-2a: var(--warning-2a);
+  --color-warning-3a: var(--warning-3a);
+  --color-warning-8a: var(--warning-8a);
   --color-warning-11a: var(--warning-11a);
 
   --color-info: var(--info);

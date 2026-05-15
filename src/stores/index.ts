@@ -1,8 +1,12 @@
 import { create } from 'zustand';
-import { useAuthStore } from './authStore';
-import { useGlobalStore } from './globalStore';
+import { AuthStore, useAuthStore } from './authStore';
+import { GlobalStore, useGlobalStore } from './globalStore';
+import { ToastStore, useToastStore } from './toastStore';
 
-export const useMainStore = create((set) => ({
-  ...useGlobalStore(set),
-  ...useAuthStore(set),
+export interface RootStore extends ToastStore, AuthStore, GlobalStore {}
+
+export const useMainStore = create<RootStore>((set, get) => ({
+  ...useGlobalStore(set, get),
+  ...useAuthStore(set, get),
+  ...useToastStore(set, get),
 }));

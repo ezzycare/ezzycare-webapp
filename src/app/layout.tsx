@@ -1,15 +1,17 @@
-import type { Metadata } from 'next';
-import './globals.css';
+import QueryProvider from '@/components/Base/QueryProvider';
+import SplashScreen from '@/components/Base/SplashScreen';
 import {
   geistMono,
   geistSans,
-  sfProDisplay,
-  playfairDisplay,
   inter,
+  playfairDisplay,
+  sfProDisplay,
 } from '@/lib/fonts';
-import QueryProvider from '@/components/Base/QueryProvider';
-import SplashScreen from '@/components/Base/SplashScreen';
 import { cn } from '@/lib/utils';
+import type { Metadata } from 'next';
+// import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from '@/components/Base/Toast/ToastContainer';
+import './globals.css';
 
 export const metadata: Metadata = {
   // metadataBase: new URL('https://ezzycare.com'),
@@ -50,11 +52,13 @@ export default function RootLayout({
         'font-sans'
       )}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <QueryProvider>
           <SplashScreen />
 
           {children}
+
+          <ToastContainer />
         </QueryProvider>
       </body>
     </html>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import Pagination from '@/components/Base/Pagination';
@@ -5,7 +6,7 @@ import CreateHospitalModal from '@/components/Dashboard/Hospital/CreateHospitalM
 import HospitalsTable from '@/components/Dashboard/Hospital/HospitalsTable';
 import { Button } from '@/components/Ui/Button';
 import { HospitalType } from '@/types/hospitals';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const Hospital = () => {
   const [createModal, setCreateModal] = useState<boolean>(false);
@@ -41,23 +42,25 @@ const Hospital = () => {
     return hospitals.slice(startIndex, endIndex);
   };
 
-  const filters = [
-    {
-      label: 'Active',
-      value: 'active',
-      fn: (row: HospitalType) => row.status === 'active',
-    },
-    {
-      label: 'Pending',
-      value: 'pending',
-      fn: (row: HospitalType) => row.status === 'pending',
-    },
-    {
-      label: 'Suspended',
-      value: 'suspended',
-      fn: (row: HospitalType) => row.status === 'suspended',
-    },
-  ];
+  const filter = {
+    label: 'Status',
+    key: 'status',
+    options: [
+      {
+        label: 'Active',
+        value: 'active',
+      },
+      {
+        label: 'Pending',
+        value: 'pending',
+      },
+      {
+        label: 'Suspended',
+        value: 'suspended',
+      },
+    ],
+    fn: (row: HospitalType, value: any) => row.status === value,
+  };
 
   return (
     <div className="m-5 bg-surface-card rounded-2xl p-8">
@@ -65,7 +68,7 @@ const Hospital = () => {
         data={paginatedData()}
         searchable={true}
         filterLabel="Status"
-        filters={filters}
+        filters={[filter]}
         titleComponent={
           <div className="">
             <h3 className="text-text text-2xl font-medium">Hospitals</h3>

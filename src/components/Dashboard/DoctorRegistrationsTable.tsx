@@ -1,18 +1,18 @@
 import BaseTable from '@/components/Base/Table';
-import { DoctorType } from '@/types/doctors';
+import type { DoctorRegistrationType } from '@/types/doctors';
 import { BaseTableProps, Column } from '@/types/table';
 import { statusColor, StatusType } from '@/utils/helper';
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 
-const DoctorsTable = ({
+const DoctorRegistrationsTable = ({
   data,
   columns,
   searchable,
   ...props
-}: Partial<BaseTableProps<DoctorType>> & {
-  data: DoctorType[];
+}: Partial<BaseTableProps<DoctorRegistrationType>> & {
+  data: DoctorRegistrationType[];
   searchable?: boolean;
-  columns?: Column<DoctorType>[];
+  columns?: Column<DoctorRegistrationType>[];
 }) => {
   const localColumns = [
     {
@@ -49,7 +49,7 @@ const DoctorsTable = ({
       field: 'actions',
       label: 'Actions',
 
-      render: (value: string, row: DoctorType) => (
+      render: (value: string, row: DoctorRegistrationType) => (
         <>
           <div
             className={`inline-flex gap-2 rounded-full px-2 py-1 text-xs font-medium border border-border1`}
@@ -64,7 +64,7 @@ const DoctorsTable = ({
 
   return (
     <div>
-      <BaseTable<DoctorType>
+      <BaseTable<DoctorRegistrationType>
         data={data}
         searchable={searchable || false}
         columns={columns || localColumns}
@@ -76,4 +76,4 @@ const DoctorsTable = ({
   );
 };
 
-export default DoctorsTable;
+export default DoctorRegistrationsTable;

@@ -37,14 +37,19 @@ export type StatusType =
   | 'approved'
   | 'active'
   | 'suspended'
+  | 'not assigned'
   | 'inactive';
 export const statusColor = (status: StatusType): string => {
   const statuses = {
     pending: 'bg-warning-2a text-warning-11a',
     approved: 'bg-success/10 text-success',
     active: 'bg-success/10 text-success',
+    upcoming: 'bg-blue-3a text-primary',
+    completed: 'bg-neutral-3a text-neutral-11a',
     suspended: 'bg-error-3a text-error',
+    cancelled: 'bg-error-3a text-error',
     inactive: 'bg-error-3a text-error',
+    'not assigned': 'bg-warning-2a text-warning-11a border border-warning-8a',
   };
 
   return statuses[status] as string;

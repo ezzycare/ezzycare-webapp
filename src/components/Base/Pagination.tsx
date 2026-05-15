@@ -1,10 +1,10 @@
 'use client';
 
+import { useIsMobile } from '@/hooks/useIsMobile';
+import ArrowLeft from '@/icons/ArrowLeft';
+import clsx from 'clsx';
 import { useMemo } from 'react';
 import FancyButton from '../Ui/FancyButton';
-import ArrowLeft from '@/icons/ArrowLeft';
-import { useIsMobile } from '@/hooks/isMobile';
-import clsx from 'clsx';
 
 const Pagination = ({
   pages,

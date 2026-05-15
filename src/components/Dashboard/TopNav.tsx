@@ -3,12 +3,18 @@
 import { NotificationDarkIconLocal } from '@/icons/DashboardNavIcons';
 import { getInitials } from '@/utils/helper';
 import clsx from 'clsx';
-import React, { useState } from 'react';
-import DatePicker from '../Ui/DatePicker';
-import { parseDate, type DateValue } from '@internationalized/date';
 import dayjs from 'dayjs';
+import { Menu } from 'lucide-react';
+import { useState } from 'react';
+import DatePicker from '../Ui/DatePicker';
 
-const TopNav = () => {
+const TopNav = ({
+  sidebarOpen,
+  setSideBarOpen,
+}: {
+  sidebarOpen: boolean;
+  setSideBarOpen: (sidebarOpen: boolean) => void;
+}) => {
   const [selectedDate, setSelectedDate] = useState<string>(
     dayjs().format('YYYY-MM-DD')
   );
@@ -23,6 +29,12 @@ const TopNav = () => {
 
   return (
     <div className="w-full h-20 bg-surface-card px-5 flex items-center justify-end">
+      <div
+        className="mr-auto cursor-pointer block lg:hidden"
+        onClick={() => setSideBarOpen(!sidebarOpen)}
+      >
+        <Menu className="w-6 h-6 text-text mr-auto" />
+      </div>
       <DatePicker
         defaultValue={selectedDate}
         onChange={(dateValue) => setSelectedDate(dateValue)}
@@ -40,7 +52,7 @@ const TopNav = () => {
         >
           {initials}
         </p>
-        <div>
+        <div className="hidden sm:block">
           <h2 className="text-sm font-semibold">{userData.role}</h2>
           <p className="text-xs text-text-muted">{userData.email}</p>
         </div>

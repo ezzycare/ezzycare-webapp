@@ -9,7 +9,7 @@ export const useIsMobile = (breakpoint = 768) => {
 
     const handleChange = () => setIsMobile(mediaQuery.matches);
 
-    handleChange(); // set initial value
+    handleChange();
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);

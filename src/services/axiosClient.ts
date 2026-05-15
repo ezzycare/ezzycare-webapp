@@ -1,6 +1,6 @@
 import { handleLogout } from '@/apiQuery/auth/logout';
+import toaster from '@/components/Base/Toast/ToastItem';
 import { general } from '@/enums';
-import toaster from '@/lib/toaster';
 import axios from 'axios';
 
 const getAuthToken = async (): Promise<string | null> => {

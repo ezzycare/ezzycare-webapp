@@ -2,14 +2,14 @@
 
 // import { redirect } from 'next/navigation';
 import Tabs from '@/components/Base/Tabs';
-import DoctorsTable from '@/components/Dashboard/DoctorsTable';
+import DoctorRegistrationsTable from '@/components/Dashboard/DoctorRegistrationsTable';
 import HospitalsTable from '@/components/Dashboard/Hospital/HospitalsTable';
 import {
   CreditCardIconLocal,
   HospitalIconLocal,
 } from '@/icons/DashboardNavIcons';
 import PeopleIconLocal from '@/icons/PeopleIcon';
-import { DoctorType } from '@/types/doctors';
+import { DoctorRegistrationType } from '@/types/doctors';
 import { HospitalType } from '@/types/hospitals';
 import React from 'react';
 
@@ -18,7 +18,7 @@ const Dashboard = () => {
   const tabs = [
     {
       name: 'Doctors',
-      component: <DoctorsTable data={registrations} />,
+      component: <DoctorRegistrationsTable data={registrations} />,
     },
     {
       name: 'Hospitals',
@@ -26,7 +26,7 @@ const Dashboard = () => {
     },
     {
       name: 'Agents',
-      component: <DoctorsTable data={registrations} />,
+      component: <DoctorRegistrationsTable data={registrations} />,
     },
     {
       name: 'Care Seekers',
@@ -157,13 +157,16 @@ const IconBase = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const registrations: DoctorType[] = Array.from({ length: 10 }, (_, i) => ({
-  id: i + 1,
-  name: 'John Doe',
-  email: 'emoryhospital@gmail.com',
-  createdAt: '2023-01-01',
-  status: i % 2 === 0 ? 'pending' : 'active',
-}));
+const registrations: DoctorRegistrationType[] = Array.from(
+  { length: 10 },
+  (_, i) => ({
+    id: i + 1,
+    name: 'John Doe',
+    email: 'emoryhospital@gmail.com',
+    createdAt: '2023-01-01',
+    status: i % 2 === 0 ? 'pending' : 'active',
+  })
+);
 
 const getStatus = (): string => {
   const rand = Math.random();

@@ -1,19 +1,23 @@
 'use client';
 
 import { countries } from '@/utils';
-import React, { useState } from 'react';
-import clsx from 'clsx';
 import {
   EyeClosedIcon,
   EyeOpenIcon,
   LockClosedIcon,
 } from '@radix-ui/react-icons';
+import clsx from 'clsx';
+import React, { useState } from 'react';
+import { FieldError, UseFormRegister } from 'react-hook-form';
 
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   className?: string;
+  error?: string | FieldError | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  register?: UseFormRegister<any>;
 }
 
 const TextInput = ({
@@ -21,6 +25,8 @@ const TextInput = ({
   leftIcon,
   rightIcon,
   className = '',
+  error,
+  register,
   ...props
 }: TextInputProps) => {
   return (
@@ -40,7 +46,7 @@ const TextInput = ({
 
         <input
           {...props}
-          value={props.type === 'password' ? '************' : props.value}
+          value={props.value}
           className={`${clsx(
             'w-full border border-neutral-3a h-14 bg-surface-card',
             'text-text text-sm rounded-xl px-4 py-4 outline-none',
@@ -50,6 +56,7 @@ const TextInput = ({
             ${rightIcon ? 'pr-8' : ''}
             ${className}
           `}
+          {...register}
         />
 
         {rightIcon && (
@@ -58,6 +65,11 @@ const TextInput = ({
           </div>
         )}
       </div>
+      {error && (
+        <span className="text-sm text-error">
+          {typeof error === 'string' ? error : error?.message}
+        </span>
+      )}
     </div>
   );
 };
@@ -140,9 +152,7 @@ const PasswordInput = ({
   label = 'Password',
   className = '',
   ...props
-}: React.InputHTMLAttributes<HTMLInputElement> & {
-  label?: string;
-}) => {
+}: TextInputProps) => {
   const [show, setShow] = useState(false);
 
   return (
@@ -165,4 +175,4 @@ const PasswordInput = ({
   );
 };
 
-export { TextInput, PhoneInput, PasswordInput };
+export { PasswordInput, PhoneInput, TextInput };

@@ -5,9 +5,11 @@ import { Button } from '@/components/Ui/Button';
 import Dropdown from '@/components/Ui/Dropdown';
 import { TextInput } from '@/components/Ui/TextInput';
 import { cn } from '@/lib/utils';
-import { BaseTableProps, SortDirection } from '@/types/table';
+import { BaseTableProps, FilterGroup, SortDirection } from '@/types/table';
+import { Cross1Icon } from '@radix-ui/react-icons';
 import { SearchIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { MobileTable } from './MobileTable';
 
 export default function BaseTable<T extends Record<string, any>>({
   titleComponent,
@@ -16,16 +18,20 @@ export default function BaseTable<T extends Record<string, any>>({
   searchable = true,
   searchPlaceholder = 'Search...',
   filters = [],
-  filterLabel,
   rowRender,
   children,
   emptyState = 'No data available',
   onRowClick,
   className = '',
+  searchContainerClassName,
 }: BaseTableProps<T>) {
   const [search, setSearch] = useState('');
-  const [activeFilter, setActiveFilter] = useState<string>('all');
-  const [selectedFilter, setSelectedFilter] = useState<string>('all');
+  const [selectedFilters, setSelectedFilters] = useState<
+    Record<string, string>
+  >({});
+  const [appliedFilters, setAppliedFilters] = useState<Record<string, string>>(
+    {}
+  );
 
   const [sortConfig, setSortConfig] = useState<{
     field: string | null;
@@ -64,12 +70,16 @@ export default function BaseTable<T extends Record<string, any>>({
     /**
      * FILTER
      */
-    if (activeFilter !== 'all') {
-      const currentFilter = filters.find((f) => f.value === activeFilter);
+    if (filters.length > 0) {
+      rows = rows.filter((row) => {
+        return filters.every((filterGroup) => {
+          const value = appliedFilters[filterGroup.key];
 
-      if (currentFilter) {
-        rows = rows.filter(currentFilter.fn);
-      }
+          if (!value || value === 'all') return true;
+
+          return filterGroup.fn(row, value);
+        });
+      });
     }
 
     /**
@@ -114,11 +124,7 @@ export default function BaseTable<T extends Record<string, any>>({
     }
 
     return rows;
-  }, [data, columns, filters, search, activeFilter, sortConfig]);
-
-  const gridTemplateColumns = columns
-    .map((col) => col.width || '1fr')
-    .join(' ');
+  }, [data, columns, filters, search, appliedFilters, sortConfig]);
 
   return (
     <div
@@ -135,7 +141,9 @@ export default function BaseTable<T extends Record<string, any>>({
           {titleComponent && <div className="mr-auto">{titleComponent}</div>}
 
           {searchable && (
-            <div className="min-w-50! max-w-76.5! ml-auto">
+            <div
+              className={`flex items-center min-w-50 max-w-76.5 ${searchContainerClassName} ${titleComponent ? 'ml-auto' : ''} `}
+            >
               <TextInput
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -145,26 +153,47 @@ export default function BaseTable<T extends Record<string, any>>({
                 }
                 className={cn(`
                   h-9! rounded-xl border border-border2 bg-surface-card 
-                  px-4 pl-10! text-sm text-text outline-none focus:border-primary 
+                  px-4 pl-10! text-sm text-text outline-none focus:border-primary
+                  w-full
                 `)}
               />
             </div>
           )}
 
           {filters.length > 0 && (
-            <div className="flex items-center gap-3">
-              <Dropdown
-                placeholder={filterLabel || 'Filter'}
-                options={filters}
-                value={selectedFilter}
-                onChange={(value) => setSelectedFilter(String(value))}
-              />
+            <div className="flex items-center gap-3 flex-wrap">
+              {filters.map((filterGroup: FilterGroup<T>) => (
+                <Dropdown
+                  key={filterGroup.key}
+                  placeholder={filterGroup.label}
+                  options={filterGroup.options}
+                  value={selectedFilters[filterGroup.key] || 'all'}
+                  onChange={(value) =>
+                    setSelectedFilters((prev) => ({
+                      ...prev,
+                      [filterGroup.key]: String(value),
+                    }))
+                  }
+                />
+              ))}
+
               <Button
                 className="h-9! bg-blue-3a! text-primary! text-xs font-semibold"
-                onClick={() => setActiveFilter(selectedFilter)}
+                onClick={() => setAppliedFilters(selectedFilters)}
               >
-                Apply Filter
+                Apply Filters
               </Button>
+              {Object.values(appliedFilters)?.length > 0 && (
+                <Button
+                  className="h-9! bg-error-3a! text-error! text-xs font-semibold"
+                  onClick={() => {
+                    setSelectedFilters({});
+                    setAppliedFilters({});
+                  }}
+                >
+                  <Cross1Icon className="w-4 h-4 font-semibold" />
+                </Button>
+              )}
             </div>
           )}
         </div>
@@ -172,86 +201,145 @@ export default function BaseTable<T extends Record<string, any>>({
         {children}
       </div>
 
-      {/* HEADER */}
-      <div
-        className="grid border-b border-gray-3 bg-gray-2 px-4 py-4 text-text-muted rounded-xl"
-        style={{
-          gridTemplateColumns,
-        }}
-      >
-        {columns.map((column) => {
-          const isSorted = sortConfig.field === column.field;
+      <div className="hidden lg:block overflow-x-auto w-full">
+        <table
+          className="w-full border-collapse table-fixed min-w-md"
+          style={{ tableLayout: 'fixed' }}
+        >
+          {/* COLUMN WIDTHS (replaces gridTemplateColumns) */}
+          <colgroup>
+            {columns.map((col) => (
+              <col
+                key={String(col.field)}
+                style={{ width: col.width || 'auto' }}
+              />
+            ))}
+          </colgroup>
 
-          return (
-            <button
-              key={String(column.field)}
-              disabled={!column.sortable}
-              onClick={() =>
-                column.sortable && handleSort(String(column.field))
-              }
-              className={cn(`bg-gray-2 flex items-center gap-2 text-left text-text-muted 
-                text-xs font-semibold capitalize tracking-wide 
-                ${
-                  column.sortable
-                    ? 'cursor-pointer hover:text-text'
-                    : 'cursor-default'
-                } ${column.className || ''}`)}
-            >
-              {column.headerRender ? column.headerRender() : column.label}
-
-              {column.sortable && (
-                <span className="text-[10px]">
-                  {!isSorted && '↕'}
-
-                  {isSorted && sortConfig.direction === 'asc' && '↑'}
-
-                  {isSorted && sortConfig.direction === 'desc' && '↓'}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* BODY */}
-      <div className="divide-y divide-gray-3">
-        {processedData.length === 0 && (
-          <div className="flex items-center justify-center py-3 text-sm text-text">
-            {emptyState}
-          </div>
-        )}
-
-        {processedData.map((row, index) => {
-          if (rowRender) {
-            return <div key={index}>{rowRender(row, columns, index)}</div>;
-          }
-
-          return (
-            <div
-              key={index}
-              onClick={() => onRowClick?.(row)}
-              className="grid items-center px-4 py-3 transition-colors hover:bg-primary/10"
-              style={{
-                gridTemplateColumns,
-              }}
-            >
+          {/* HEADER */}
+          <thead>
+            <tr className="border-b border-gray-3 bg-gray-2 text-text-muted rounded-xl">
               {columns.map((column) => {
-                const value = row[column.field as keyof T];
+                const isSorted = sortConfig.field === column.field;
 
                 return (
-                  <div
+                  <th
                     key={String(column.field)}
-                    className={`text-sm text-text-muted ${column.className || ''}`}
+                    className={cn(
+                      `min-w-32.5 first:pl-4 last:pr-4 py-3 text-left text-xs font-semibold 
+                      capitalize tracking-wide text-text-muted overflow-visible`,
+                      column.sortable
+                        ? 'cursor-pointer hover:text-text'
+                        : 'cursor-default',
+                      column.className || ''
+                    )}
+                    onClick={() =>
+                      column.sortable && handleSort(String(column.field))
+                    }
                   >
-                    {column.render
-                      ? column.render(value, row, index)
-                      : String(value ?? '-')}
-                  </div>
+                    <div className="flex items-center gap-2 ">
+                      {column.headerRender
+                        ? column.headerRender()
+                        : column.label}
+
+                      {column.sortable && (
+                        <span className="text-[10px]">
+                          {!isSorted && '↕'}
+                          {isSorted && sortConfig.direction === 'asc' && '↑'}
+                          {isSorted && sortConfig.direction === 'desc' && '↓'}
+                        </span>
+                      )}
+                    </div>
+                  </th>
                 );
               })}
-            </div>
-          );
-        })}
+            </tr>
+          </thead>
+
+          {/* BODY */}
+          <tbody className="divide-y divide-gray-3">
+            {processedData.length === 0 && (
+              <tr>
+                <td colSpan={columns.length}>
+                  <div className="flex items-center justify-center py-3 text-sm text-text">
+                    {emptyState}
+                  </div>
+                </td>
+              </tr>
+            )}
+
+            {processedData.map((row, index) => {
+              if (rowRender) {
+                return (
+                  <tr key={index}>
+                    <td colSpan={columns.length}>
+                      {rowRender(row, columns, index)}
+                    </td>
+                  </tr>
+                );
+              }
+
+              return (
+                <tr
+                  key={index}
+                  onClick={() => onRowClick?.(row)}
+                  className="hover:bg-primary/10 transition-colors"
+                >
+                  {columns.map((column) => {
+                    const value = row[column.field as keyof T];
+
+                    return (
+                      <td
+                        key={String(column.field)}
+                        className={cn(
+                          `first:pl-4 last:pr-4 py-3 text-sm text-text-muted`,
+                          column.className || ''
+                        )}
+                      >
+                        <div className="relative group w-full min-w-0">
+                          {/* truncated text */}
+                          <div className="truncate whitespace-nowrap overflow-hidden">
+                            {column.render
+                              ? column.render(value, row, index)
+                              : String(value ?? '-')}
+                          </div>
+
+                          {/* tooltip */}
+                          {String(value)?.length > 20 && (
+                            <div
+                              className={cn(`
+                                pointer-events-none
+                                absolute left-0 top-full z-50 mt-1
+                                hidden group-hover:block
+                                w-max max-w-xs
+                                whitespace-normal wrap-break-word
+                                rounded-md bg-surface-card text-text-muted text-xs
+                                px-3 py-2 shadow-lg`)}
+                            >
+                              {column.render
+                                ? column.render(value, row, index)
+                                : String(value ?? '-')}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="block lg:hidden overflow-x-auto w-full">
+        <MobileTable
+          data={processedData}
+          columns={columns}
+          rowRender={rowRender}
+          onRowClick={onRowClick}
+          emptyState={emptyState}
+        />
       </div>
     </div>
   );
