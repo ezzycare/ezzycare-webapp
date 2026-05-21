@@ -1,8 +1,8 @@
 import FancyButton from '@/components/Ui/FancyButton';
 import Modal from '@/components/Ui/Modal';
 import { PhoneInput, TextInput } from '@/components/Ui/TextInput';
-import { useToaster } from '@/hooks/useToaster';
 import { UserIconLocal } from '@/icons/DashboardNavIcons';
+import { toaster } from '@/lib/toaster';
 import { EnvelopeClosedIcon } from '@radix-ui/react-icons';
 import { MapPin } from 'lucide-react';
 import React from 'react';
@@ -14,7 +14,6 @@ const EditAgentModal = ({
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const toaster = useToaster();
   return (
     <div>
       <Modal

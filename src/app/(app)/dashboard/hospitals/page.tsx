@@ -80,7 +80,7 @@ const Hospital = () => {
       >
         <Button
           className="h-9! text-xs font-semibold"
-          color="#007E9B"
+          color="bg-blue-11a! hover:bg-blue-11a/80"
           onClick={() => setCreateModal(true)}
         >
           Create New Hospital

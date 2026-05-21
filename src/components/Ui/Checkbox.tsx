@@ -113,7 +113,7 @@ const Checkbox = ({
       {(label || description) && (
         <span className="flex flex-col gap-0.5">
           {label && (
-            <span className="text-xs text-text uppercase tracking-wide">
+            <span className="text-xs text-text capitalize tracking-wide">
               {label}
             </span>
           )}

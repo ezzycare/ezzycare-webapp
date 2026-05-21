@@ -76,9 +76,17 @@ const TextInput = ({
 
 interface PhoneInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  error?: string | FieldError | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  register?: UseFormRegister<any>;
 }
 
-const PhoneInput = ({ label = 'Phone Number', ...props }: PhoneInputProps) => {
+const PhoneInput = ({
+  label = 'Phone Number',
+  error,
+  register,
+  ...props
+}: PhoneInputProps) => {
   const [open, setOpen] = useState(false);
   const [country, setCountry] = useState(countries[0]);
 
@@ -117,8 +125,15 @@ const PhoneInput = ({ label = 'Phone Number', ...props }: PhoneInputProps) => {
             'text-text text-sm rounded-xl px-4 py-4 outline-none',
             'placeholder:text-neutral-8a rounded-r-lg'
           )}
+          {...register}
         />
       </div>
+
+      {error && (
+        <span className="text-sm text-error">
+          {typeof error === 'string' ? error : error?.message}
+        </span>
+      )}
 
       {/* DROPDOWN */}
       {open && (

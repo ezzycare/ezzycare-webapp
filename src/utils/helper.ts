@@ -39,18 +39,78 @@ export type StatusType =
   | 'suspended'
   | 'not assigned'
   | 'inactive';
-export const statusColor = (status: StatusType): string => {
-  const statuses = {
-    pending: 'bg-warning-2a text-warning-11a',
-    approved: 'bg-success/10 text-success',
-    active: 'bg-success/10 text-success',
-    upcoming: 'bg-blue-3a text-primary',
-    completed: 'bg-neutral-3a text-neutral-11a',
-    suspended: 'bg-error-3a text-error',
-    cancelled: 'bg-error-3a text-error',
-    inactive: 'bg-error-3a text-error',
-    'not assigned': 'bg-warning-2a text-warning-11a border border-warning-8a',
-  };
 
+const statuses = {
+  pending: 'bg-warning-2a text-warning-11a',
+  approved: 'bg-success/10 text-success',
+  active: 'bg-success/10 text-success',
+  upcoming: 'bg-blue-3a text-primary',
+  completed: 'bg-success/10 text-success',
+  suspended: 'bg-error-3a text-error',
+  cancelled: 'bg-error-3a text-error',
+  inactive: 'bg-error-3a text-error',
+  'not assigned': 'bg-warning-2a text-warning-11a border border-warning-8a',
+};
+
+export const statusColor = (status: StatusType): string => {
   return statuses[status] as string;
 };
+
+export type RoleColorType =
+  | 'operations manager'
+  | 'finance manager'
+  | 'hospital admin'
+  | 'agent supervisor';
+const roles: RoleColorType[] = [
+  'operations manager',
+  'finance manager',
+  'hospital admin',
+  'agent supervisor',
+];
+export const roleColor = (role: RoleColorType): string => {
+  const roleColors = Object.values(statuses);
+
+  const roleColor: Record<RoleColorType, string> = {} as Record<
+    RoleColorType,
+    string
+  >;
+  roles.forEach((r) => {
+    roleColor[r] = roleColors[Math.floor(Math.random() * roleColors.length)];
+  });
+  return roleColor[role] as string;
+};
+
+// =============================== TEMP WILL REMOVE ===============================
+type PaginateDataProps<T> = {
+  currentPage: number;
+  data: T[];
+};
+
+export const paginateData = <T>({
+  currentPage,
+  data,
+}: PaginateDataProps<T>) => {
+  const meta = {
+    page: currentPage,
+    pageSize: 10,
+    pageCount: Math.ceil(data.length / 10),
+    total: data.length,
+  };
+
+  const paginatedData = (): T[] => {
+    const startIndex = (currentPage - 1) * meta.pageSize;
+    const endIndex = startIndex + meta.pageSize;
+
+    return data.slice(startIndex, endIndex);
+  };
+
+  return { meta, paginatedData };
+};
+// ==============================================================
+
+export const tempRoles = [
+  'operations manager',
+  'finance manager',
+  'hospital admin',
+  'agent supervisor',
+];

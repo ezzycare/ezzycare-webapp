@@ -1,11 +1,12 @@
 import StateModal from '@/components/Base/StateModal';
+import Dropdown from '@/components/Ui/Dropdown';
 import FancyButton from '@/components/Ui/FancyButton';
 import Modal from '@/components/Ui/Modal';
-import { PhoneInput, TextInput } from '@/components/Ui/TextInput';
+import { TextInput } from '@/components/Ui/TextInput';
 import { EnvelopeClosedIcon } from '@radix-ui/react-icons';
 import React from 'react';
 
-const CreateDoctorModal = ({
+const InviteDoctorModal = ({
   openModal,
   setOpenModal,
 }: {
@@ -13,13 +14,23 @@ const CreateDoctorModal = ({
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
+  const departments = [
+    'Nephology',
+    'Obstetrics & Gynecology',
+    'Ear, Nose & Throat',
+    'Ophthalmic',
+    'Mental & Psychiatric',
+    'Pediatric',
+    'Intensive care unit',
+    'Orthopedics',
+  ];
   return (
     <div>
       <Modal
         open={openModal}
         onClose={() => setOpenModal(false)}
-        title="Create Doctor"
-        description="Create the Doctor’s record"
+        title="Invite Doctor"
+        description="Provide doctor’s information"
         size="md"
       >
         <div className="space-y-4 flex w-full flex-col">
@@ -30,7 +41,15 @@ const CreateDoctorModal = ({
               label="Email"
               leftIcon={<EnvelopeClosedIcon />}
             />
-            <PhoneInput placeholder="" label="Phone" />
+            <Dropdown
+              label="Assign Department"
+              options={departments.map((val) => ({
+                value: val,
+                label: val,
+              }))}
+              fullWidth
+              mainClassName="h-12!"
+            />
           </div>
 
           <div className="flex w-full mt-6">
@@ -42,7 +61,7 @@ const CreateDoctorModal = ({
                 setOpenModal(false);
               }}
             >
-              Create
+              Invite Doctor
             </FancyButton>
           </div>
         </div>
@@ -51,12 +70,12 @@ const CreateDoctorModal = ({
         open={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
         type="success"
-        title="Doctor Added"
+        title="Invitation sent!"
         content={
           <span>
-            We have sent login credentials to{' '}
-            <span className="font-bold">sarah.johnson@medical.com</span> they
-            will continue the onboarding process from their end.
+            We&apos;ve sent an email with an invitation link to{' '}
+            <span className="font-bold">sarah.johnson@medical.com</span>. They
+            will come onboard when they accept the invite.
           </span>
         }
         btnText="Okay"
@@ -66,4 +85,4 @@ const CreateDoctorModal = ({
   );
 };
 
-export default CreateDoctorModal;
+export default InviteDoctorModal;

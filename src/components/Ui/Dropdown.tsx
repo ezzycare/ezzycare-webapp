@@ -3,7 +3,7 @@
 import { useClickOutside } from '@/hooks/useClickoutside';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 interface SelectOption {
   value: string;
@@ -24,6 +24,8 @@ interface DropdownProps {
   disabled?: boolean;
   error?: string;
   className?: string;
+  mainClassName?: string;
+  fullWidth?: boolean;
 }
 
 const Dropdown = ({
@@ -38,6 +40,8 @@ const Dropdown = ({
   disabled = false,
   error,
   className = '',
+  mainClassName = '',
+  fullWidth = false,
 }: DropdownProps) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -90,57 +94,59 @@ const Dropdown = ({
   return (
     <div className={`space-y-2 ${className}`} ref={containerRef}>
       {label && (
-        <label className="text-xs text-text capitalize tracking-wide">
+        <label className="text-sm font-medium text-text capitalize tracking-wide">
           {label}
         </label>
       )}
 
       <Popover>
         <div className="relative">
-          <PopoverTrigger>
+          <PopoverTrigger
+            className={`${fullWidth && 'w-full min-w-full'} ${disabled && 'pointer-events-none'}`}
+          >
             {/* Trigger */}
             <button
               type="button"
               disabled={disabled}
               onClick={() => setOpen((prev) => !prev)}
               className={`
-            w-full h-9
-            px-4 py-3
-            rounded-xl
-            border
-            bg-surface-card
-            transition-all
-            flex items-center justify-between gap-3
-            text-left
+                w-full h-9
+                px-4 py-3
+                rounded-xl
+                border
+                bg-surface-card
+                transition-all
+                flex items-center justify-between gap-3
+                text-left
+                ${
+                  error
+                    ? 'border-red-500'
+                    : open
+                      ? 'border-primary'
+                      : 'border-neutral-3a'
+                }
 
-            ${
-              error
-                ? 'border-red-500'
-                : open
-                  ? 'border-primary'
-                  : 'border-neutral-3a'
-            }
-
-            ${
-              disabled
-                ? 'opacity-50 cursor-not-allowed'
-                : 'hover:border-primary cursor-pointer'
-            }
-          `}
+                ${
+                  disabled
+                    ? 'bg-gray-3! text-neutral-10! border border-neutral-6a! pointer-events-none cursor-not-allowed'
+                    : 'hover:border-primary cursor-pointer'
+                }
+                    ${mainClassName}
+              `}
             >
               <div className="flex flex-wrap gap-2 flex-1">
                 {chips && selectedOptions.length > 0 ? (
                   selectedOptions.map((option) => (
                     <span
                       key={option.value}
-                      className="
-                    px-2.5 py-1
-                    rounded-full
-                    bg-primary/10
-                    border border-primary/20
-                    text-xs text-primary
-                    capitalize tracking-wide
-                  "
+                      className={cn(`
+                        px-2.5 py-1
+                        rounded-full
+                        bg-primary/10
+                        border border-primary/20
+                        text-xs text-primary
+                        capitalize tracking-wide
+                      `)}
                     >
                       {option.label}
                     </span>
@@ -184,7 +190,11 @@ const Dropdown = ({
           </PopoverTrigger>
 
           {/* Dropdown */}
-          <PopoverContent className="w-[320px] rounded-2xl border border-gray-3 bg-white shadow-2xl">
+          <PopoverContent
+            className={cn(
+              'rounded-2xl border border-gray-3 w-[320px] bg-white shadow-2xl'
+            )}
+          >
             <div>
               {/* Search */}
               {searchable && (

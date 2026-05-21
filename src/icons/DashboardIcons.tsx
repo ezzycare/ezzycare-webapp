@@ -22,3 +22,45 @@ export const ClockIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
+
+export const InfoInvertedIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 20 20"
+    width={20}
+    height={20}
+    fill="none"
+    {...props}
+  >
+    <path
+      fill="#00432C"
+      d="M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0Zm1 15H9v-2h2v2Zm0-4H9V5h2v6Z"
+    />
+  </svg>
+);
+
+export const DepartmentIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={20}
+    height={20}
+    fill="none"
+    {...props}
+  >
+    <g
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.667}
+      clipPath="url(#a)"
+    >
+      <path d="M5 18.334v-15a1.667 1.667 0 0 1 1.667-1.667h6.666A1.666 1.666 0 0 1 15 3.334v15H5ZM5 10H3.333a1.667 1.667 0 0 0-1.667 1.667v5a1.667 1.667 0 0 0 1.667 1.666H5" />
+      <path d="M15 7.5h1.667a1.667 1.667 0 0 1 1.666 1.667v7.5a1.667 1.667 0 0 1-1.666 1.666H15M8.334 5h3.333M8.334 8.333h3.333M8.334 11.667h3.333M8.334 15h3.333" />
+    </g>
+    <defs>
+      <clipPath id="a">
+        <path fill="none" d="M0 0h20v20H0z" />
+      </clipPath>
+    </defs>
+  </svg>
+);

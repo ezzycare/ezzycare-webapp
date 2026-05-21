@@ -1,14 +1,14 @@
 'use client';
 
-import FullLogo from '@/icons/FullLogo';
-import React, { useEffect } from 'react';
-import FancyButton from '@/components/Ui/FancyButton';
 import AnimatedMenu from '@/components/Base/AnimatedMenu';
-import clsx from 'clsx';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
+import FancyButton from '@/components/Ui/FancyButton';
+import FullLogo from '@/icons/FullLogo';
 import { useGSAP } from '@gsap/react';
+import clsx from 'clsx';
 import gsap from 'gsap';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import React, { useEffect } from 'react';
 
 const navItems = [
   { name: 'Home', path: '/' },
@@ -96,12 +96,14 @@ const NavBar = () => {
             Sign In
           </FancyButton>
         </Link>
-        <FancyButton
-          variant="primary"
-          className="py-1.5! sm:py-2! px-1.5! sm:px-3! text-xs! sm:text-sm!"
-        >
-          Get Started
-        </FancyButton>
+        <Link href="/auth/signup/hospital">
+          <FancyButton
+            variant="primary"
+            className="py-1.5! sm:py-2! px-1.5! sm:px-3! text-xs! sm:text-sm!"
+          >
+            Get Started
+          </FancyButton>
+        </Link>
         <div
           className="lg:hidden cursor-pointer z-52"
           onClick={() => setMenuOpen((prev) => !prev)}

@@ -7,10 +7,9 @@ import {
   playfairDisplay,
   sfProDisplay,
 } from '@/lib/fonts';
+import { AppToaster } from '@/lib/toaster';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
-// import { ToastContainer } from 'react-toastify';
-import { ToastContainer } from '@/components/Base/Toast/ToastContainer';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -58,7 +57,7 @@ export default function RootLayout({
 
           {children}
 
-          <ToastContainer />
+          <AppToaster />
         </QueryProvider>
       </body>
     </html>

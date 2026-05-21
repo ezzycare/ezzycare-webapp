@@ -4,7 +4,7 @@ import { useId } from 'react';
 
 interface RadioOption {
   value: string;
-  label: string;
+  label?: string;
   description?: string;
   disabled?: boolean;
 }
@@ -57,13 +57,18 @@ const RadioGroup = ({
 };
 
 interface RadioItemProps {
-  name: string;
+  name?: string;
   option: RadioOption;
   checked: boolean;
   onChange: () => void;
 }
 
-const RadioItem = ({ name, option, checked, onChange }: RadioItemProps) => {
+export const RadioItem = ({
+  name,
+  option,
+  checked,
+  onChange,
+}: RadioItemProps) => {
   const id = useId();
 
   return (

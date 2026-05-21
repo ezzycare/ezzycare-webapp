@@ -14,6 +14,7 @@ import {
   SideBarBaseIcon,
   StethoscopeIconLocal,
   UserIconLocal,
+  UsersIconLocal,
 } from '@/icons/DashboardNavIcons';
 import FullLogo from '@/icons/FullLogo';
 import { cn } from '@/lib/utils';
@@ -24,27 +25,60 @@ import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
 const dashNavItems = [
-  { name: 'Dashboard Overview', href: '/dashboard', icon: HomeIconLocal },
-  { name: 'Hospitals', href: '/dashboard/hospitals', icon: HospitalIconLocal },
-  { name: 'Doctors', href: '/dashboard/doctors', icon: StethoscopeIconLocal },
-  { name: 'Agents', href: '/dashboard/agents', icon: UserIconLocal },
-  { name: 'Patients', href: '/dashboard/patients', icon: UserIconLocal },
-  { name: 'Bookings', href: '/dashboard/bookings', icon: CalendarIconLocal },
+  { name: 'Dashboard Overview', href: '/dashboard', icon: <HomeIconLocal /> },
+  {
+    name: 'Hospitals',
+    href: '/dashboard/hospitals',
+    icon: <HospitalIconLocal />,
+  },
+  {
+    name: 'Doctors',
+    href: '/dashboard/doctors',
+    icon: <StethoscopeIconLocal />,
+  },
+  { name: 'Agents', href: '/dashboard/agents', icon: <UserIconLocal /> },
+  { name: 'Team', href: '/dashboard/team', icon: <UsersIconLocal /> },
+  { name: 'Patients', href: '/dashboard/patients', icon: <UserIconLocal /> },
+  {
+    name: 'Bookings',
+    href: '/dashboard/bookings',
+    icon: <CalendarIconLocal />,
+  },
   {
     name: 'Notifications',
     href: '/dashboard/notifications',
-    icon: NotificationIconLocal,
+    icon: <NotificationIconLocal />,
   },
   {
     name: 'Verifications',
     href: '/dashboard/verifications',
-    icon: MenuBoardIconLocal,
+    icon: <MenuBoardIconLocal />,
   },
-  { name: 'Approvals', href: '/dashboard/approvals', icon: MenuBoardIconLocal },
-  { name: 'Payments', href: '/dashboard/payments', icon: CreditCardIconLocal },
-  { name: 'Analytics', href: '/dashboard/analytics', icon: AnalyticsIconLocal },
-  { name: 'Settings', href: '/dashboard/settings', icon: SettingsIconLocal },
-  { name: 'Admin Management', href: '/dashboard/admin', icon: UserIconLocal },
+  {
+    name: 'Approvals',
+    href: '/dashboard/approvals',
+    icon: <MenuBoardIconLocal />,
+  },
+  {
+    name: 'Payments',
+    href: '/dashboard/payments',
+    icon: <CreditCardIconLocal />,
+  },
+  {
+    name: 'Analytics',
+    href: '/dashboard/analytics',
+    icon: <AnalyticsIconLocal />,
+  },
+  {
+    name: 'Settings',
+    href: '/dashboard/settings',
+    icon: <SettingsIconLocal />,
+  },
+  {
+    name: 'Admin Management',
+    href: '/dashboard/admin',
+    icon: <UserIconLocal />,
+  },
 ];
 
 const userData = {
@@ -72,7 +106,7 @@ const DashNav = ({
   return (
     <div
       className={cn(
-        'absolute top-0 bottom-0 lg:relative lg:w-72.5 inset-0 z-50',
+        'absolute top-0 bottom-0 lg:fixed lg:w-72.5 inset-0 z-50',
         isMobile && sidebarOpen
           ? 'bg-black/20 w-full left-0 right-0 cursor-pointer'
           : 'pointer-events-none'
@@ -104,11 +138,11 @@ const DashNav = ({
                 href={item.href}
                 onClick={() => isMobile && setSideBarOpen(false)}
                 className={clsx(
-                  'flex items-center gap-3 text-text-alt font-medium text-sm hover:text-text transition-colors duration-200 pl-7 py-2.5 rounded-lg',
-                  active && 'bg-blue-3a text-blue-11a'
+                  'flex items-center gap-3  font-medium text-sm hover:text-text transition-colors duration-200 pl-7 py-2.5 rounded-lg',
+                  active ? 'bg-blue-3a text-blue-11a' : 'text-text-alt'
                 )}
               >
-                <item.icon />
+                {item.icon}
                 {item.name}
               </Link>
             );

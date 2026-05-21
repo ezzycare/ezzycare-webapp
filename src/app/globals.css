@@ -11,12 +11,14 @@
   --blue-1: #F9FDFE;
   --blue-2a: #00B7DB0E;
   --blue-3a: #00C8FF25;
+  --blue-6a: #00B2E66D;
   --blue-9: #17C9ED;
   --blue-10: #00BEE2;
   --blue-10a: #00BEE2FA;
   --blue-10ab: #0086F0FA;
   --blue-11: #007E9B;
   --blue-11a: #007E9B;
+  --blue-12: #003D4C;
 
   /* =========================
     GRAY
@@ -36,8 +38,10 @@
   ========================= */
   --neutral-3a: #0000330F;
   --neutral-5a: #0009321F;
+  --neutral-6a: #00002F26;
   --neutral-8a: #00083046;
   --neutral-9a: #00051D74;
+  --neutral-10: #80838D;
   --neutral-11a: #0007149F;
   --neutral-12: #1C2024;
 
@@ -124,12 +128,14 @@
   --color-blue-1: var(--blue-1);
   --color-blue-2a: var(--blue-2a);
   --color-blue-3a: var(--blue-3a);
+  --color-blue-6a: var(--blue-6a);
   --color-blue-9: var(--blue-9);
   --color-blue-10: var(--blue-10);
   --color-blue-10a: var(--blue-10a);
   --color-blue-11: var(--blue-11);
   --color-blue-11a: var(--blue-11a);
   --color-blue-10ab: var(--blue-10ab);
+  --color-blue-12: var(--blue-12);
 
   /* GRAY */
   --color-gray-2: var(--gray-2);
@@ -144,8 +150,10 @@
   /* NEUTRAL */
   --color-neutral-3a: var(--neutral-3a);
   --color-neutral-5a: var(--neutral-5a);
+  --color-neutral-6a: var(--neutral-6a);
   --color-neutral-8a: var(--neutral-8a);
   --color-neutral-9a: var(--neutral-9a);
+  --color-neutral-10: var(--neutral-10);
   --color-neutral-11a: var(--neutral-11a);
   --color-neutral-12: var(--neutral-12);
 

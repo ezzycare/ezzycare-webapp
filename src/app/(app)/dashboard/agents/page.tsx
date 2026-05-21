@@ -4,9 +4,11 @@
 import Pagination from '@/components/Base/Pagination';
 import AgentsTable from '@/components/Dashboard/Agent/AgentsTable';
 import CreateAgentModal from '@/components/Dashboard/Agent/CreateAgentModal';
+import { Button } from '@/components/Ui/Button';
 import FancyButton from '@/components/Ui/FancyButton';
 import { cn } from '@/lib/utils';
 import { AgentType } from '@/types/agents';
+import { PlusIcon } from 'lucide-react';
 import React, { useState } from 'react';
 
 const Agents = () => {
@@ -104,13 +106,23 @@ const Agents = () => {
           </p>
         </div>
 
-        <FancyButton
-          onClick={() => setCreateModal(true)}
-          className=""
-          variant="primary"
-        >
-          Create New Agent
-        </FancyButton>
+        <div className="flex items-center gap-3 ">
+          <FancyButton
+            onClick={() => setCreateModal(true)}
+            className="bg-blue-11a! hover:bg-blue-11a/80 gap-2"
+            variant="primary"
+          >
+            Create New Agent
+          </FancyButton>
+          <Button
+            onClick={() => setCreateModal(true)}
+            className="bg-blue-11a! hover:bg-blue-11a/80 gap-2"
+            variant="primary"
+          >
+            <PlusIcon size={18} />
+            Add Agent
+          </Button>
+        </div>
       </div>
       <div
         className={cn(`

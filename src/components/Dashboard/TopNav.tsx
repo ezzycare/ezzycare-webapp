@@ -28,7 +28,7 @@ const TopNav = ({
   const initials = getInitials(userData.name);
 
   return (
-    <div className="w-full h-20 bg-surface-card px-5 flex items-center justify-end">
+    <div className="w-full h-20 bg-surface-card px-5 flex items-center justify-end fixed z-10! top-0 left-0">
       <div
         className="mr-auto cursor-pointer block lg:hidden"
         onClick={() => setSideBarOpen(!sidebarOpen)}

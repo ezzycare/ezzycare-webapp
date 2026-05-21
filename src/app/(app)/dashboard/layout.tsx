@@ -7,9 +7,9 @@ import React, { useState } from 'react';
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const [sidebarOpen, setSideBarOpen] = useState(false);
   return (
-    <div className="grid  grid-cols-1 lg:grid-cols-[290px_1fr] bg-background ">
+    <div className="relative grid grid-cols-1 lg:pl-72.5 bg-background ">
       <SideNav sidebarOpen={sidebarOpen} setSideBarOpen={setSideBarOpen} />
-      <div>
+      <div className="relative pt-20">
         <TopNav sidebarOpen={sidebarOpen} setSideBarOpen={setSideBarOpen} />
         {children}
       </div>

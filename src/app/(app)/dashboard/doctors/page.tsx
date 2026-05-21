@@ -5,15 +5,19 @@ import CreateDoctorModal from '@/components/Dashboard/Doctor/CreateDoctorModal';
 // import { redirect } from 'next/navigation';
 import Pagination from '@/components/Base/Pagination';
 import DoctorsTable from '@/components/Dashboard/Doctor/DoctorsTable';
+import InviteDoctorModal from '@/components/Dashboard/Doctor/InviteDoctorModal';
 import IconBase from '@/components/Dashboard/IconBase';
+import { Button } from '@/components/Ui/Button';
 import FancyButton from '@/components/Ui/FancyButton';
 import { UserIconLocal } from '@/icons/DashboardNavIcons';
 import { DoctorType } from '@/types/doctors';
+import { Plus } from 'lucide-react';
 import React, { useState } from 'react';
 
 const Doctors = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [createModal, setCreateModal] = useState<boolean>(false);
+  const [openInviteModal, setOpenInviteModal] = useState<boolean>(false);
 
   const totals = [
     {
@@ -145,13 +149,31 @@ const Doctors = () => {
           </p>
         </div>
 
-        <FancyButton
-          onClick={() => setCreateModal(true)}
-          className=""
-          variant="primary"
-        >
-          Create New Doctor
-        </FancyButton>
+        <div className="flex items-center gap-3 ">
+          <FancyButton
+            onClick={() => setCreateModal(true)}
+            className="bg-blue-11a! hover:bg-blue-11a/80"
+            variant="primary"
+          >
+            Create New Doctor
+          </FancyButton>
+          <Button
+            className="flex items-center flex-row!"
+            variant="outline"
+            onClick={() => setOpenInviteModal(true)}
+          >
+            <Plus size={18} className="mr-2" />
+            Invite Doctor
+          </Button>
+          <Button
+            className="flex items-center bg-blue-11a!"
+            variant="primary"
+            onClick={() => setCreateModal(true)}
+          >
+            <UserIconLocal className="mr-2" />
+            Add Doctor
+          </Button>
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 justify-between items-center">
         {totals.map((item) => (
@@ -192,6 +214,10 @@ const Doctors = () => {
           openModal={createModal}
           setOpenModal={setCreateModal}
         ></CreateDoctorModal>
+        <InviteDoctorModal
+          openModal={openInviteModal}
+          setOpenModal={setOpenInviteModal}
+        ></InviteDoctorModal>
       </div>
     </div>
   );
