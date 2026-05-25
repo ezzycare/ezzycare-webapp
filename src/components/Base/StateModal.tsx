@@ -1,14 +1,14 @@
 'use client';
 
 import { Button } from '@/components/Ui/Button';
-import Modal from '@/components/Ui/Modal';
+import Modal, { type ModalProps } from '@/components/Ui/Modal';
 import { cn } from '@/lib/utils';
 import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react';
 import React from 'react';
 
 type StateModalType = 'success' | 'error' | 'warning' | 'info';
 
-interface StateModalProps {
+type StateModalProps = {
   open: boolean;
   onClose: () => void;
   type?: StateModalType;
@@ -20,7 +20,7 @@ interface StateModalProps {
   cancelBtnAction?: () => void;
   loading?: boolean;
   className?: string;
-}
+} & Partial<ModalProps>;
 
 const modalConfig: Record<
   StateModalType,
@@ -72,6 +72,7 @@ const StateModal = ({
   cancelBtnAction,
   loading = false,
   className,
+  ...props
 }: StateModalProps) => {
   const config = modalConfig[type];
 
@@ -83,6 +84,7 @@ const StateModal = ({
       showCloseButton
       className={cn('p-8', className)}
       contentClassName="mt-0"
+      {...props}
     >
       <div className="flex flex-col">
         {/* Icon */}

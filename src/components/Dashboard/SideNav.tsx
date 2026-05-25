@@ -50,6 +50,11 @@ const dashNavItems = [
     icon: <NotificationIconLocal />,
   },
   {
+    name: 'Appointments',
+    href: '/dashboard/appointments',
+    icon: <MenuBoardIconLocal />,
+  },
+  {
     name: 'Verifications',
     href: '/dashboard/verifications',
     icon: <MenuBoardIconLocal />,

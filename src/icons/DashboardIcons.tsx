@@ -1,8 +1,12 @@
-export const ClockIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+type IconProps = React.SVGProps<SVGSVGElement> & {
+  size?: number;
+};
+
+export const ClockIconLocal = ({ size = 20, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={20}
-    height={20}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -23,12 +27,12 @@ export const ClockIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const InfoInvertedIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+export const InfoInvertedIconLocal = ({ size = 20, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 20 20"
-    width={20}
-    height={20}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -39,11 +43,11 @@ export const InfoInvertedIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const DepartmentIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+export const DepartmentIconLocal = ({ size = 20, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={20}
-    height={20}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -62,5 +66,23 @@ export const DepartmentIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
         <path fill="none" d="M0 0h20v20H0z" />
       </clipPath>
     </defs>
+  </svg>
+);
+
+export const MapFilledLocal = ({ size = 15, ...props }: IconProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 15 15"
+    width={size}
+    height={size}
+    fill="none"
+    {...props}
+  >
+    <path
+      fill="currentColor"
+      fillRule="evenodd"
+      d="M7.039 13.834S2.5 10.012 2.5 6.25a5 5 0 1 1 10 0c0 3.761-4.539 7.584-4.539 7.584a.7.7 0 0 1-.922 0ZM7.5 8.438a2.188 2.188 0 1 0 0-4.375 2.188 2.188 0 0 0 0 4.375Z"
+      clipRule="evenodd"
+    />
   </svg>
 );

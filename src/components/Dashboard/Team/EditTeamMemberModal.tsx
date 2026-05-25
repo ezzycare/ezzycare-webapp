@@ -73,7 +73,7 @@ const EditTeamMemberModal = ({
               value={data.role}
               options={[{ label: data.role, value: data.role }]}
               fullWidth
-              mainClassName="h-12!"
+              containerClassName="h-12!"
               disabled
             />
           </div>

@@ -23,6 +23,7 @@
   /* =========================
     GRAY
   ========================= */
+  --gray-1: #FBFCFE;
   --gray-2: #F7F9FE;
   --gray-3: #EDF1F7;
   --gray-3a: #00398E12;
@@ -61,10 +62,13 @@
   ========================= */
   --crimson-11: #CB1D63;
 
+  --plum-11a: #730086C1;
+
   --pink-3a: #F400FF17;
   --pink-10: #A036AE;
   --pink-11a: #850096CE;
   --pink-11: #9C31AA;
+  --pink-12a: #5F006B;
 
   --purple-10: #8347B9;
 
@@ -73,6 +77,7 @@
   /* =========================
     ACCENT
   ========================= */
+  --accent-3a: #00C8FF25;
   --accent-8a: #00BADE;
   --accent-10: #00BEE2;
   --accent-11a: #007E9B;
@@ -138,6 +143,7 @@
   --color-blue-12: var(--blue-12);
 
   /* GRAY */
+  --color-gray-1: var(--gray-1);
   --color-gray-2: var(--gray-2);
   --color-gray-3: var(--gray-3);
   --color-gray-3a: var(--gray-3a);
@@ -168,16 +174,19 @@
 
   /* CRIMSON / PINK */
   --color-crimson-11: var(--crimson-11);
+  --color-plum-11a: var(--plum-11a);
   --color-pink-3a: var(--pink-3a);
   --color-pink-10: var(--pink-10);
   --color-pink-11a: var(--pink-11a);
   --color-pink-11: var(--pink-11);
+  --color-pink-12a: var(--pink-12a);
 
   --color-purple-10: var(--purple-10);
 
   --color-orange-10a: var(--orange-10a);
 
   /* ACCENT */
+  --color-accent-3a: var(--accent-3a);
   --color-accent-8a: var(--accent-8a);
   --color-accent-10: var(--accent-10);
   --color-accent-11a: var(--accent-11a);
@@ -219,6 +228,15 @@
   --color-error-8a: var(--error-8a);
   --color-error-11a: var(--error-11a);
 
+  --animate-shake: shake 0.4s ease-in-out;
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70% { transform: translateX(-6px); }
+    20%, 40%, 60% { transform: translateX(6px); }
+    80% { transform: translateX(-4px); }
+    90% { transform: translateX(4px); }
+  }
 
 }
 

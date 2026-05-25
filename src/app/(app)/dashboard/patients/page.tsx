@@ -83,12 +83,12 @@ const Patients = () => {
 
   return (
     <div className="p-7.5">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
           <h3 className="text-text text-2xl font-medium">
             Patients Management
           </h3>
-          <p className="text-sm text-text-muted whitespace-nowrap ">
+          <p className="text-sm text-text-muted">
             View and manage patient records and information
           </p>
         </div>
@@ -111,7 +111,7 @@ const Patients = () => {
           </div>
         ))}
       </div>
-      <div className="mt-4 rounded-xl bg-surface-card">
+      <div className="mt-4 rounded-xl bg-surface-card pb-5">
         <PatientsTable
           data={paginatedData()}
           searchable={true}

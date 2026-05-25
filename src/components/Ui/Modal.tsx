@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { KeyboardEvent, MouseEvent, ReactNode, useEffect, useRef } from 'react';
 
-interface ModalProps {
+export interface ModalProps {
   open: boolean;
   onClose: () => void;
   title?: string;
@@ -18,6 +18,7 @@ interface ModalProps {
   headerClassName?: string;
   className?: string;
   contentClassName?: string;
+  persistent?: boolean;
 }
 
 const sizeClasses = {
@@ -42,6 +43,7 @@ const Modal = ({
   headerClassName = '',
   className = '',
   contentClassName = '',
+  persistent = false,
 }: ModalProps) => {
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -76,11 +78,29 @@ const Modal = ({
   if (!open) return null;
 
   const handleBackdropClick = (e: MouseEvent<HTMLDivElement>) => {
+    // only trigger on actual backdrop click
+    if (e.target !== e.currentTarget) return;
+
+    if (persistent) {
+      if (panelRef.current) {
+        panelRef.current.classList.remove('animate-shake');
+
+        // force reflow so animation restarts
+        void panelRef.current.offsetWidth;
+
+        panelRef.current.classList.add('animate-shake');
+
+        setTimeout(() => {
+          panelRef.current?.classList.remove('animate-shake');
+        }, 300);
+      }
+
+      return;
+    }
+
     if (!closeOnBackdrop) return;
 
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
+    onClose();
   };
 
   return (

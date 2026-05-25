@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/Ui/Button';
 import FancyButton from '@/components/Ui/FancyButton';
 import StatusText from '@/components/Ui/StatusText';
 import { ClockIconLocal } from '@/icons/DashboardIcons';
@@ -13,6 +14,7 @@ import { BookingType } from '@/types/bookings';
 import {
   ArrowLeft,
   Briefcase,
+  Edit,
   MessageCircleMore,
   NotepadText,
 } from 'lucide-react';
@@ -22,14 +24,33 @@ import RescheduleBookingModal from './RescheduleBookingModal';
 
 const BookingDetails = ({ booking }: { booking: BookingType }) => {
   const [openEditModal, setOpenEditModal] = React.useState(false);
+  const [previousRoute, setPreviousRoute] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const prev = sessionStorage.getItem('previousRoute');
+    setPreviousRoute(prev);
+  }, []);
+
+  const isAppointments = previousRoute?.includes('appointments');
+  const isAnalytics = previousRoute?.includes('analytics');
+
   return (
     <div>
       <Link
-        href="/dashboard/bookings"
+        href={previousRoute || '/dashboard/bookings'}
         className="flex items-center gap-2 cursor-pointer"
       >
         <ArrowLeft className="text-text-alt" />
-        <p className="text-sm text-text-alt">Back to Bookings</p>
+        <p className="text-sm text-text-alt">
+          Back to{' '}
+          <span className="capitalize">
+            {isAppointments
+              ? 'appointments'
+              : isAnalytics
+                ? 'analytics'
+                : 'bookings'}
+          </span>
+        </p>
       </Link>
 
       <div className="mt-8 flex items-start gap-4 flex-wrap justify-between">
@@ -46,22 +67,37 @@ const BookingDetails = ({ booking }: { booking: BookingType }) => {
             </div>
           </div>
         </div>
-        <div className="flex items-center ml-auto gap-2">
-          <FancyButton
-            variant="outline"
-            className="text-text! hover:text-surface-card! py-2! px-4!"
-            onClick={() => {}}
-          >
-            Cancel booking
-          </FancyButton>
-          <FancyButton
-            variant="outline"
-            className="text-text! hover:text-surface-card! py-2! px-4!"
-            onClick={() => {}}
-          >
-            Reschedule booking
-          </FancyButton>
-        </div>
+        {!isAnalytics && (
+          <div className="flex items-center ml-auto gap-2">
+            {!isAppointments && (
+              <>
+                <FancyButton
+                  variant="outline"
+                  className="text-text! hover:text-surface-card! py-2! px-4!"
+                  onClick={() => {}}
+                >
+                  Cancel booking
+                </FancyButton>
+                <FancyButton
+                  variant="outline"
+                  className="text-text! hover:text-surface-card! py-2! px-4!"
+                  onClick={() => {}}
+                >
+                  Reschedule booking
+                </FancyButton>
+              </>
+            )}
+            {isAppointments && (
+              <Button
+                variant="primary"
+                className="bg-accent-3a! text-accent-11a! gap-2"
+              >
+                <Edit size={16} />
+                Log follow-up details
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5 items-start">
@@ -114,12 +150,8 @@ const BookingDetails = ({ booking }: { booking: BookingType }) => {
             </div>
             <div>
               <h3 className="text-text text-sm font-medium">Hospital</h3>
-              <div className="flex items-center mt-1.5">
-                <HospitalIconLocal
-                  width={20}
-                  height={20}
-                  className="text-text-muted mt-1.5"
-                />
+              <div className="flex items-center mt-1.5 gap-2">
+                <HospitalIconLocal size={16} className="text-text-muted" />
                 <p className="text-text-muted">City General Hospital</p>
               </div>
             </div>
@@ -141,13 +173,26 @@ const BookingDetails = ({ booking }: { booking: BookingType }) => {
                 <h3 className="text-text text-sm font-medium">Specialty</h3>
                 <p className="text-text-muted">{booking.doctor.specialty}</p>
               </div>
-              <FancyButton
-                variant="outline"
-                className="py-1! px-2.5! text-text! hover:text-surface-card! w-fit"
-                onClick={() => {}}
-              >
-                Reassign Doctor
-              </FancyButton>
+              {!isAnalytics && (
+                <div>
+                  {isAppointments ? (
+                    <button className="flex items-center gap-1.5 bg-gray-3a py-1.5 px-3 rounded-lg w-fit cursor-pointer">
+                      <MessageCircleMore size={16} className="text-text-alt" />
+                      <p className="text-text-alt text-sm">
+                        Follow-up with Doctor
+                      </p>
+                    </button>
+                  ) : (
+                    <FancyButton
+                      variant="outline"
+                      className="py-1! px-2.5! text-text! hover:text-surface-card! w-fit"
+                      onClick={() => {}}
+                    >
+                      Reassign Doctor
+                    </FancyButton>
+                  )}
+                </div>
+              )}
             </div>
           </div>
           <div className="rounded-xl border border-gray-5 p-5">
@@ -165,10 +210,16 @@ const BookingDetails = ({ booking }: { booking: BookingType }) => {
                 <h3 className="text-text text-sm font-medium">Email</h3>
                 <p className="text-text-muted">{`jsmith@gmail.com`}</p>
               </div>
-              <button className="flex items-center gap-1.5 bg-gray-3a py-1.5 px-3 rounded-lg w-fit cursor-pointer">
-                <MessageCircleMore size={16} className="text-text-alt" />
-                <p className="text-text-alt text-sm">Text Patient</p>
-              </button>
+              {!isAnalytics && (
+                <button className="flex items-center gap-1.5 bg-gray-3a py-1.5 px-3 rounded-lg w-fit cursor-pointer">
+                  <MessageCircleMore size={16} className="text-text-alt" />
+                  <p className="text-text-alt text-sm">
+                    {previousRoute?.includes('appointment')
+                      ? 'Follow-up with Patient'
+                      : 'Text Patient'}
+                  </p>
+                </button>
+              )}
             </div>
           </div>
         </div>

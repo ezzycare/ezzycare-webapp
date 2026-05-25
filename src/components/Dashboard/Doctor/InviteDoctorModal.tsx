@@ -48,7 +48,7 @@ const InviteDoctorModal = ({
                 label: val,
               }))}
               fullWidth
-              mainClassName="h-12!"
+              containerClassName="h-12!"
             />
           </div>
 

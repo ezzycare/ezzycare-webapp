@@ -56,7 +56,7 @@ const CreateRoleModal = ({
                 { label: 'Green', value: 'green' },
               ]}
               fullWidth
-              mainClassName="h-12!"
+              containerClassName="h-12!"
             />
           </div>
 

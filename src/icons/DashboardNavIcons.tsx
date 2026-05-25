@@ -1,8 +1,12 @@
-export const HomeIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+type IconProps = React.SVGProps<SVGSVGElement> & {
+  size?: number;
+};
+
+export const HomeIconLocal = ({ size = 16, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={16}
-    height={16}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -17,17 +21,12 @@ export const HomeIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const HospitalIconLocal = ({
-  ...props
-}: {
-  props?: React.SVGProps<SVGSVGElement>;
-  [key: string]: unknown;
-}) => (
+export const HospitalIconLocal = ({ size = 16, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 13 13"
-    width={15}
-    height={15}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -40,17 +39,12 @@ export const HospitalIconLocal = ({
   </svg>
 );
 
-export const StethoscopeIconLocal = ({
-  ...props
-}: {
-  props?: React.SVGProps<SVGSVGElement>;
-  [key: string]: unknown;
-}) => (
+export const StethoscopeIconLocal = ({ size = 16, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
-    width={16}
-    height={16}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -61,11 +55,11 @@ export const StethoscopeIconLocal = ({
   </svg>
 );
 
-export const UserIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+export const UserIconLocal = ({ size = 16, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={16}
-    height={16}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -76,12 +70,12 @@ export const UserIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const UsersIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+export const UsersIconLocal = ({ size = 16, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
-    width={16}
-    height={16}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -102,11 +96,11 @@ export const UsersIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const CalendarIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+export const CalendarIconLocal = ({ size = 16, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={16}
-    height={16}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -127,11 +121,11 @@ export const CalendarIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const NotificationIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+export const NotificationIconLocal = ({ size = 16, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={16}
-    height={16}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -146,11 +140,13 @@ export const NotificationIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const NotificationDarkIconLocal = (
-  props: React.SVGProps<SVGSVGElement>
-) => (
+export const NotificationDarkIconLocal = ({
+  size = 16,
+  ...props
+}: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 22 22"
     width={22}
     height={22}
     fill="none"
@@ -163,12 +159,12 @@ export const NotificationDarkIconLocal = (
   </svg>
 );
 
-export const MenuBoardIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+export const MenuBoardIconLocal = ({ size = 16, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
-    width={16}
-    height={16}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -193,11 +189,11 @@ export const MenuBoardIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const CreditCardIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+export const CreditCardIconLocal = ({ size = 16, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={16}
-    height={16}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -220,11 +216,11 @@ export const CreditCardIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const AnalyticsIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+export const AnalyticsIconLocal = ({ size = 16, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={16}
-    height={16}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -244,11 +240,11 @@ export const AnalyticsIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const SettingsIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+export const SettingsIconLocal = ({ size = 16, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={16}
-    height={16}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -263,11 +259,11 @@ export const SettingsIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const LogoutIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
+export const LogoutIconLocal = ({ size = 16, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={16}
-    height={16}
+    width={size}
+    height={size}
     fill="none"
     {...props}
   >
@@ -280,7 +276,7 @@ export const LogoutIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const SideBarBaseIcon = (props: React.SVGProps<SVGSVGElement>) => (
+export const SideBarBaseIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={32}

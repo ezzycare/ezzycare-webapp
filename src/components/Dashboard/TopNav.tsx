@@ -1,12 +1,12 @@
 'use client';
 
-import { NotificationDarkIconLocal } from '@/icons/DashboardNavIcons';
 import { getInitials } from '@/utils/helper';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { Menu } from 'lucide-react';
 import { useState } from 'react';
 import DatePicker from '../Ui/DatePicker';
+import Noti from './Notification/Noti';
 
 const TopNav = ({
   sidebarOpen,
@@ -40,9 +40,7 @@ const TopNav = ({
         onChange={(dateValue) => setSelectedDate(dateValue)}
       />
 
-      <div className="bg-gray-2 w-10 h-10 rounded-full flex items-center justify-center ml-3 mr-2">
-        <NotificationDarkIconLocal />
-      </div>
+      <Noti />
       <div className="flex items-center gap-2">
         <p
           className={clsx(

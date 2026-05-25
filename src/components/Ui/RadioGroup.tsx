@@ -60,7 +60,8 @@ interface RadioItemProps {
   name?: string;
   option: RadioOption;
   checked: boolean;
-  onChange: () => void;
+  onChange?: () => void;
+  interactive?: boolean;
 }
 
 export const RadioItem = ({
@@ -68,15 +69,19 @@ export const RadioItem = ({
   option,
   checked,
   onChange,
+  interactive = true,
 }: RadioItemProps) => {
   const id = useId();
 
+  const isDisabled = option.disabled;
+
   return (
     <label
-      htmlFor={id}
+      htmlFor={interactive ? id : undefined}
       className={`
         group flex items-start gap-3
-        ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+        ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+        ${!interactive ? 'pointer-events-none' : ''}
       `}
     >
       <input
@@ -85,8 +90,8 @@ export const RadioItem = ({
         name={name}
         value={option.value}
         checked={checked}
-        disabled={option.disabled}
-        onChange={onChange}
+        disabled={isDisabled}
+        onChange={interactive ? onChange : undefined}
         className="sr-only peer"
       />
 
@@ -112,10 +117,9 @@ export const RadioItem = ({
             rounded-full
             bg-surface-card
             transition-all duration-200
-            opacity-100
             ${checked ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}
           `}
-        ></span>
+        />
       </span>
 
       {/* Label + description */}
@@ -126,6 +130,7 @@ export const RadioItem = ({
               {option.label}
             </span>
           )}
+
           {option.description && (
             <span className="text-xs text-neutral-8a leading-relaxed">
               {option.description}

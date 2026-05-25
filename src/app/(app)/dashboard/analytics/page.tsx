@@ -2,42 +2,37 @@
 'use client';
 
 import Pagination from '@/components/Base/Pagination';
-import AgentsTable from '@/components/Dashboard/Agent/AgentsTable';
-import CreateAgentModal from '@/components/Dashboard/Agent/CreateAgentModal';
-import { Button } from '@/components/Ui/Button';
-import FancyButton from '@/components/Ui/FancyButton';
+import BookingTable from '@/components/Dashboard/Booking/BookingTable';
 import { cn } from '@/lib/utils';
-import { AgentType } from '@/types/agents';
-import { PlusIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import { BookingType } from '@/types/bookings';
+import React from 'react';
 
-const Agents = () => {
+const Analytics = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [createModal, setCreateModal] = useState<boolean>(false);
 
   const totals = [
     {
-      title: 'Total Agents',
+      title: 'Total Bookings',
       value: '166',
       titleColor: 'text-text',
     },
     {
-      title: 'Active Agents',
+      title: 'Upcoming Bookings',
       value: '46',
       titleColor: 'text-primary',
     },
     {
-      title: 'Pending',
+      title: 'Completed Bookings',
       value: '100',
       titleColor: 'text-text',
     },
     {
-      title: 'Inactive Agents',
+      title: 'Active Booking',
       value: '10',
-      titleColor: 'text-text',
+      titleColor: 'text-success',
     },
     {
-      title: 'Suspended Agents',
+      title: 'Cancelled Bookings',
       value: '10',
       titleColor: 'text-error',
     },
@@ -47,16 +42,37 @@ const Agents = () => {
     // eslint-disable-next-line react-hooks/purity
     const rand = Math.random();
 
-    if (rand < 0.5) return 'active';
-    if (rand < 0.8) return 'pending';
-    return 'suspended';
+    if (rand < 0.5) return 'cancelled';
+    if (rand < 0.8) return 'upcoming';
+    if (rand < 0.6) return 'active';
+    return 'completed';
   };
 
-  const agents: AgentType[] = Array.from({ length: 30 }, (_, i) => ({
+  const bookings: BookingType[] = Array.from({ length: 30 }, (_, i) => ({
     id: i + 1,
-    name: 'John Smith',
-    email: 'jsmith@gmail.com',
-    phoneNumber: '08069192646',
+    bookingId: 'B001',
+    patientName: 'John Smith',
+    doctor: {
+      id: i + 1,
+      name: 'Dr. Sarah Johnson',
+      email: 'sarah.johnson@medical.com',
+      phoneNumber: '+1 (555) 123-4567',
+      assignedHospital: 'Emory',
+      experience: (i + 1) * 2 - i + ' years',
+      specialty: 'Cardiology',
+      createdAt: 'May 08, 2026 10:00 AM',
+      status: 'active',
+      address: 'Highlevel, Makurdi, Benue State',
+      medicalCertificate: 'MD',
+      practiceLicense: '12345',
+      specialtyCertificate: '12345',
+      licenseExpiryDate: '12 May 2035',
+      qualifications: ['MD', 'FAAP'],
+      university: 'University of California, San Francisco',
+      dateGraduated: '12 May 2015',
+      about: `Dr. Rodriguez is passionate about child health and development.`,
+    },
+    appointmentDate: '08069192646',
     createdAt: '2023-01-01',
     address: 'Highlevel, Makurdi, Benue State',
     status: getStatus(),
@@ -65,13 +81,13 @@ const Agents = () => {
   const meta = {
     page: 1,
     pageSize: 10,
-    pageCount: Math.round(agents.length / 10),
-    total: agents.length,
+    pageCount: Math.round(bookings.length / 10),
+    total: bookings.length,
   };
-  const paginatedData = (): AgentType[] => {
+  const paginatedData = (): BookingType[] => {
     const startIndex = (currentPage - 1) * meta.pageSize;
     const endIndex = startIndex + meta.pageSize;
-    return agents.slice(startIndex, endIndex);
+    return bookings.slice(startIndex, endIndex);
   };
 
   const filters = [
@@ -84,44 +100,30 @@ const Agents = () => {
           value: 'active',
         },
         {
-          label: 'Pending',
-          value: 'pending',
+          label: 'Upcoming',
+          value: 'upcoming',
         },
         {
-          label: 'Suspended',
-          value: 'suspended',
+          label: 'Cancelled',
+          value: 'cancelled',
+        },
+        {
+          label: 'Completed',
+          value: 'completed',
         },
       ],
-      fn: (row: AgentType, value: any) => row.status === value,
+      fn: (row: BookingType, value: any) => row.status === value,
     },
   ];
 
   return (
     <div className="p-7.5">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h3 className="text-text text-2xl font-medium">Agents</h3>
+          <h3 className="text-text text-2xl font-medium">Analytics</h3>
           <p className="text-sm text-text-muted">
-            Manage healthcare agents and their access to the platform
+            Monitor all appointments across the platform
           </p>
-        </div>
-
-        <div className="flex items-center gap-3 flex-wrap">
-          <FancyButton
-            onClick={() => setCreateModal(true)}
-            className="bg-blue-11a! hover:bg-blue-11a/80 gap-2"
-            variant="primary"
-          >
-            Create New Agent
-          </FancyButton>
-          <Button
-            onClick={() => setCreateModal(true)}
-            className="bg-blue-11a! hover:bg-blue-11a/80 gap-2"
-            variant="primary"
-          >
-            <PlusIcon size={18} />
-            Add Agent
-          </Button>
         </div>
       </div>
       <div
@@ -144,13 +146,13 @@ const Agents = () => {
         ))}
       </div>
       <div className="mt-4 rounded-xl bg-surface-card pb-5">
-        <AgentsTable
+        <BookingTable
           data={paginatedData()}
           searchable={true}
           searchPlaceholder="Search by name, email, specialization, or qualification..."
           searchContainerClassName="max-w-[404px]!"
           filters={filters}
-        ></AgentsTable>
+        ></BookingTable>
 
         {meta && meta?.pageCount > 1 && (
           <div className="mt-auto pt-10">
@@ -161,14 +163,9 @@ const Agents = () => {
             />
           </div>
         )}
-
-        <CreateAgentModal
-          openModal={createModal}
-          setOpenModal={setCreateModal}
-        ></CreateAgentModal>
       </div>
     </div>
   );
 };
 
-export default Agents;
+export default Analytics;

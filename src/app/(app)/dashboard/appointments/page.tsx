@@ -2,12 +2,11 @@
 'use client';
 
 import Pagination from '@/components/Base/Pagination';
-import BookingTable from '@/components/Dashboard/Booking/BookingTable';
-import { cn } from '@/lib/utils';
+import AppointmentsTable from '@/components/Dashboard/Agent/AppointmentsTable';
 import { BookingType } from '@/types/bookings';
 import React from 'react';
 
-const Bookings = () => {
+const Appointments = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
 
   const totals = [
@@ -72,6 +71,9 @@ const Bookings = () => {
       dateGraduated: '12 May 2015',
       about: `Dr. Rodriguez is passionate about child health and development.`,
     },
+    hospital: {
+      name: 'Emory hospital',
+    },
     appointmentDate: '08069192646',
     createdAt: '2023-01-01',
     address: 'Highlevel, Makurdi, Benue State',
@@ -118,41 +120,19 @@ const Bookings = () => {
 
   return (
     <div className="p-7.5">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h3 className="text-text text-2xl font-medium">Bookings</h3>
-          <p className="text-sm text-text-muted">
-            Monitor all appointments across the platform
-          </p>
-        </div>
-      </div>
-      <div
-        className={cn(`
-        grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 
-        lg:grid-cols-5 gap-4 mt-4 justify-between items-center`)}
-      >
-        {totals.map((item) => (
-          <div
-            key={item.title}
-            className="flex gap-4 items-center justify-left p-5 bg-surface-card rounded-lg"
-          >
-            <div className="flex flex-col gap-2">
-              <h2 className={`text-xs font-400 uppercase ${item.titleColor}`}>
-                {item.title}
-              </h2>
-              <p className="text-text font-semibold">{item.value}</p>
-            </div>
-          </div>
-        ))}
-      </div>
       <div className="mt-4 rounded-xl bg-surface-card pb-5">
-        <BookingTable
+        <AppointmentsTable
           data={paginatedData()}
+          titleComponent={
+            <h3 className="text-text text-2xl font-medium ml-3">
+              Appointments
+            </h3>
+          }
           searchable={true}
-          searchPlaceholder="Search by name, email, specialization, or qualification..."
+          searchPlaceholder="Search"
           searchContainerClassName="max-w-[404px]!"
           filters={filters}
-        ></BookingTable>
+        ></AppointmentsTable>
 
         {meta && meta?.pageCount > 1 && (
           <div className="mt-auto pt-10">
@@ -168,4 +148,4 @@ const Bookings = () => {
   );
 };
 
-export default Bookings;
+export default Appointments;

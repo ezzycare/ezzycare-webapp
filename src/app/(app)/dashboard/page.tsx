@@ -1,23 +1,27 @@
 import AdminDashboard from '@/components/Dashboard/Admin/AdminDashboard';
+import AgentAdminDashboard from '@/components/Dashboard/Agent/AgentAdminDashboard';
 import HospitalAdminDashboard from '@/components/Dashboard/Hospital/HospitalAdminDashboard';
 
-type Role = 'admin' | 'hospital';
-const user: { role: Role } = {
-  role: 'hospital',
-};
+type Role = 'admin' | 'hospital' | 'agent';
 
-const Dashboard = () => {
+interface DashboardProps {
+  searchParams: Promise<{
+    role?: Role;
+  }>;
+}
+
+const Dashboard = async ({ searchParams }: DashboardProps) => {
+  const params = await searchParams;
+
+  const role: Role = params.role ?? 'agent';
+
   const dashboard = {
     admin: <AdminDashboard />,
     hospital: <HospitalAdminDashboard />,
+    agent: <AgentAdminDashboard />,
   };
 
-  return (
-    <div>
-      {user.role === 'admin' && dashboard.admin}
-      {user.role === 'hospital' && dashboard.hospital}
-    </div>
-  );
+  return <div>{dashboard[role]}</div>;
 };
 
 export default Dashboard;

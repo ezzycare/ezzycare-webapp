@@ -24,6 +24,15 @@ export function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+export const formatCurrency = (value: number, decimal: boolean = true) => {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'NGN',
+    minimumFractionDigits: decimal ? 2 : 0,
+  });
+  return formatter.format(Number(value));
+};
+
 export const getInitials = (name: string) => {
   return name
     .split(' ')

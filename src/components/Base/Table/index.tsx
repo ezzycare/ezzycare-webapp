@@ -140,62 +140,64 @@ export default function BaseTable<T extends Record<string, any>>({
         <div className="flex flex-1 items-center gap-3 flex-wrap">
           {titleComponent && <div className="mr-auto">{titleComponent}</div>}
 
-          {searchable && (
-            <div
-              className={`flex items-center min-w-50 max-w-76.5 ${searchContainerClassName} ${titleComponent ? 'ml-auto' : ''} `}
-            >
-              <TextInput
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={searchPlaceholder}
-                leftIcon={
-                  <SearchIcon size={18} className="text-text-muted ml-2" />
-                }
-                className={cn(`
+          <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+            {searchable && (
+              <div
+                className={`flex items-center w-full min-w-50 sm:max-w-76.5 ${searchContainerClassName} ${titleComponent ? 'ml-auto' : ''} `}
+              >
+                <TextInput
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder={searchPlaceholder}
+                  leftIcon={
+                    <SearchIcon size={18} className="text-text-muted ml-2" />
+                  }
+                  className={cn(`
                   h-9! rounded-xl border border-border2 bg-surface-card 
                   px-4 pl-10! text-sm text-text outline-none focus:border-primary
                   w-full
                 `)}
-              />
-            </div>
-          )}
-
-          {filters.length > 0 && (
-            <div className="flex items-center gap-3 flex-wrap">
-              {filters.map((filterGroup: FilterGroup<T>) => (
-                <Dropdown
-                  key={filterGroup.key}
-                  placeholder={filterGroup.label}
-                  options={filterGroup.options}
-                  value={selectedFilters[filterGroup.key] || 'all'}
-                  onChange={(value) =>
-                    setSelectedFilters((prev) => ({
-                      ...prev,
-                      [filterGroup.key]: String(value),
-                    }))
-                  }
                 />
-              ))}
+              </div>
+            )}
 
-              <Button
-                className="h-9! bg-blue-3a! text-primary! text-xs font-semibold"
-                onClick={() => setAppliedFilters(selectedFilters)}
-              >
-                Apply Filters
-              </Button>
-              {Object.values(appliedFilters)?.length > 0 && (
+            {filters.length > 0 && (
+              <div className="flex items-center gap-3">
+                {filters.map((filterGroup: FilterGroup<T>) => (
+                  <Dropdown
+                    key={filterGroup.key}
+                    placeholder={filterGroup.label}
+                    options={filterGroup.options}
+                    value={selectedFilters[filterGroup.key] || 'all'}
+                    onChange={(value) =>
+                      setSelectedFilters((prev) => ({
+                        ...prev,
+                        [filterGroup.key]: String(value),
+                      }))
+                    }
+                  />
+                ))}
+
                 <Button
-                  className="h-9! bg-error-3a! text-error! text-xs font-semibold"
-                  onClick={() => {
-                    setSelectedFilters({});
-                    setAppliedFilters({});
-                  }}
+                  className="h-9! bg-blue-3a! text-primary! text-xs font-semibold whitespace-nowrap"
+                  onClick={() => setAppliedFilters(selectedFilters)}
                 >
-                  <Cross1Icon className="w-4 h-4 font-semibold" />
+                  Apply Filters
                 </Button>
-              )}
-            </div>
-          )}
+                {Object.values(appliedFilters)?.length > 0 && (
+                  <Button
+                    className="h-9! bg-error-3a! text-error! text-xs font-semibold"
+                    onClick={() => {
+                      setSelectedFilters({});
+                      setAppliedFilters({});
+                    }}
+                  >
+                    <Cross1Icon className="w-4 h-4 font-semibold" />
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {children}

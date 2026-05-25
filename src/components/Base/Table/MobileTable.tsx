@@ -31,6 +31,7 @@ export function MobileTable<T extends Record<string, any>>({
         const isExpanded = expandedIndex === index;
         const firstTwoColumns = columns.slice(0, 2);
         const remainingColumns = columns.slice(2);
+        const statusColumn = columns.find((col) => col.field === 'status');
 
         return (
           <div
@@ -42,18 +43,27 @@ export function MobileTable<T extends Record<string, any>>({
               onClick={() => setExpandedIndex(isExpanded ? null : index)}
               className="w-full flex justify-between items-center px-4 py-3 text-left"
             >
-              <div className="flex flex-col gap-1 truncate">
-                {firstTwoColumns.map((col) => {
+              <div className="flex flex-col gap-1 truncate w-[90%]">
+                {firstTwoColumns.map((col, index) => {
                   const value = row[col.field as keyof T];
                   return (
-                    <span
+                    <div
                       key={String(col.field)}
-                      className="text-sm font-medium text-text truncate"
+                      className="flex gap-1 justify-between items-center w-full"
                     >
-                      {col.render
-                        ? col.render(value, row, index)
-                        : String(value ?? '-')}
-                    </span>
+                      <span className="text-sm font-medium text-text truncate">
+                        {col.render
+                          ? col.render(value, row, index)
+                          : String(value ?? '-')}
+                      </span>
+                      {index === 0 && (
+                        <span>
+                          {statusColumn?.render
+                            ? statusColumn.render(row.status, row, index)
+                            : String(row.status ?? '-')}
+                        </span>
+                      )}
+                    </div>
                   );
                 })}
               </div>
