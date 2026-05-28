@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { create } from 'zustand';
+
 export interface GlobalStore {
   loading: boolean;
   user: any;
@@ -7,9 +9,9 @@ export interface GlobalStore {
   updateUser: (user: any) => void;
 }
 
-export const useGlobalStore = (set: any, get?: any) => ({
+export const useGlobalStore = create<GlobalStore>((set) => ({
   loading: false,
   user: {},
   setLoading: (loading: boolean) => set({ loading }),
   updateUser: (user: any) => set({ user }),
-});
+}));

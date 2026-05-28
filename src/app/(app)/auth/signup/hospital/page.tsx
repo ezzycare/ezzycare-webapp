@@ -1,63 +1,150 @@
 'use client';
 
-import RegisterHospital from '@/components/Auth/RegisterHospital';
-import { AccountCreatedInfo } from '@/components/Auth/RegistrationState';
-import UploadHospitalDocs from '@/components/Auth/UploadHospitalDocs';
+import { useRegisterHospital } from '@/apiQuery/hospital/auth/register';
+import Card from '@/components/Ui/Card';
+import FancyButton from '@/components/Ui/FancyButton';
+import {
+  PasswordInput,
+  PhoneInput,
+  TextInput,
+} from '@/components/Ui/TextInput';
+import { HospitalIconLocal, UserIconLocal } from '@/icons/DashboardNavIcons';
+import { toaster } from '@/lib/toaster';
+import { AuthStore, useAuthStore } from '@/stores/authStore';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { EnvelopeClosedIcon } from '@radix-ui/react-icons';
+import { MapPinIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
 
-import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+const HospitalRegistrationSchema = z.object({
+  hospitalName: z.string().min(1, 'Hospital name is required'),
+  email: z.string().email('Enter a valid email address'),
+  phone: z.string().min(7, 'Enter a valid phone number'),
+  location: z.string().min(1, 'Location is required'),
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  password: z.string().min(8, 'Password must be at least 8 characters long'),
+});
+type HospitalRegistration = z.infer<typeof HospitalRegistrationSchema>;
 
-const pageVariants = {
-  initial: {
-    opacity: 0,
-    x: 40,
-    scale: 0.98,
-  },
+const RegisterHospital = () => {
+  const router = useRouter();
 
-  animate: {
-    opacity: 1,
-    x: 0,
-    scale: 1,
-  },
+  const { hospitalRegDetails, updateHospitalRegDetails } = useAuthStore(
+    (state: AuthStore) => state
+  );
 
-  exit: {
-    opacity: 0,
-    x: -40,
-    scale: 0.98,
-  },
-};
+  const { mutateAsync, isPending } = useRegisterHospital();
 
-const pageTransition = {
-  duration: 0.35,
-  ease: [0.22, 1, 0.36, 1] as const,
-};
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm({
+    resolver: zodResolver(HospitalRegistrationSchema),
+  });
 
-const RegisterHospitalPage = () => {
-  const [state, setState] = useState('register');
+  const onSubmit = async (data: HospitalRegistration) => {
+    const payload = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      hospitalName: data.hospitalName,
+      email: data.email,
+      mobileNo: data.phone || undefined,
+      password: data.password,
+      location: data.location,
+      accountType: 'HOSPITAL' as const,
+    };
+    try {
+      const res = await mutateAsync(payload);
+
+      toaster.success(res.message || 'Verification code sent');
+      updateHospitalRegDetails(payload);
+      router.push('/auth/signup/hospital/verify-email');
+    } catch (error) {
+      // toaster.error(error?.message || 'Registration failed');
+    }
+  };
 
   return (
-    <div className="flex min-h-[90vh] w-full items-center justify-center overflow-hidden pt-5 sm:pt-7.5">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={state}
-          variants={pageVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          transition={pageTransition}
-          className="w-full flex justify-center"
+    <Card onCancel={() => router.back()}>
+      <div className="flex flex-col">
+        <h1 className="font-medium text-text text-2xl">
+          Hospital Registration
+        </h1>
+        <p className="text-text-alt text-sm mt-1.5">
+          Provide your information to registered as a hospital
+        </p>
+
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-2 mt-5 flex flex-col"
         >
-          {state === 'register' && <RegisterHospital updateState={setState} />}
-
-          {state === 'upload-docs' && (
-            <UploadHospitalDocs updateState={setState} />
-          )}
-
-          {state === 'created' && <AccountCreatedInfo />}
-        </motion.div>
-      </AnimatePresence>
-    </div>
+          <TextInput
+            label="Hospital Name"
+            leftIcon={<HospitalIconLocal className="text-text-muted" />}
+            {...register('hospitalName')}
+            name="hospitalName"
+            error={errors.hospitalName?.message}
+          />
+          <TextInput
+            label="Hospital Email"
+            leftIcon={<EnvelopeClosedIcon />}
+            {...register('email')}
+            name="email"
+            error={errors.email?.message}
+          />
+          <PhoneInput
+            label="Phone"
+            {...register('phone')}
+            name="phone"
+            error={errors.phone?.message}
+          />
+          <TextInput
+            label="Location"
+            leftIcon={<MapPinIcon size={18} className="text-text-muted" />}
+            {...register('location')}
+            name="location"
+            error={errors.location?.message}
+          />
+          <div className="grid grid-cols-2 gap-2">
+            <TextInput
+              label="First Name"
+              leftIcon={<UserIconLocal className="text-text-muted" />}
+              {...register('firstName')}
+              name="firstName"
+              error={errors.firstName?.message}
+            />
+            <TextInput
+              label="Last Name"
+              leftIcon={<UserIconLocal className="text-text-muted" />}
+              {...register('lastName')}
+              name="lastName"
+              error={errors.lastName?.message}
+            />
+          </div>
+          <PasswordInput
+            label="Password"
+            {...register('password')}
+            name="password"
+            error={errors.password?.message}
+          />
+          <FancyButton
+            type="submit"
+            className="w-full mt-10 h-12 flex justify-center"
+            variant="primary"
+            loading={isPending}
+            disabled={Object.keys(errors).length > 0 || isPending}
+          >
+            Continue
+          </FancyButton>
+        </form>
+      </div>
+    </Card>
   );
 };
 
-export default RegisterHospitalPage;
+export default RegisterHospital;

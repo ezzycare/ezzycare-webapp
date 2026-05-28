@@ -1,12 +1,23 @@
 'use client';
 
+import { useGetProfile } from '@/apiQuery/hospital/auth/getProfile';
 import SideNav from '@/components/Dashboard/SideNav';
 import TopNav from '@/components/Dashboard/TopNav';
 import { useTrackPreviousRoute } from '@/hooks/useTrackPreviousRoute';
-import React, { useState } from 'react';
+import { AuthStore, useAuthStore } from '@/stores/authStore';
+import React, { useEffect, useState } from 'react';
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const [sidebarOpen, setSideBarOpen] = useState(false);
+  const updateUser = useAuthStore((state: AuthStore) => state.updateUser);
+  const { user } = useGetProfile();
+
+  useEffect(() => {
+    if (user) {
+      console.log({ user });
+      updateUser(user);
+    }
+  }, [user]);
 
   useTrackPreviousRoute();
 

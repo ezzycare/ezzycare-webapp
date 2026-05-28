@@ -79,6 +79,7 @@ const FancyButton = ({
     disabled:opacity-50
     disabled:cursor-not-allowed
 
+    ${loading ? 'pointer-events-none' : ''}
     ${variantStyles[variant]}
     ${className}
   `;

@@ -1,6 +1,7 @@
 'use client';
 
 // import { redirect } from 'next/navigation';
+import { useGetHospitalDashboard } from '@/apiQuery/hospital/dashboard';
 import AlertBanner from '@/components/Base/AlertBanner';
 import {
   CalendarIconLocal,
@@ -19,7 +20,7 @@ import HospitalDetailsModal from './HospitalDetailsModal';
 
 interface Totals {
   title: string;
-  value: string;
+  value: string | number;
   icon: React.ReactNode;
   timeRange?: string[];
 }
@@ -34,6 +35,8 @@ const hospital: HospitalType = {
 };
 
 const HospitalAdminDashboard = () => {
+  const { dashboard: dashboardData } = useGetHospitalDashboard();
+
   const [timeRange, setTimeRange] = React.useState([
     {
       title: '24h',
@@ -52,22 +55,22 @@ const HospitalAdminDashboard = () => {
   const totals: Totals[] = [
     {
       title: 'Total Appointments',
-      value: '2000',
+      value: dashboardData?.totalAppointments || 0,
       icon: <CalendarIconLocal className="text-text" />,
     },
     {
-      title: 'Total Hospitals',
-      value: '1500',
+      title: 'Total Patients',
+      value: dashboardData?.totalPatients || 0,
       icon: <UsersIconLocal className="text-blue-10a" />,
     },
     {
-      title: 'Total Doctors',
-      value: '3',
+      title: 'Pending Appointments',
+      value: dashboardData?.pendingAppointments || 0,
       icon: <CalendarIconLocal className="text-warning-10" />,
     },
     {
-      title: 'Total Agents',
-      value: '₦10,000,000',
+      title: 'Revenue',
+      value: dashboardData?.revenue || 0,
       icon: <Banknote size={18} className="text-green-10" />,
       timeRange: timeRange.map((item) => item.title),
     },
@@ -76,22 +79,22 @@ const HospitalAdminDashboard = () => {
   const doctorStats = [
     {
       title: 'Total Doctors',
-      value: 155,
+      value: dashboardData?.totalDoctors || 0,
       icon: <StethoscopeIconLocal className="text-blue-10a" />,
     },
     {
       title: 'Available Doctors',
-      value: 100,
+      value: dashboardData?.availableDoctors || 0,
       icon: <StethoscopeIconLocal className="text-blue-10a" />,
     },
     {
       title: 'Doctors in session',
-      value: 45,
+      value: dashboardData?.doctorsInSession || 0,
       icon: <StethoscopeIconLocal className="text-blue-10a" />,
     },
     {
       title: 'Unavailable Doctors',
-      value: 10,
+      value: dashboardData?.unavailableDoctors || 0,
       icon: <StethoscopeIconLocal className="text-blue-10a" />,
     },
   ];
@@ -126,7 +129,7 @@ const HospitalAdminDashboard = () => {
         <span className="text-text">Metropolitan Health Institute</span>
       </h1>
       <p>Here&apos;s what is happening on the platform today...</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 justify-between items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4 justify-between items-center">
         {totals.map((item) => (
           <div
             key={item.title}
@@ -164,7 +167,7 @@ const HospitalAdminDashboard = () => {
             </p>
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 justify-between items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  gap-4 justify-between items-center">
           {doctorStats.map((item) => (
             <div
               key={item.title}

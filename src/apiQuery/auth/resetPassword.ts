@@ -2,9 +2,9 @@
 import axios from 'axios';
 import { baseURL } from '../baseUrl';
 
-export const createPassword = async ({ password }: { password: string }) => {
+export const resetPassword = async ({ password }: { password: string }) => {
   try {
-    const response = await axios.post(`${baseURL}/auth/create-password`, {
+    const response = await axios.post(`${baseURL}/auth/reset-password`, {
       password,
     });
 

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { create } from 'zustand';
 
 export interface BookAppointmentStore {
   patientName: string;
@@ -13,15 +13,15 @@ export interface BookAppointmentStore {
   consultationFee: string;
 }
 
-export const useBookAppointmentStore = (set: any, get?: any) => ({
+export const useBookAppointmentStore = create<BookAppointmentStore>((set) => ({
   patientName: '',
   patientEmail: '',
-  bookingType: '',
-  consultationType: '',
+  bookingType: '' as 'doctor' | 'hospital',
+  consultationType: '' as 'video' | 'home' | 'clinic',
   careType: '',
   specialty: '',
   location: '',
   doctorId: '',
   appointmentDate: '',
   consultationFee: '',
-});
+}));

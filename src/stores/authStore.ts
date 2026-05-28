@@ -1,45 +1,71 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { User } from '@/apiQuery/hospital/auth/types';
+import { general } from '@/enums';
+import { getAuthToken } from '@/services/getAuthToken';
+import { create } from 'zustand';
+
+export interface HospitalDocs {
+  cac: File | null;
+  license: File | null;
+  permit: File | null;
+  address: File | null;
+}
+
+export interface HospitalRegDetails {
+  firstName: string;
+  lastName: string;
+  hospitalName: string;
+  email: string;
+  mobileNo: string;
+  password: string;
+  location: string;
+  accountType: 'HOSPITAL';
+  phone: string;
+  adminName?: string;
+  docs: HospitalDocs;
+}
 
 export interface AuthStore {
   forgotPasswordEmail: string | null;
   setForgotPasswordEmail: (email: string) => void;
-  hospitalRegDetails: {
-    email: string;
-    hospitalName: string;
-    phone: string;
-    location: string;
-    adminName: string;
-    password: string;
-    docs: {
-      cac: File | null;
-      license: File | null;
-      permit: File | null;
-      address: File | null;
-    };
-  };
+  user: User;
+  authToken: string | null;
+  hospitalRegDetails: HospitalRegDetails;
+  updateUser: (user: User) => void;
+  setToken: (token: string) => void;
+  removeAuth: () => void;
+  updateHospitalRegDetails: (details: Partial<HospitalRegDetails>) => void;
 }
 
-export const useAuthStore = (set: any, get?: any) => ({
+const isBrowser = typeof window !== 'undefined';
+
+export const useAuthStore = create<AuthStore>((set) => ({
   forgotPasswordEmail: null,
-  hospitalRegDetails: {
-    email: '',
-    hospitalName: '',
-    phone: '',
-    location: '',
-    adminName: '',
-    password: '',
-    docs: {
-      cac: null,
-      license: null,
-      permit: null,
-      address: null,
-    },
+  user: {} as User,
+  authToken: getAuthToken(),
+  hospitalRegDetails: {} as HospitalRegDetails,
+
+  setForgotPasswordEmail: (email) => set({ forgotPasswordEmail: email }),
+
+  updateUser: (user) => {
+    set({ user });
+    if (isBrowser) localStorage.setItem(general.USER, JSON.stringify(user));
   },
-  setForgotPasswordEmail: (email: string) =>
-    set({ forgotPasswordEmail: email }),
-  setHospitalRegDetails: (details: any) => set({ hospitalRegDetails: details }),
-  updateHospitalRegDetails: (details: any) =>
-    set((state: any) => ({
+
+  setToken: (token) => {
+    set({ authToken: token });
+    if (isBrowser) sessionStorage.setItem(general.TOKEN, token);
+  },
+
+  removeAuth: () => {
+    set({ user: {} as User, authToken: null });
+    if (isBrowser) {
+      sessionStorage.removeItem(general.TOKEN);
+      localStorage.removeItem(general.USER);
+    }
+  },
+
+  updateHospitalRegDetails: (details) =>
+    set((state) => ({
       hospitalRegDetails: { ...state.hospitalRegDetails, ...details },
     })),
-});
+}));

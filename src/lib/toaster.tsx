@@ -57,7 +57,7 @@ const variantStyles = {
   },
 
   error: {
-    wrapper: 'bg-red-3a border border-red-6 text-red-12',
+    wrapper: 'bg-red-3a border border-red-400 text-error',
     icon: 'bg-red-6a text-red-11',
     progress: 'bg-red-9',
     Icon: AlertCircle,

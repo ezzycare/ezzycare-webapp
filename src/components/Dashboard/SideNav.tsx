@@ -1,90 +1,17 @@
 'use client';
 
+import { handleLogout } from '@/apiQuery/auth/logout';
+import { useGetAccountType } from '@/hooks/useGetAccountType';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import {
-  AnalyticsIconLocal,
-  CalendarIconLocal,
-  CreditCardIconLocal,
-  HomeIconLocal,
-  HospitalIconLocal,
-  LogoutIconLocal,
-  MenuBoardIconLocal,
-  NotificationIconLocal,
-  SettingsIconLocal,
-  SideBarBaseIcon,
-  StethoscopeIconLocal,
-  UserIconLocal,
-  UsersIconLocal,
-} from '@/icons/DashboardNavIcons';
+import { LogoutIconLocal, SideBarBaseIcon } from '@/icons/DashboardNavIcons';
 import FullLogo from '@/icons/FullLogo';
 import { cn } from '@/lib/utils';
+import { dashNavItems } from '@/utils/route';
 import clsx from 'clsx';
 import { ChevronsUpDown } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
-
-const dashNavItems = [
-  { name: 'Dashboard Overview', href: '/dashboard', icon: <HomeIconLocal /> },
-  {
-    name: 'Hospitals',
-    href: '/dashboard/hospitals',
-    icon: <HospitalIconLocal />,
-  },
-  {
-    name: 'Doctors',
-    href: '/dashboard/doctors',
-    icon: <StethoscopeIconLocal />,
-  },
-  { name: 'Agents', href: '/dashboard/agents', icon: <UserIconLocal /> },
-  { name: 'Team', href: '/dashboard/team', icon: <UsersIconLocal /> },
-  { name: 'Patients', href: '/dashboard/patients', icon: <UserIconLocal /> },
-  {
-    name: 'Bookings',
-    href: '/dashboard/bookings',
-    icon: <CalendarIconLocal />,
-  },
-  {
-    name: 'Notifications',
-    href: '/dashboard/notifications',
-    icon: <NotificationIconLocal />,
-  },
-  {
-    name: 'Appointments',
-    href: '/dashboard/appointments',
-    icon: <MenuBoardIconLocal />,
-  },
-  {
-    name: 'Verifications',
-    href: '/dashboard/verifications',
-    icon: <MenuBoardIconLocal />,
-  },
-  {
-    name: 'Approvals',
-    href: '/dashboard/approvals',
-    icon: <MenuBoardIconLocal />,
-  },
-  {
-    name: 'Payments',
-    href: '/dashboard/payments',
-    icon: <CreditCardIconLocal />,
-  },
-  {
-    name: 'Analytics',
-    href: '/dashboard/analytics',
-    icon: <AnalyticsIconLocal />,
-  },
-  {
-    name: 'Settings',
-    href: '/dashboard/settings',
-    icon: <SettingsIconLocal />,
-  },
-  {
-    name: 'Admin Management',
-    href: '/dashboard/admin',
-    icon: <UserIconLocal />,
-  },
-];
+import { useEffect, useMemo } from 'react';
 
 const userData = {
   name: 'John Doe',
@@ -101,6 +28,16 @@ const DashNav = ({
 }) => {
   const pathname = usePathname();
   const isMobile = useIsMobile(1023);
+
+  const { accountType, accountNavItems } = useGetAccountType();
+
+  const accessibleNavItems = useMemo(() => {
+    console.log({ accountNavItems });
+    return dashNavItems.filter(
+      (item) =>
+        !item.name?.includes('settings') && accountNavItems?.includes(item.href)
+    );
+  }, [accountNavItems]);
 
   const showSidebar = !isMobile || (isMobile && sidebarOpen);
 
@@ -120,7 +57,7 @@ const DashNav = ({
     >
       <div
         className={cn(
-          `w-72.5 min-h-screen overflow-y-auto flex flex-col
+          `w-72.5 min-h-screen flex flex-col
           bg-surface-card border-r border-r-gray-3
           transition-transform duration-500
           lg:relative lg:left-0 pointer-events-auto`,
@@ -132,8 +69,8 @@ const DashNav = ({
           className="h-10.25 w-36 my-5 ml-12.5"
           onClick={() => setSideBarOpen(false)}
         />
-        <nav className="flex flex-col gap-2.5">
-          {dashNavItems.map((item) => {
+        <nav className="flex flex-col gap-2.5 max-h-[90vh] overflow-y-auto">
+          {accessibleNavItems.map((item) => {
             const active =
               pathname === item.href ||
               (item.href !== '/dashboard' && pathname.startsWith(item.href));
@@ -157,6 +94,7 @@ const DashNav = ({
               flex items-center gap-3 text-text-alt font-medium text-sm hover:text-text
               transition-colors duration-200 pl-7 py-2.5 rounded-lg cursor-pointer
             `)}
+            onClick={handleLogout}
           >
             <LogoutIconLocal />
             Logout

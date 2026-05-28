@@ -3,21 +3,13 @@
 import AnimatedMenu from '@/components/Base/AnimatedMenu';
 import FancyButton from '@/components/Ui/FancyButton';
 import FullLogo from '@/icons/FullLogo';
+import { navItems } from '@/utils/route';
 import { useGSAP } from '@gsap/react';
 import clsx from 'clsx';
 import gsap from 'gsap';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect } from 'react';
-
-const navItems = [
-  { name: 'Home', path: '/' },
-  { name: 'Our Doctors', path: '/our-doctors' },
-  { name: 'How it works', path: '/how-it-works' },
-  { name: 'For Doctors', path: '#' },
-  { name: 'For Hospitals', path: '#' },
-  { name: 'Blogs', path: '/blog' },
-];
 
 const NavBar = () => {
   const pathname = usePathname();

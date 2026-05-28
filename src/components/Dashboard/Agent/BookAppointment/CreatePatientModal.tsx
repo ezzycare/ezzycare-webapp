@@ -56,7 +56,7 @@ const CreatePatientModal = ({
   });
 
   const onSubmit = async (data: CreatePatientFormValues) => {
-    console.log(data);
+    // console.log(data);
 
     // API call here
 

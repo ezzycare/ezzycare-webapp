@@ -46,8 +46,6 @@ const SelectSpecialty = ({
   const specialty = watch('specialty');
 
   const onSubmit = async (data: FormValues) => {
-    console.log(data);
-
     // setState('out-of-scope');
     setState('select-doctor');
 

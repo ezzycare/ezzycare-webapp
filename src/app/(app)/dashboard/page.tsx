@@ -13,7 +13,7 @@ interface DashboardProps {
 const Dashboard = async ({ searchParams }: DashboardProps) => {
   const params = await searchParams;
 
-  const role: Role = params.role ?? 'agent';
+  const role: Role = params.role ?? 'hospital';
 
   const dashboard = {
     admin: <AdminDashboard />,

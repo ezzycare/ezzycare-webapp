@@ -1,3 +1,4 @@
+import Card from '@/components/Ui/Card';
 import FancyButton from '@/components/Ui/FancyButton';
 import { toaster } from '@/lib/toaster';
 import { cn } from '@/lib/utils';
@@ -5,7 +6,6 @@ import { ProgressBar } from '@heroui/react';
 import { CheckCircle2, Trash2, UploadIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
-import Card from '../Ui/Card';
 
 type DocKey = 'cac' | 'license' | 'permit' | 'address';
 
@@ -21,11 +21,7 @@ type DocType = {
 
 const MAX_SIZE = 5 * 1024 * 1024;
 
-const UploadHospitalDocs = ({
-  updateState,
-}: {
-  updateState: (val: string) => void;
-}) => {
+const UploadHospitalDocs = () => {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -156,7 +152,7 @@ const UploadHospitalDocs = ({
   const canSubmit = docs.every((doc) => doc.uploaded);
 
   return (
-    <Card onCancel={() => updateState('register')}>
+    <Card onCancel={() => router.back()}>
       <div className="flex flex-col">
         <h1 className="text-2xl font-medium text-text">
           Hospital Registration
@@ -183,7 +179,7 @@ const UploadHospitalDocs = ({
             disabled={!canSubmit || loading}
             onClick={() => {
               toaster.success('Documents submitted successfully');
-              updateState('created');
+              router.push('/dashboard');
             }}
           >
             Submit

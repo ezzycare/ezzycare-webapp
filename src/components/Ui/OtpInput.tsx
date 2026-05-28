@@ -72,14 +72,23 @@ const OtpInput: React.FC<OtpInputProps> = ({
   };
 
   const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
     const pastedData = e.clipboardData
       .getData('text')
       .replace(/\D/g, '')
       .slice(0, length);
-    const newOtp = pastedData.split('');
-    while (newOtp.length < length) newOtp.push('');
+
+    if (!pastedData) return;
+
+    const newOtp = [...Array(length)].map(
+      (_, index) => pastedData[index] || ''
+    );
     setOtp(newOtp);
-    inputsRef.current[Math.min(pastedData.length, length - 1)]?.focus();
+    const nextIndex =
+      pastedData.length >= length ? length - 1 : pastedData.length;
+
+    inputsRef.current[nextIndex]?.focus();
   };
 
   const gridStyle = {
@@ -108,19 +117,24 @@ const OtpInput: React.FC<OtpInputProps> = ({
             onKeyDown={(e) => handleKeyDown(e, index)}
             // @ts-expect-error - This is safe because we ensure the ref array is always the correct length
             ref={(el) => (inputsRef.current[index] = el)}
-            className={`${responsive ? 'min-w-8' : 'w-8'} h-10 text-sm text-center bg-border1 focus:outline-primary`}
+            className={`${responsive ? 'min-w-10' : 'w-10'} h-10 text-sm text-center border border-border2 rounded-lg focus:outline-primary`}
           />
         ))}
       </div>
-      <p className="opacity-45 mt-4 text-sm text-center">
-        Didn’t get code?{' '}
-        {countdownTimer === 0 && (
-          <span className="text-text cursor-pointer" onClick={handleResendOtp}>
-            RESEND
-          </span>
-        )}{' '}
-        {countdownTimer > 0 && `RESEND IN 0:${countdownTimer}`}
-      </p>
+      {handleResendOtp && (
+        <p className="opacity-45 mt-4 text-sm text-center">
+          Didn’t get code?{' '}
+          {countdownTimer === 0 && (
+            <span
+              className="text-text cursor-pointer"
+              onClick={handleResendOtp}
+            >
+              RESEND
+            </span>
+          )}{' '}
+          {countdownTimer > 0 && `RESEND IN 0:${countdownTimer}`}
+        </p>
+      )}
     </div>
   );
 };
