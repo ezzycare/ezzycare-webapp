@@ -1,6 +1,6 @@
 import { InfoCircledIcon } from '@radix-ui/react-icons';
+import { ArrowRight } from 'lucide-react';
 import React from 'react';
-import { Button } from '../Ui/Button';
 
 type BannerType = 'info' | 'warning' | 'error';
 const AlertBanner = ({
@@ -22,10 +22,10 @@ const AlertBanner = ({
   type: BannerType;
   children?: React.ReactNode;
 }) => {
-  const baseClass =
-    'w-full! flex flex-col md:flex-row justify-center md:justify-start items-center gap-3 rounded-[16px] p-5 relative';
+  const baseClass = `w-full! flex flex-col md:flex-row justify-center md:justify-start 
+    text-xs items-center gap-3 rounded-[16px] p-4 relative cursor-pointer`;
   const bgTypeClasses = {
-    info: 'bg-info-3a',
+    info: 'bg-gray-3a',
     warning: 'bg-warning-3a',
     error: 'bg-error-3a',
   };
@@ -36,36 +36,31 @@ const AlertBanner = ({
     error: 'text-error',
   };
 
-  const buttonTypeClasses = {
-    info: 'bg-info',
-    warning: 'bg-warning',
-    error: 'bg-error',
-  };
-
   return (
-    <div className={`${baseClass} ${bgTypeClasses[type]} ${className}`}>
+    <div
+      className={`${baseClass} ${bgTypeClasses[type]} ${className}`}
+      onClick={btnAction && btnAction}
+    >
       <InfoCircledIcon className={`w-6 h-6 ${textTypeClasses[type]}`} />
-      <div>
-        {title && (
-          <p className={`text-lg font-medium ${textTypeClasses[type]}`}>
-            {title}
-          </p>
-        )}
-        {content && (
-          <p className={`text-sm ${textTypeClasses[type]}`}>{content}</p>
+      <div className="w-full flex gap-2 items-center justify-between">
+        <p>
+          {title && (
+            <span className={`font-semibold mr-1.5 ${textTypeClasses[type]}`}>
+              {title}:
+            </span>
+          )}
+          {content && (
+            <span className={`${textTypeClasses[type]}`}>{content}</span>
+          )}
+        </p>
+        {children}
+        {btnAction && (
+          <ArrowRight
+            size={16}
+            className="min-w-4 ml-auto text-text cursor-pointer"
+          />
         )}
       </div>
-      {children}
-      {btnText && btnAction && (
-        <Button
-          variant="primary"
-          className={`md:ml-auto flex! items-center justify-center gap-2 ${buttonTypeClasses[type]}`}
-          onClick={btnAction}
-        >
-          <span>{btnText}</span>
-          {btnIcon && btnIcon}
-        </Button>
-      )}
     </div>
   );
 };

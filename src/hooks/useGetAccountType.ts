@@ -9,7 +9,7 @@ export const useGetAccountType = (): {
 } => {
   const authStore = useAuthStore((state: AuthStore) => state);
   const accountType =
-    getCookie()?.user?.accountType || authStore.user.accountType;
+    getCookie()?.user?.accountType || authStore?.user?.accountType;
 
   return {
     accountType,

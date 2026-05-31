@@ -8,6 +8,7 @@ import {
   StethoscopeIconLocal,
   UsersIconLocal,
 } from '@/icons/DashboardNavIcons';
+import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { BookingType } from '@/types/bookings';
 import { HospitalType } from '@/types/hospitals';
 import { ArrowRight, Banknote } from 'lucide-react';
@@ -36,6 +37,7 @@ const hospital: HospitalType = {
 
 const HospitalAdminDashboard = () => {
   const { dashboard: dashboardData } = useGetHospitalDashboard();
+  const user = useAuthStore((state: AuthStore) => state.user);
 
   const [timeRange, setTimeRange] = React.useState([
     {
@@ -114,16 +116,18 @@ const HospitalAdminDashboard = () => {
 
   return (
     <div className="p-7.5 w-full">
-      <AlertBanner
-        type="info"
-        title="Complete Hospital Profile & Brand Setup"
-        content="Complete your hospital profile and brand setup to get discovered by more patients"
-        btnText="Complete profile"
-        btnIcon={<ArrowRight size={16} className="text-white" />}
-        btnAction={() => {
-          setShowProfileModal(true);
-        }}
-      />
+      {user && user?.status === 'PROFILE_NOT_COMPLETE' && (
+        <AlertBanner
+          type="info"
+          title="Complete Hospital Profile & Brand Setup"
+          content="Complete your hospital profile and brand setup to get discovered by more patients"
+          btnText="Complete profile"
+          btnIcon={<ArrowRight size={16} className="text-white" />}
+          btnAction={() => {
+            setShowProfileModal(true);
+          }}
+        />
+      )}
       <h1 className="text-muted text-[28px] font-medium mb-4 mt-2">
         Welcome back,{' '}
         <span className="text-text">Metropolitan Health Institute</span>

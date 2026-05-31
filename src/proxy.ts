@@ -25,7 +25,7 @@ export async function proxy(req: NextRequest) {
     PUBLIC_EXACT.has(pathname) ||
     PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'));
 
-  const isBlocked = blockedNavItems(session.user.accountType).includes(
+  const isBlocked = blockedNavItems(session?.user?.accountType).includes(
     pathname
   );
 

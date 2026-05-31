@@ -85,6 +85,8 @@ export const dashNavItems = [
 ];
 
 export const getAccountNavItems = (accountType: ACCOUNT_TYPE) => {
+  // const TEST = true;
+  // if (TEST) return dashNavItems.map((item) => item.href);
   switch (accountType) {
     case 'ADMIN':
       return ['/dashboard/doctors'];
