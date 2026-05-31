@@ -1,3 +1,5 @@
+'use client';
+
 import Card from '@/components/Ui/Card';
 import FancyButton from '@/components/Ui/FancyButton';
 import { toaster } from '@/lib/toaster';
