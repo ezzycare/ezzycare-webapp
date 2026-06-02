@@ -129,8 +129,8 @@ const AdminDashboard = () => {
           ))}
         </div>
       </div>
-      <div className="mt-4 px-5.5 py-6.5 rounded-xl bg-surface-card">
-        <div className="flex items-center gap-2 mb-4.5">
+      <div className="mt-4 rounded-xl bg-surface-card">
+        <div className="flex items-center gap-2 mb-4.5 px-5.5 pt-6.5">
           <h2 className="text-text font-semibold">New Registrations</h2>
           <div className="bg-blue-2a text-xs text-primary font-medium p-1.5">
             {240}

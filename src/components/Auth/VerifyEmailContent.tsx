@@ -35,6 +35,7 @@ const VerifyEmailContent = () => {
       });
 
       toaster.success('Verification code sent');
+      router.push('/auth/signup/hospitals/upload-docs');
     } catch (error) {}
   };
 

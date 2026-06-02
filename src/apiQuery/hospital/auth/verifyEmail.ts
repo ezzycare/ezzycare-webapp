@@ -1,3 +1,4 @@
+import { ApiResponse } from '@/apiQuery/types';
 import { axiosClient } from '@/services/axiosClient';
 import {
   useMutation,
@@ -5,7 +6,7 @@ import {
   UseMutationResult,
 } from '@tanstack/react-query';
 import axios from 'axios';
-import { ApiResponse, VerifiedUserResponse } from './types';
+import { VerifiedUserResponse } from './types';
 
 export type VerifyEmailPayload = {
   email: string;

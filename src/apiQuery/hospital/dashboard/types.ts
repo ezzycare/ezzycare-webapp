@@ -1,4 +1,4 @@
-import { ApiResponse } from '../auth/types';
+import { ApiResponse } from '@/apiQuery/types';
 
 export interface DashboardStats {
   totalDoctors: number;
@@ -13,3 +13,11 @@ export interface DashboardStats {
 }
 
 export type DashboardResponse = ApiResponse<DashboardStats>;
+
+export interface AgentsInterface {
+  id: string;
+}
+
+export type ConsultationType = 'CLINIC' | 'VIDEO' | 'HOME';
+
+export type PayoutMethod = 'HOSPITAL_MANAGED' | 'PLATFORM_MANAGED';

@@ -86,3 +86,61 @@ export const MapFilledLocal = ({ size = 15, ...props }: IconProps) => (
     />
   </svg>
 );
+
+export const ChartSquareIconLocal = ({ size = 16, ...props }: IconProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 16 16"
+    width={size}
+    height={size}
+    fill="none"
+    {...props}
+  >
+    <path
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeMiterlimit={10}
+      d="M6.74 7.433H4.975a.76.76 0 0 0-.76.76v3.413H6.74V7.433v0Z"
+    />
+    <path
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeMiterlimit={10}
+      d="M8.508 4.4H7.494a.76.76 0 0 0-.76.76v6.44h2.527V5.16c0-.42-.333-.76-.753-.76ZM11.032 8.566H9.266V11.6h2.526V9.326a.768.768 0 0 0-.76-.76Z"
+    />
+    <path
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M6 14.666h4c3.333 0 4.666-1.333 4.666-4.666V6c0-3.334-1.333-4.667-4.666-4.667H6C2.666 1.333 1.333 2.666 1.333 6v4c0 3.333 1.333 4.666 4.667 4.666Z"
+    />
+  </svg>
+);
+
+export const HealthIconLocal = ({ size = 16, ...props }: IconProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 16 16"
+    width={size}
+    height={size}
+    fill="none"
+    {...props}
+  >
+    <path
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeOpacity={0.729}
+      d="M5.98 14.666h4c3.333 0 4.667-1.333 4.667-4.666V6c0-3.334-1.334-4.667-4.667-4.667h-4C2.647 1.333 1.313 2.666 1.313 6v4c0 3.333 1.334 4.666 4.667 4.666Z"
+    />
+    <path
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeOpacity={0.729}
+      d="m1.313 8.467 4-.013c.5 0 1.06.38 1.247.846l.76 1.92c.173.434.447.434.62 0l1.527-3.873c.146-.373.42-.387.606-.033l.694 1.313c.207.393.74.713 1.18.713h2.707"
+    />
+  </svg>
+);

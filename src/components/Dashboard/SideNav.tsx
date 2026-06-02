@@ -6,6 +6,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { LogoutIconLocal, SideBarBaseIcon } from '@/icons/DashboardNavIcons';
 import FullLogo from '@/icons/FullLogo';
 import { cn } from '@/lib/utils';
+import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { dashNavItems } from '@/utils/route';
 import clsx from 'clsx';
 import { ChevronsUpDown } from 'lucide-react';
@@ -29,7 +30,18 @@ const DashNav = ({
   const pathname = usePathname();
   const isMobile = useIsMobile(1023);
 
+  const user = useAuthStore((state: AuthStore) => state.user);
+  const email = user.email;
+
   const { accountType, accountNavItems } = useGetAccountType();
+
+  const handleLogoutUser = async () => {
+    try {
+      await handleLogout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   const accessibleNavItems = useMemo(() => {
     console.log({ accountNavItems });
@@ -94,7 +106,7 @@ const DashNav = ({
               flex items-center gap-3 text-text-alt font-medium text-sm hover:text-text
               transition-colors duration-200 pl-7 py-2.5 rounded-lg cursor-pointer
             `)}
-            onClick={handleLogout}
+            onClick={handleLogoutUser}
           >
             <LogoutIconLocal />
             Logout
@@ -103,8 +115,8 @@ const DashNav = ({
         <div className="w-full flex items-center gap-2 px-4 py-2.5 mt-auto">
           <SideBarBaseIcon />
           <div>
-            <h2 className="text-sm font-semibold">{userData.role}</h2>
-            <p className="text-xs text-text-muted">{userData.email}</p>
+            <h2 className="text-sm font-semibold">{accountType}</h2>
+            <p className="text-xs text-text-muted">{email}</p>
           </div>
           <ChevronsUpDown size={18} color="gray" className="ml-auto" />
         </div>

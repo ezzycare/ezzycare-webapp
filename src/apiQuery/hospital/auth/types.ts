@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export type ApiResponse<T = unknown> = {
-  success: boolean;
-  message: string;
-  data: T | null;
-};
-
 export type RegisterHospitalPayload = {
   firstName?: string;
   lastName?: string;
@@ -22,7 +16,7 @@ export type RegisterHospitalPayload = {
   [key: string]: any;
 };
 
-export type ACCOUNT_TYPE = 'HOSPITAL' | 'AGENT' | 'DOCTOR' | 'ADMIN';
+export type ACCOUNT_TYPE = 'HOSPITAL' | 'AGENT' | 'ADMIN';
 
 export interface User {
   id: string;
@@ -65,7 +59,7 @@ export interface User {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
-  hospitalRoleId: string | null;
+  hospitalroleId: number | null;
   userDetails?: UserDetails;
   account_type: string;
   account_type_label: string;
@@ -89,7 +83,7 @@ export interface UserDetails {
   height: number | null;
   weight: number | null;
   allergies: string | null;
-  smokingHabbits: string | null;
+  smokingHabits: string | null;
   alcoholConsumption: string | null;
   foodPreference: string | null;
   occupation: string | null;

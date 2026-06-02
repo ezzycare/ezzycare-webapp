@@ -1,3 +1,4 @@
+import Dropdown from '@/components/Ui/Dropdown';
 import FancyButton from '@/components/Ui/FancyButton';
 import Modal from '@/components/Ui/Modal';
 import { PhoneInput, TextInput } from '@/components/Ui/TextInput';
@@ -14,6 +15,18 @@ const CreateAgentModal = ({
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const [selectedDepartment, setSelectedDepartment] = React.useState('');
+
+  const departments = [
+    'Nephology',
+    'Obstetrics & Gynecology',
+    'Ear, Nose & Throat',
+    'Ophthalmic',
+    'Mental & Psychiatric',
+    'Pediatric',
+    'Intensive care unit',
+    'Orthopedics',
+  ];
   return (
     <div>
       <Modal
@@ -41,6 +54,22 @@ const CreateAgentModal = ({
               label="Address"
               leftIcon={<MapPin className="text-muted" size={16} />}
             />
+            <div>
+              <p className="text-sm text-text font-medium mb-1">Department</p>
+              <Dropdown
+                placeholder="Select Department"
+                multiple
+                searchable
+                fullWidth
+                containerClassName="h-14"
+                value={selectedDepartment}
+                onChange={(v) => setSelectedDepartment(v as string)}
+                options={departments.map((dept) => ({
+                  label: dept,
+                  value: dept,
+                }))}
+              />
+            </div>
           </div>
 
           <div className="flex w-full mt-6">

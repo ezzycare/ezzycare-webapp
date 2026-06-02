@@ -9,6 +9,7 @@
     BLUE
   ========================= */
   --blue-1: #F9FDFE;
+  --blue-2: #F1FBFD;
   --blue-2a: #00B7DB0E;
   --blue-3a: #00C8FF25;
   --blue-6a: #00B2E66D;
@@ -70,7 +71,9 @@
   --pink-11: #9C31AA;
   --pink-12a: #5F006B;
 
+  --purple-3a: #8E00F112;
   --purple-10: #8347B9;
+  --purple-11a: #52009ABA;
 
   --orange-10a: #EF5F00;                      
 
@@ -131,6 +134,7 @@
 
   /* BLUE */
   --color-blue-1: var(--blue-1);
+  --color-blue-2: var(--blue-2);
   --color-blue-2a: var(--blue-2a);
   --color-blue-3a: var(--blue-3a);
   --color-blue-6a: var(--blue-6a);
@@ -181,7 +185,9 @@
   --color-pink-11: var(--pink-11);
   --color-pink-12a: var(--pink-12a);
 
+  --color-purple-3a: var(--purple-3a);
   --color-purple-10: var(--purple-10);
+  --color-purple-11a: var(--purple-11a);
 
   --color-orange-10a: var(--orange-10a);
 
@@ -331,3 +337,15 @@
   }
 }
 
+/* Chrome, Safari, Edge, Opera */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

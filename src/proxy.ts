@@ -35,6 +35,11 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  if (session?.access_token && pathname?.includes('/auth')) {
+    req.headers.set('Authorization', `Bearer ${session.access_token}`);
+    return NextResponse.redirect(new URL('/dashboard', origin));
+  }
+
   return NextResponse.next();
 }
 

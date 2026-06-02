@@ -8,7 +8,7 @@ export interface ModalProps {
   open: boolean;
   onClose: () => void;
   title?: string;
-  description?: string;
+  description?: string | ReactNode;
   children: ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   closeOnBackdrop?: boolean;

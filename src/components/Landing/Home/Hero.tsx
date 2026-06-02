@@ -1,17 +1,17 @@
 'use client';
 
-import ArrowTopRight from '@/icons/ArrowTopRight';
-import FancyButton from '@/components/Ui/FancyButton';
-import styles from './Home.module.css';
-import HeroStats from './HeroStats';
-import Image from 'next/image';
 import LeftHeroImage from '@/assets/img/left-hero-img.png';
 import RightHeroImage from '@/assets/img/right-hero-img.png';
-import clsx from 'clsx';
+import FancyButton from '@/components/Ui/FancyButton';
+import ArrowTopRight from '@/icons/ArrowTopRight';
 import { useGSAP } from '@gsap/react';
+import clsx from 'clsx';
 import { gsap } from 'gsap';
-import React, { useEffect, useMemo } from 'react';
 import { SplitText } from 'gsap/all';
+import Image from 'next/image';
+import React, { useEffect, useMemo } from 'react';
+import HeroStats from './HeroStats';
+import styles from './Home.module.css';
 
 gsap.registerPlugin(SplitText);
 
@@ -80,7 +80,7 @@ const Hero = () => {
         'relative items-center pt-10 sm:pt-30 pb-10 sm:pb-20 px-5 lg:px-0'
       )}
     >
-      <div ref={titleRef} className="opacity-100">
+      <div ref={titleRef} className="opacity-100 z-2">
         <h1
           className={clsx(
             'max-w-156 leading-12 tracking-tighter font-geist-sans',
@@ -126,7 +126,7 @@ const Hero = () => {
         width={288}
         height={0}
         loading="eager"
-        className="absolute top-40 sm:top-30 left-5 sm:left-10 -z-10 opacity-0"
+        className="absolute top-40 sm:top-30 left-5 sm:left-10 z-1 opacity-0"
       />
 
       <Image
@@ -136,7 +136,7 @@ const Hero = () => {
         width={288}
         height={0}
         loading="eager"
-        className="absolute top-40 sm:top-30 right-5 sm:right-10 -z-10 opacity-0"
+        className="absolute top-40 sm:top-30 right-5 sm:right-10 z-1 opacity-0"
       />
     </section>
   );

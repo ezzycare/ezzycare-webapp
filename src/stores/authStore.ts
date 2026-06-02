@@ -26,6 +26,7 @@ export interface HospitalRegDetails {
 
 export interface AuthStore {
   forgotPasswordEmail: string | null;
+  isAuthenticated: () => boolean;
   setForgotPasswordEmail: (email: string) => void;
   user: User;
   authToken: string | null;
@@ -43,6 +44,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
   user: {} as User,
   authToken: getAuthToken(),
   hospitalRegDetails: {} as HospitalRegDetails,
+
+  isAuthenticated: () => !!getAuthToken(),
 
   setForgotPasswordEmail: (email) => set({ forgotPasswordEmail: email }),
 

@@ -1,5 +1,7 @@
 'use client';
 
+import { useGetAccountType } from '@/hooks/useGetAccountType';
+import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { getInitials } from '@/utils/helper';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
@@ -19,13 +21,12 @@ const TopNav = ({
     dayjs().format('YYYY-MM-DD')
   );
 
-  const userData = {
-    name: 'John Doe',
-    role: 'Admin',
-    email: 'F7i0k@example.com',
-  };
+  const user = useAuthStore((state: AuthStore) => state.user);
 
-  const initials = getInitials(userData.name);
+  const initials = getInitials(`${user.firstName} ${user.lastName}`);
+  const email = user.email;
+
+  const { accountType } = useGetAccountType();
 
   return (
     <div className="w-full h-20 bg-surface-card px-5 flex items-center justify-end fixed z-10! top-0 left-0">
@@ -51,8 +52,8 @@ const TopNav = ({
           {initials}
         </p>
         <div className="hidden sm:block">
-          <h2 className="text-sm font-semibold">{userData.role}</h2>
-          <p className="text-xs text-text-muted">{userData.email}</p>
+          <h2 className="text-sm font-semibold">{accountType}</h2>
+          <p className="text-xs text-text-muted">{email}</p>
         </div>
       </div>
     </div>

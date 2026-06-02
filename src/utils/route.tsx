@@ -89,7 +89,20 @@ export const getAccountNavItems = (accountType: ACCOUNT_TYPE) => {
   // if (TEST) return dashNavItems.map((item) => item.href);
   switch (accountType) {
     case 'ADMIN':
-      return ['/dashboard/doctors'];
+      return [
+        '',
+        'hospitals',
+        'doctors',
+        'agents',
+        'patients',
+        'bookings',
+        'notifications',
+        'approvals',
+        'payments',
+        'analytics',
+        'settings',
+        'admin',
+      ].map((val) => (val?.length ? `/dashboard/${val}` : `/dashboard`));
 
     case 'HOSPITAL':
       return [
@@ -104,10 +117,9 @@ export const getAccountNavItems = (accountType: ACCOUNT_TYPE) => {
       ].map((val) => (val?.length ? `/dashboard/${val}` : `/dashboard`));
 
     case 'AGENT':
-      return ['/dashboard/agents'];
-
-    case 'DOCTOR':
-      return ['/dashboard/doctors'];
+      return ['', 'patients', 'notifications', 'appointments', 'settings'].map(
+        (val) => (val?.length ? `/dashboard/${val}` : `/dashboard`)
+      );
 
     default:
       return [];

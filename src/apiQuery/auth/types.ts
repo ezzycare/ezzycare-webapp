@@ -1,4 +1,5 @@
-import { ApiResponse, VerifiedUserResponse } from '../hospital/auth/types';
+import { ApiResponse } from '@/apiQuery/types';
+import { VerifiedUserResponse } from '../hospital/auth/types';
 
 type AuthByEmail = {
   email: string;

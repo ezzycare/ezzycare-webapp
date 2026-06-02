@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { ApiResponse } from '@/apiQuery/types';
 import { axiosClient } from '@/services/axiosClient';
 import {
   useMutation,
   UseMutationOptions,
   UseMutationResult,
 } from '@tanstack/react-query';
-import { ApiResponse, RegisterHospitalPayload } from './types';
+import { RegisterHospitalPayload } from './types';
 
 export const registerHospital = async (
   payload: RegisterHospitalPayload

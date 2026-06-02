@@ -50,7 +50,7 @@ const AssignToDeptModal = ({
             leftIcon={<Search size={18} />}
             className="bg-gray-2!"
           />
-          <div className="space-y-2 mt-5 flex flex-col bg-gray-2 rounded-lg text-sm text-text-alt p-3.5">
+          <div className="space-y-2flex flex-col bg-gray-2 rounded-lg text-sm text-text-alt p-3.5">
             {departments.map((department, index) => (
               <div
                 key={index}

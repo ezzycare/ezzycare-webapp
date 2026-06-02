@@ -181,7 +181,7 @@ const UploadHospitalDocs = () => {
             disabled={!canSubmit || loading}
             onClick={() => {
               toaster.success('Documents submitted successfully');
-              router.push('/dashboard');
+              router.push('/auth/signup/hospital/account-created');
             }}
           >
             Submit

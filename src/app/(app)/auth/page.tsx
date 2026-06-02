@@ -1,7 +1,7 @@
-import React from 'react';
+import { redirect } from 'next/navigation';
 
 const Page = () => {
-  return <div className="bg-background"></div>;
+  redirect('/auth/signin');
 };
 
 export default Page;

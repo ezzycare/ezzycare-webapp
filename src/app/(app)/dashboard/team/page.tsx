@@ -71,24 +71,6 @@ const TeamManagement = () => {
     },
   ];
 
-  const roleFilters = [
-    {
-      label: 'Status',
-      key: 'status',
-      options: [
-        {
-          label: 'Active',
-          value: 'active',
-        },
-        {
-          label: 'Inactive',
-          value: 'inactive',
-        },
-      ],
-      fn: (row: RoleType, value: any) => row.createdAt === value,
-    },
-  ];
-
   const tabItems = ['Team members', 'Roles & Permissions'];
   const [activeTab, setActiveTab] = useState(0);
 
@@ -182,7 +164,6 @@ const TeamManagement = () => {
               searchable={true}
               searchPlaceholder="Search by name, email, specialization, or qualification..."
               searchContainerClassName="max-w-[404px]!"
-              filters={roleFilters}
             ></RolesTable>
 
             {roleMeta && roleMeta?.pageCount > 1 && (

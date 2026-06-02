@@ -188,19 +188,19 @@ const HospitalAdminDashboard = () => {
           ))}
         </div>
       </div>
-      <div className="mt-4 px-5.5 py-6.5 rounded-xl bg-surface-card min-h-97.5">
-        <div className="flex items-center gap-2">
+      <div className="mt-4 rounded-xl bg-surface-card min-h-97.5">
+        <div className="flex items-center gap-2 px-5.5 pt-6.5">
           <CalendarIconLocal className="text-text" />
           <h2 className="text-text font-semibold">Todays Appointments</h2>
           {!!bookings?.length && (
-            <Link href="/dashboard/bookings" className="ml-auto">
+            <Link href="/dashboard/appointments" className="ml-auto">
               <p className="text-primary text-sm font-medium cursor-pointer">
                 View all appointments
               </p>
             </Link>
           )}
         </div>
-        <div className="-mt-2">
+        <div className="-mt-3">
           {!bookings?.length && <EmptyAppointment />}
           {!!bookings?.length && <BookingTable data={bookings.slice(0, 10)} />}
         </div>

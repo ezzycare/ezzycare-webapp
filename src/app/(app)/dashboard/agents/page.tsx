@@ -6,14 +6,19 @@ import AgentsTable from '@/components/Dashboard/Agent/AgentsTable';
 import CreateAgentModal from '@/components/Dashboard/Agent/CreateAgentModal';
 import { Button } from '@/components/Ui/Button';
 import FancyButton from '@/components/Ui/FancyButton';
+import { useGetAccountType } from '@/hooks/useGetAccountType';
 import { cn } from '@/lib/utils';
 import { AgentType } from '@/types/agents';
 import { PlusIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 const Agents = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [createModal, setCreateModal] = useState<boolean>(false);
+  const { accountType } = useGetAccountType();
+
+  const isHospital = useMemo(() => accountType === 'HOSPITAL', [accountType]);
+  const isAdmin = useMemo(() => accountType === 'ADMIN', [accountType]);
 
   const totals = [
     {
@@ -107,21 +112,25 @@ const Agents = () => {
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          <FancyButton
-            onClick={() => setCreateModal(true)}
-            className="bg-blue-11a! hover:bg-blue-11a/80 gap-2"
-            variant="primary"
-          >
-            Create New Agent
-          </FancyButton>
-          <Button
-            onClick={() => setCreateModal(true)}
-            className="bg-blue-11a! hover:bg-blue-11a/80 gap-2"
-            variant="primary"
-          >
-            <PlusIcon size={18} />
-            Add Agent
-          </Button>
+          {isAdmin && (
+            <FancyButton
+              onClick={() => setCreateModal(true)}
+              className="bg-blue-11a! hover:bg-blue-11a/80 gap-2"
+              variant="primary"
+            >
+              Create New Agent
+            </FancyButton>
+          )}
+          {isHospital && (
+            <Button
+              onClick={() => setCreateModal(true)}
+              className="bg-blue-11a! hover:bg-blue-11a/80 gap-2"
+              variant="primary"
+            >
+              <PlusIcon size={18} />
+              Add Agent
+            </Button>
+          )}
         </div>
       </div>
       <div

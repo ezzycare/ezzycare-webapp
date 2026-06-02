@@ -88,7 +88,7 @@ const NavBar = () => {
             Sign In
           </FancyButton>
         </Link>
-        <Link href="/auth/signup/hospital">
+        <Link href="/auth/signup">
           <FancyButton
             variant="primary"
             className="py-1.5! sm:py-2! px-1.5! sm:px-3! text-xs! sm:text-sm!"
