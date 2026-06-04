@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/Ui/Button';
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import StatusText from '@/components/Ui/StatusText';
 import { useGetAccountType } from '@/hooks/useGetAccountType';
 import { ChartSquareIconLocal, HealthIconLocal } from '@/icons/DashboardIcons';
@@ -81,16 +81,16 @@ const AgentDetails = ({ agent }: { agent: AgentType }) => {
         <div className="flex items-center ml-auto gap-2">
           {isAdmin && (
             <>
-              <FancyButton
+              <Button
                 variant="outline"
                 className="text-text! hover:text-surface-card! py-2! px-4!"
                 onClick={() => {}}
               >
                 Reject
-              </FancyButton>
-              <FancyButton variant="primary" className="py-2! px-4!">
+              </Button>
+              <Button variant="primary" className="py-2! px-4!">
                 Approve
-              </FancyButton>
+              </Button>
             </>
           )}
           {isHospital && (

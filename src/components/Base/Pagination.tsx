@@ -4,7 +4,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import ArrowLeft from '@/icons/ArrowLeft';
 import clsx from 'clsx';
 import { useMemo } from 'react';
-import FancyButton from '../Ui/FancyButton';
+import Button from '../Ui/Button';
 
 const Pagination = ({
   pages,
@@ -50,7 +50,7 @@ const Pagination = ({
 
   return (
     <div className="w-full flex items-center justify-between px-0 md:px-5">
-      <FancyButton
+      <Button
         variant="outline"
         onClick={() => setPage(page - 1 > 0 ? page - 1 : 1)}
       >
@@ -58,7 +58,7 @@ const Pagination = ({
           <ArrowLeft className="" />
           <p className="text-sm hidden md:block">Previous</p>
         </div>
-      </FancyButton>
+      </Button>
       <div className="flex items-center justify-center gap-0.5">
         {pagesArray.map((pageItem) =>
           showPageNumber[pageItem] ? (
@@ -76,7 +76,7 @@ const Pagination = ({
           ) : null
         )}
       </div>
-      <FancyButton
+      <Button
         variant="outline"
         onClick={() => setPage(page + 1 < pages ? page + 1 : pages)}
       >
@@ -84,7 +84,7 @@ const Pagination = ({
           <p className="text-sm hidden md:block">Next</p>
           <ArrowLeft className="rotate-180" />
         </div>
-      </FancyButton>
+      </Button>
     </div>
   );
 };

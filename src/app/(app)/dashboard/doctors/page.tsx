@@ -8,7 +8,6 @@ import DoctorsTable from '@/components/Dashboard/Doctor/DoctorsTable';
 import InviteDoctorModal from '@/components/Dashboard/Doctor/InviteDoctorModal';
 import IconBase from '@/components/Dashboard/IconBase';
 import { Button } from '@/components/Ui/Button';
-import FancyButton from '@/components/Ui/FancyButton';
 import { UserIconLocal } from '@/icons/DashboardNavIcons';
 import { DoctorType } from '@/types/doctors';
 import { Plus } from 'lucide-react';
@@ -150,13 +149,13 @@ const Doctors = () => {
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          <FancyButton
+          <Button
             onClick={() => setCreateModal(true)}
             className="bg-blue-11a! hover:bg-blue-11a/80"
             variant="primary"
           >
             Create New Doctor
-          </FancyButton>
+          </Button>
           <Button
             className="flex items-center flex-row!"
             variant="outline"

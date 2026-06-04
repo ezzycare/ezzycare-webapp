@@ -1,7 +1,7 @@
 'use client';
 
 import Card from '@/components/Ui/Card';
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import { PasswordInput, TextInput } from '@/components/Ui/TextInput';
 import { toaster } from '@/lib/toaster';
 import { loginAction } from '@/serverActions/login';
@@ -90,7 +90,7 @@ const SignIn = () => {
           error={errors.password?.message}
         />
         <p className="text-sm text-blue-11a ml-auto">Forgot password?</p>
-        <FancyButton
+        <Button
           type="submit"
           className="w-full mt-5 h-12 flex justify-center"
           variant="primary"
@@ -98,7 +98,7 @@ const SignIn = () => {
           disabled={Object.keys(errors).length > 0 || loading}
         >
           Login
-        </FancyButton>
+        </Button>
       </form>
       <p className="text-sm text-text/50 mt-4 text-center">
         Don&apos;t have an account?{' '}

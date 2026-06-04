@@ -1,12 +1,12 @@
 'use client';
 
 import { useRegisterHospital } from '@/apiQuery/hospital/auth/register';
+import Button from '@/components/Ui/Button';
 import Card from '@/components/Ui/Card';
-import FancyButton from '@/components/Ui/FancyButton';
 import {
-  PasswordInput,
-  PhoneInput,
-  TextInput,
+    PasswordInput,
+    PhoneInput,
+    TextInput,
 } from '@/components/Ui/TextInput';
 import { HospitalIconLocal, UserIconLocal } from '@/icons/DashboardNavIcons';
 import { toaster } from '@/lib/toaster';
@@ -132,7 +132,7 @@ const RegisterHospital = () => {
             name="password"
             error={errors.password?.message}
           />
-          <FancyButton
+          <Button
             type="submit"
             className="w-full mt-10 h-12 flex justify-center"
             variant="primary"
@@ -140,7 +140,7 @@ const RegisterHospital = () => {
             disabled={Object.keys(errors).length > 0 || isPending}
           >
             Continue
-          </FancyButton>
+          </Button>
         </form>
       </div>
     </Card>

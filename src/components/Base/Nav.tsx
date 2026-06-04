@@ -1,7 +1,7 @@
 'use client';
 
 import AnimatedMenu from '@/components/Base/AnimatedMenu';
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import FullLogo from '@/icons/FullLogo';
 import { navItems } from '@/utils/route';
 import { useGSAP } from '@gsap/react';
@@ -81,20 +81,20 @@ const NavBar = () => {
       </div>
       <div className="flex space-x-1.5 sm:space-x-2.5 items-center">
         <Link href="/auth/signin">
-          <FancyButton
+          <Button
             variant="outline"
             className="py-1.5! sm:py-2! px-1.5! sm:px-3! text-xs! sm:text-sm!"
           >
             Sign In
-          </FancyButton>
+          </Button>
         </Link>
         <Link href="/auth/signup">
-          <FancyButton
+          <Button
             variant="primary"
             className="py-1.5! sm:py-2! px-1.5! sm:px-3! text-xs! sm:text-sm!"
           >
             Get Started
-          </FancyButton>
+          </Button>
         </Link>
         <div
           className="lg:hidden cursor-pointer z-52"

@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/Ui/Button';
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import StatusText from '@/components/Ui/StatusText';
 import { ClockIconLocal } from '@/icons/DashboardIcons';
 import {
@@ -71,20 +71,20 @@ const BookingDetails = ({ booking }: { booking: BookingType }) => {
           <div className="flex items-center ml-auto gap-2">
             {!isAppointments && (
               <>
-                <FancyButton
+                <Button
                   variant="outline"
                   className="text-text! hover:text-surface-card! py-2! px-4!"
                   onClick={() => {}}
                 >
                   Cancel booking
-                </FancyButton>
-                <FancyButton
+                </Button>
+                <Button
                   variant="outline"
                   className="text-text! hover:text-surface-card! py-2! px-4!"
                   onClick={() => {}}
                 >
                   Reschedule booking
-                </FancyButton>
+                </Button>
               </>
             )}
             {isAppointments && (
@@ -183,13 +183,13 @@ const BookingDetails = ({ booking }: { booking: BookingType }) => {
                       </p>
                     </button>
                   ) : (
-                    <FancyButton
+                    <Button
                       variant="outline"
                       className="py-1! px-2.5! text-text! hover:text-surface-card! w-fit"
                       onClick={() => {}}
                     >
                       Reassign Doctor
-                    </FancyButton>
+                    </Button>
                   )}
                 </div>
               )}

@@ -2,7 +2,7 @@
 
 import styles from './Home.module.css';
 import ArrowTopRight from '@/icons/ArrowTopRight';
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import HealthPlusIcon from '@/icons/HealthPlusIcon';
 import clsx from 'clsx';
 import { useGSAP } from '@gsap/react';
@@ -117,13 +117,13 @@ const GetStarted = () => {
             Take some quicks actions today and get started with improving your
             health...
           </p>
-          <FancyButton
+          <Button
             variant="primary"
             icon={<ArrowTopRight />}
             className="px-6!"
           >
             Book Appointment
-          </FancyButton>
+          </Button>
         </div>
 
         <div
@@ -152,7 +152,7 @@ const GetStarted = () => {
               <p className="mb-6 text-black group-hover:text-white">
                 {item.description}
               </p>
-              <FancyButton
+              <Button
                 variant="primary"
                 icon={<ArrowTopRight />}
                 className={clsx(
@@ -162,7 +162,7 @@ const GetStarted = () => {
                 href={item.link}
               >
                 {item.btnTitle}
-              </FancyButton>
+              </Button>
             </div>
           ))}
         </div>

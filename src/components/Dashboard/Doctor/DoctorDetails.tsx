@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/Ui/Button';
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import { DepartmentIconLocal } from '@/icons/DashboardIcons';
 import { FolderIconLocal } from '@/icons/FolderIconLocal';
 import { DoctorType } from '@/types/doctors';
@@ -50,19 +50,19 @@ const DoctorDetails = ({ doctor }: { doctor: DoctorType }) => {
           </div>
         </div>
         <div className="flex items-center ml-auto gap-3">
-          <FancyButton
+          <Button
             variant="outline"
             className="text-text! hover:text-surface-card!"
             onClick={() => setOpenEditModal(true)}
           >
             Edit Details
-          </FancyButton>
-          <FancyButton
+          </Button>
+          <Button
             variant="outline"
             className="text-text! hover:text-surface-card!"
           >
             Verify Doctor
-          </FancyButton>
+          </Button>
         </div>
       </div>
 
@@ -94,12 +94,12 @@ const ViewFileButton = () => {
   return (
     <div className="flex items-center gap-1.5 mt-2.5">
       <FolderIconLocal />
-      <FancyButton
+      <Button
         variant="outline"
         className="py-1! px-2.5! text-text! hover:text-surface-card!"
       >
         View File
-      </FancyButton>
+      </Button>
     </div>
   );
 };

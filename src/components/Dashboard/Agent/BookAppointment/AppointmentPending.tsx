@@ -1,4 +1,4 @@
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import {
   HospitalIconLocal,
@@ -68,7 +68,7 @@ const AppointmentPending = ({
           approval.
         </p>
         <div className="mt-5 flex items-center gap-3 w-full">
-          <FancyButton
+          <Button
             className="w-full text-white"
             variant="primary"
             onClick={() => {
@@ -76,7 +76,7 @@ const AppointmentPending = ({
             }}
           >
             View Appointment
-          </FancyButton>
+          </Button>
         </div>
       </div>
     </Modal>

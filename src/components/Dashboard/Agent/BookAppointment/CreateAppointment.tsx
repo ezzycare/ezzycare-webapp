@@ -1,4 +1,4 @@
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { RadioItem } from '@/components/Ui/RadioGroup';
 import TextArea from '@/components/Ui/TextArea';
@@ -94,13 +94,13 @@ const CreateAppointment = ({
               </div>
             </div>
 
-            <FancyButton
+            <Button
               variant="outline"
               className="text-lg! py-2.75! w-full"
               onClick={() => setIsSelectingTime(true)}
             >
               Select appointment time
-            </FancyButton>
+            </Button>
 
             {selectedTimes && (
               <SelectedSlotDisplay
@@ -138,7 +138,7 @@ const CreateAppointment = ({
               <TextInput placeholder="Enter promo code" className="mt-2" />
             </div>
 
-            <FancyButton
+            <Button
               variant="primary"
               className="text-lg! py-2.75! w-full"
               disabled={!selectedTimes || !selectedConsultationType}
@@ -147,7 +147,7 @@ const CreateAppointment = ({
               }}
             >
               Book Appointment
-            </FancyButton>
+            </Button>
           </div>
         )}
 

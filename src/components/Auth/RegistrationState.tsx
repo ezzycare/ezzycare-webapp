@@ -4,7 +4,7 @@ import { InfoInvertedIconLocal } from '@/icons/DashboardIcons';
 import { CircleCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Card from '../Ui/Card';
-import FancyButton from '../Ui/FancyButton';
+import Button from '../Ui/Button';
 
 export const AccountCreatedInfo = () => {
   const { push } = useRouter();
@@ -22,20 +22,20 @@ export const AccountCreatedInfo = () => {
         </p>
 
         <div className="mt-10 flex items-center gap-3 w-full">
-          <FancyButton
+          <Button
             className="w-full"
             variant="outline"
             onClick={() => push('/auth/signin')}
           >
             Close
-          </FancyButton>
-          <FancyButton
+          </Button>
+          <Button
             className="w-full"
             variant="primary"
             onClick={() => push('/auth/signin')}
           >
             Okay
-          </FancyButton>
+          </Button>
         </div>
       </div>
     </Card>
@@ -60,20 +60,20 @@ export const AccountReviewProgressInfo = () => {
         </p>
 
         <div className="mt-10 flex items-center gap-3 w-full">
-          <FancyButton
+          <Button
             className="w-full"
             variant="outline"
             onClick={() => push('/auth/signin')}
           >
             Close
-          </FancyButton>
-          <FancyButton
+          </Button>
+          <Button
             className="w-full"
             variant="primary"
             onClick={() => push('/auth/signin')}
           >
             Okay
-          </FancyButton>
+          </Button>
         </div>
       </div>
     </Card>

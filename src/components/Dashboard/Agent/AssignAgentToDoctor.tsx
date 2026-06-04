@@ -1,4 +1,4 @@
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { RadioItem } from '@/components/Ui/RadioGroup';
 import { TextInput } from '@/components/Ui/TextInput';
@@ -144,21 +144,21 @@ const AssignAgentToDoctor = ({
           </div>
 
           <div className="flex gap-2 w-full mt-6">
-            <FancyButton
+            <Button
               variant="outline"
               className="w-full"
               onClick={() => setOpenModal(false)}
             >
               Cancel
-            </FancyButton>
-            <FancyButton
+            </Button>
+            <Button
               variant="primary"
               className="w-full"
               disabled={!selectedDoctor?.length}
               onClick={() => setOpenModal(false)}
             >
               Assign department
-            </FancyButton>
+            </Button>
           </div>
         </div>
       </Modal>

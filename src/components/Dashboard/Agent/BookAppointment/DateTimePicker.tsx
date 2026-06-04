@@ -1,4 +1,4 @@
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import { cn } from '@/lib/utils';
 import { TimeSlot } from '@/utils/timeSlotsGenerator';
 import dayjs from 'dayjs';
@@ -359,22 +359,22 @@ export default function DateTimePicker({
 
       <div className="mt-5">
         {!showSelected && (
-          <FancyButton
+          <Button
             variant="primary"
             className="w-full text-lg py-3.5"
             onClick={handleApply}
           >
             Apply
-          </FancyButton>
+          </Button>
         )}
         {showSelected && (
-          <FancyButton
+          <Button
             variant="primary"
             className="w-full text-lg py-3.5"
             onClick={handleContinue}
           >
             Continue
-          </FancyButton>
+          </Button>
         )}
       </div>
     </div>

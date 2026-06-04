@@ -1,4 +1,4 @@
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { TextInput } from '@/components/Ui/TextInput';
 import { UserIconLocal } from '@/icons/DashboardNavIcons';
@@ -99,14 +99,14 @@ const CreatePatientModal = ({
           </div>
 
           <div className="flex w-full mt-6">
-            <FancyButton
+            <Button
               type="submit"
               variant="primary"
               className="w-full"
               disabled={isSubmitting || !isValid}
             >
               {isSubmitting ? 'Checking...' : 'Check'}
-            </FancyButton>
+            </Button>
           </div>
         </form>
       </Modal>

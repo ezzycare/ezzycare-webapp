@@ -13,7 +13,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
 }
 
-export function Button({
+export const Button = ({
   children,
   variant = 'primary',
   color,
@@ -21,7 +21,7 @@ export function Button({
   disabled,
   loading = false,
   ...props
-}: ButtonProps) {
+}: ButtonProps) => {
   const baseStyles = clsx(
     'py-3 px-5 rounded-lg transition font-medium inline-flex',
     'items-center justify-center text-sm cursor-pointer active:scale-95'
@@ -77,4 +77,6 @@ export function Button({
       )}
     </button>
   );
-}
+};
+
+export default Button;

@@ -1,4 +1,4 @@
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { PhoneInput, TextInput } from '@/components/Ui/TextInput';
 import { UserIconLocal } from '@/icons/DashboardNavIcons';
@@ -44,7 +44,7 @@ const EditAgentModal = ({
           </div>
 
           <div className="flex w-full mt-6">
-            <FancyButton
+            <Button
               variant="primary"
               className="w-full"
               onClick={() => {
@@ -53,7 +53,7 @@ const EditAgentModal = ({
               }}
             >
               Save
-            </FancyButton>
+            </Button>
           </div>
         </div>
       </Modal>

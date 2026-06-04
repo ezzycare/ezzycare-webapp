@@ -1,5 +1,5 @@
 import Dropdown from '@/components/Ui/Dropdown';
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { TextInput } from '@/components/Ui/TextInput';
 import { tempRoles } from '@/utils/helper';
@@ -37,20 +37,20 @@ const InviteMemberModal = ({
           </div>
 
           <div className="flex w-full gap-2 items-center mt-6">
-            <FancyButton
+            <Button
               variant="outline"
               className="w-full"
               onClick={() => setOpenModal(false)}
             >
               Cancel
-            </FancyButton>
-            <FancyButton
+            </Button>
+            <Button
               variant="primary"
               className="w-full"
               onClick={() => setOpenModal(false)}
             >
               Send Invitation
-            </FancyButton>
+            </Button>
           </div>
         </div>
       </Modal>

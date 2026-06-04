@@ -1,12 +1,12 @@
 'use client';
 
+import Button from '@/components/Ui/Button';
 import Card from '@/components/Ui/Card';
-import FancyButton from '@/components/Ui/FancyButton';
 import { RadioItem } from '@/components/Ui/RadioGroup';
 import {
-  HospitalIconLocal,
-  StethoscopeIconLocal,
-  UserIconLocal,
+    HospitalIconLocal,
+    StethoscopeIconLocal,
+    UserIconLocal,
 } from '@/icons/DashboardNavIcons';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -66,7 +66,7 @@ const Page = () => {
         </div>
 
         <div className="mt-10 flex items-center gap-3 w-full">
-          <FancyButton
+          <Button
             className="w-full text-white"
             variant="primary"
             disabled={!selectedType?.length}
@@ -75,7 +75,7 @@ const Page = () => {
             }}
           >
             Continue
-          </FancyButton>
+          </Button>
         </div>
       </div>
     </Card>

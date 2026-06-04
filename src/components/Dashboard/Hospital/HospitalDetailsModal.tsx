@@ -2,7 +2,7 @@
 
 import ImageUpload from '@/components/Base/ImageUpload';
 import { Button } from '@/components/Ui/Button';
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import TextArea from '@/components/Ui/TextArea';
 import { TextInput } from '@/components/Ui/TextInput';
@@ -153,7 +153,7 @@ const HospitalDetailsModal = ({
           </div>
 
           <div className="flex w-full gap-3 mt-6">
-            <FancyButton
+            <Button
               variant="primary"
               className="w-full"
               onClick={() => {
@@ -162,10 +162,10 @@ const HospitalDetailsModal = ({
               }}
             >
               Save changes
-            </FancyButton>
-            <FancyButton className="w-full" onClick={() => setOpenModal(false)}>
+            </Button>
+            <Button className="w-full" onClick={() => setOpenModal(false)}>
               Cancel
-            </FancyButton>
+            </Button>
           </div>
         </div>
       </Modal>

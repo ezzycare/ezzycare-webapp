@@ -1,7 +1,7 @@
 'use client';
 
+import Button from '@/components/Ui/Button';
 import Card from '@/components/Ui/Card';
-import FancyButton from '@/components/Ui/FancyButton';
 import { toaster } from '@/lib/toaster';
 import { cn } from '@/lib/utils';
 import { ProgressBar } from '@heroui/react';
@@ -174,7 +174,7 @@ const UploadHospitalDocs = () => {
             />
           ))}
 
-          <FancyButton
+          <Button
             className="mt-7 flex h-12 w-full justify-center"
             variant="primary"
             loading={loading}
@@ -185,7 +185,7 @@ const UploadHospitalDocs = () => {
             }}
           >
             Submit
-          </FancyButton>
+          </Button>
         </div>
       </div>
     </Card>

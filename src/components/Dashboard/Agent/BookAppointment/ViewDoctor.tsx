@@ -1,4 +1,4 @@
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import { CalendarIconLocal } from '@/icons/DashboardNavIcons';
 import { formatCurrency } from '@/utils/helper';
 import { CircleDollarSign, MapPin } from 'lucide-react';
@@ -16,13 +16,13 @@ const ViewDoctor = ({
     <div>
       <DoctorCard key={doctor.id} doctor={doctor} />
 
-      <FancyButton
+      <Button
         variant="primary"
         className="mt-4 text-lg! py-4.25! w-full"
         onClick={() => setState('book-appointment')}
       >
         Book Appointment{' '}
-      </FancyButton>
+      </Button>
 
       <section className="flex flex-col space-y-3.5 p-3.5">
         <article>

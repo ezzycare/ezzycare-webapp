@@ -2,7 +2,7 @@
 
 import LeftHeroImage from '@/assets/img/left-hero-img.png';
 import RightHeroImage from '@/assets/img/right-hero-img.png';
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import ArrowTopRight from '@/icons/ArrowTopRight';
 import { useGSAP } from '@gsap/react';
 import clsx from 'clsx';
@@ -101,16 +101,16 @@ const Hero = () => {
         </p>
 
         <div className="flex space-x-2 sm:space-x-4 justify-center mt-10">
-          <FancyButton variant="outline" className="px-3! sm:px-6!">
+          <Button variant="outline" className="px-3! sm:px-6!">
             Explore Hospitals
-          </FancyButton>
-          <FancyButton
+          </Button>
+          <Button
             variant="primary"
             icon={<ArrowTopRight />}
             className="px-3! sm:px-6! text-sm!"
           >
             Book Appointment
-          </FancyButton>
+          </Button>
         </div>
       </div>
 

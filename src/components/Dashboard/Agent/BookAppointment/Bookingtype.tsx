@@ -1,4 +1,4 @@
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { RadioItem } from '@/components/Ui/RadioGroup';
 import {
@@ -63,7 +63,7 @@ const BookingType = ({
           ))}
         </div>
         <div className="mt-10 flex items-center gap-3 w-full">
-          <FancyButton
+          <Button
             className="w-full text-white"
             variant="primary"
             disabled={!selectedType?.length}
@@ -72,7 +72,7 @@ const BookingType = ({
             }}
           >
             Continue
-          </FancyButton>
+          </Button>
         </div>
       </div>
     </Modal>

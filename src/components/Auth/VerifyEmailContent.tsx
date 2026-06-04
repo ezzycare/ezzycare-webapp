@@ -7,7 +7,7 @@ import {
   VerifyEmailPayload,
 } from '@/apiQuery/hospital/auth/verifyEmail';
 import Card from '@/components/Ui/Card';
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import OtpInput from '@/components/Ui/OtpInput';
 import { toaster } from '@/lib/toaster';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
@@ -82,7 +82,7 @@ const VerifyEmailContent = () => {
           resendOtpFunction={handleResendOtp}
         />
 
-        <FancyButton
+        <Button
           variant="primary"
           className="w-full mt-10"
           onClick={handleVerifyEmail}
@@ -90,7 +90,7 @@ const VerifyEmailContent = () => {
           loading={isPending}
         >
           Verify
-        </FancyButton>
+        </Button>
       </div>
     </Card>
   );

@@ -1,5 +1,5 @@
 import StateModal from '@/components/Base/StateModal';
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { PhoneInput, TextInput } from '@/components/Ui/TextInput';
 import { EnvelopeClosedIcon } from '@radix-ui/react-icons';
@@ -34,7 +34,7 @@ const CreateDoctorModal = ({
           </div>
 
           <div className="flex w-full mt-6">
-            <FancyButton
+            <Button
               variant="primary"
               className="w-full"
               onClick={() => {
@@ -43,7 +43,7 @@ const CreateDoctorModal = ({
               }}
             >
               Create
-            </FancyButton>
+            </Button>
           </div>
         </div>
       </Modal>

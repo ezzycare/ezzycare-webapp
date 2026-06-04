@@ -1,5 +1,5 @@
 import Dropdown from '@/components/Ui/Dropdown';
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { TextInput } from '@/components/Ui/TextInput';
 import { PersonIcon } from '@radix-ui/react-icons';
@@ -110,7 +110,7 @@ const SelectSpecialty = ({
         </div>
 
         <div className="mt-10 flex items-center gap-3 w-full">
-          <FancyButton
+          <Button
             type="submit"
             className="w-full text-white"
             variant="primary"
@@ -118,7 +118,7 @@ const SelectSpecialty = ({
             onClick={() => setState('select-doctor')}
           >
             Continue
-          </FancyButton>
+          </Button>
         </div>
       </form>
     </Modal>

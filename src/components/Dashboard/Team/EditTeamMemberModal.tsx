@@ -1,7 +1,7 @@
 import Toggle from '@/components/Base/Toggle';
 import Checkbox from '@/components/Ui/Checkbox';
 import Dropdown from '@/components/Ui/Dropdown';
-import FancyButton from '@/components/Ui/FancyButton';
+import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { TeamMemberType } from '@/types/team';
 import React from 'react';
@@ -96,20 +96,20 @@ const EditTeamMemberModal = ({
           </div>
 
           <div className="flex w-full mt-6 gap-2">
-            <FancyButton
+            <Button
               variant="outline"
               className="w-full"
               onClick={() => setOpenModal(false)}
             >
               Delete User
-            </FancyButton>
-            <FancyButton
+            </Button>
+            <Button
               variant="primary"
               className="w-full"
               onClick={() => setOpenModal(false)}
             >
               Save Changes
-            </FancyButton>
+            </Button>
           </div>
         </div>
       </Modal>
