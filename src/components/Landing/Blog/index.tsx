@@ -10,7 +10,7 @@ const Blog = () => {
         'relative items-center pt-8 sm:pt-16 pb-10 sm:pb-20 px-5 lg:px-0 font-geist-sans'
       )}
     >
-      <h4 className="text-primary-text text-base font-semibold tracking-widest">
+      <h4 className="text-primary text-base font-semibold tracking-widest">
         Blog & ideas
       </h4>
 

@@ -1,11 +1,11 @@
 'use client';
 
 import { useGSAP } from '@gsap/react';
-import styles from './Home.module.css';
 import clsx from 'clsx';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
 import React, { useState } from 'react';
+import styles from './Home.module.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -85,12 +85,12 @@ const Features = () => {
         'relative items-center py-10 sm:py-20 px-5 lg:px-0 font-geist-sans'
       )}
     >
-      <h4 className="text-primary-text text-base font-semibold tracking-widest">
+      <h4 className="text-blue-11 text-base font-semibold tracking-widest">
         FEATURES
       </h4>
 
       <h3
-        className="text-3xl sm:text-4xl font-medium mt-3.5 mb-3 max-w-80 sm:max-w-130 mx-auto text-center"
+        className="text-3xl sm:text-4xl lg:text-[46px] font-medium mt-3.5 mb-3 max-w-80 sm:max-w-130 mx-auto text-center"
         role="heading"
       >
         Everything You Need for Connected{' '}
@@ -100,7 +100,7 @@ const Features = () => {
       </h3>
 
       <p
-        className="text-[#788498] max-w-125 text-center mx-auto"
+        className="text-text-muted max-w-125 text-center mx-auto"
         role="description"
       >
         EzzyCare combines intelligent technology, verified healthcare networks,
@@ -119,7 +119,7 @@ const Features = () => {
               key={index}
               onClick={() => setActiveIndex(index)}
               className={clsx(
-                'relative opacity-0',
+                'relative opacity-0 text-text',
                 'group h-50 sm:h-68.5 flex flex-col p-7 rounded-2xl cursor-pointer',
                 'bg-[#F7F9FE] transition-colors duration-300',
                 isActive || 'hover:text-white'
@@ -140,7 +140,7 @@ const Features = () => {
                   'mt-auto z-1',
                   isActive
                     ? 'text-white'
-                    : 'text-[#788498] group-hover:text-white'
+                    : 'text-text-muted group-hover:text-white'
                 )}
               >
                 {feature.description}

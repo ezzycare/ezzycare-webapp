@@ -10,7 +10,6 @@ import { gsap } from 'gsap';
 import { SplitText } from 'gsap/all';
 import Image from 'next/image';
 import React, { useEffect, useMemo } from 'react';
-import HeroStats from './HeroStats';
 import styles from './Home.module.css';
 
 gsap.registerPlugin(SplitText);
@@ -76,7 +75,7 @@ const Hero = () => {
   return (
     <section
       className={clsx(
-        'w-full min-h-[70vh] max-h-187.5 sm:min-h-[80vh] sm:max-h-auto max-w-300 mx-auto flex flex-col',
+        'w-full min-h-[55vh] max-h-187.5 sm:max-h-auto max-w-300 mx-auto flex flex-col',
         'relative items-center pt-10 sm:pt-30 pb-10 sm:pb-20 px-5 lg:px-0'
       )}
     >
@@ -84,7 +83,7 @@ const Hero = () => {
         <h1
           className={clsx(
             'max-w-156 leading-12 tracking-tighter font-geist-sans',
-            'text-4xl! sm:text-[46px] text-center font-medium text-[#005365] mb-4'
+            'text-4xl sm:text-[46px] text-center font-medium text-[#005365] mb-4'
           )}
           role="heading"
         >
@@ -93,7 +92,7 @@ const Hero = () => {
           <span className={styles['title-blue']}>Labs</span> - Anywhere, Anytime
         </h1>
         <p
-          className="max-w-150 text-center text-base text-[#5B6575] px-5"
+          className="max-w-150 text-center text-lg text-[#5B6575] px-5 font-inter"
           role="description"
         >
           A unified healthcare platform connecting patients, doctors, and
@@ -101,21 +100,17 @@ const Hero = () => {
         </p>
 
         <div className="flex space-x-2 sm:space-x-4 justify-center mt-10">
-          <Button variant="outline" className="px-3! sm:px-6!">
+          <Button variant="outline" className="px-3! sm:px-6! sm:text-lg">
             Explore Hospitals
           </Button>
           <Button
             variant="primary"
-            icon={<ArrowTopRight />}
-            className="px-3! sm:px-6! text-sm!"
+            className="px-3! sm:px-6! text-sm sm:text-lg gap-2"
           >
-            Book Appointment
+            <span className="text-sm sm:text-lg">Book Appointment</span>
+            <ArrowTopRight />
           </Button>
         </div>
-      </div>
-
-      <div className="w-full mt-auto">
-        <HeroStats />
       </div>
 
       {/* hero left and right images */}

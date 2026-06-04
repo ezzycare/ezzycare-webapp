@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
 import SlidingTabs from '@/components/Base/SlidingTabs';
-import clsx from 'clsx';
 import { allSteps } from '@/data/howEzzycareWorks';
+import clsx from 'clsx';
+import React from 'react';
 
 const HowEzzycareWorks = ({ children }: { children?: React.ReactNode }) => {
   const [activeTab, setActiveTab] = React.useState(0);
@@ -17,12 +17,12 @@ const HowEzzycareWorks = ({ children }: { children?: React.ReactNode }) => {
         'relative items-center py-10 sm:py-20 px-5 lg:px-0 font-geist-sans'
       )}
     >
-      <h4 className="text-primary-text text-base font-semibold tracking-widest">
+      <h4 className="text-blue-11 text-base font-semibold tracking-widest">
         HOW IT WORKS
       </h4>
 
       <h3
-        className="text-3xl sm:text-4xl font-medium mt-3.5 mb-3 max-w-80 sm:max-w-130 mx-auto text-center"
+        className="text-3xl sm:text-4xl lg:text-[46px] font-medium mt-3.5 mb-3 max-w-80 sm:max-w-130 mx-auto text-center"
         role="heading"
       >
         How Ezzycare Works
@@ -49,7 +49,7 @@ const HowEzzycareWorks = ({ children }: { children?: React.ReactNode }) => {
         </h4>
 
         <div className="grid grid-cols-1 md:grid-cols-2 justify-between gap-5">
-          <div className="flex flex-col mt-6 max-w-[463px]">
+          <div className="flex flex-col mt-6 max-w-115.75">
             {allSteps[activeTab]?.steps.map((step, index) => (
               <div
                 key={step.title}
@@ -91,7 +91,7 @@ const HowEzzycareWorks = ({ children }: { children?: React.ReactNode }) => {
 
                 <div>
                   <h4 className="text-base font-semibold">{step.title}</h4>
-                  <p className="text-sm text-[#788498] mt-1">
+                  <p className="text-sm text-text-muted mt-1">
                     {step.description}
                   </p>
                 </div>

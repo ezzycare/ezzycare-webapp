@@ -2,12 +2,12 @@
 
 import TrustSafetyImage from '@/assets/img/trust-safety-img.png';
 import TickCircle from '@/icons/TickCircle';
-import Image from 'next/image';
+import { useGSAP } from '@gsap/react';
 import clsx from 'clsx';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
+import Image from 'next/image';
 import React from 'react';
-import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -91,19 +91,19 @@ const TrustAndSafety = () => {
         'relative items-center py-10 sm:py-20 px-5 lg:px-0 font-geist-sans'
       )}
     >
-      <h4 className="text-primary-text text-base font-semibold tracking-widest">
+      <h4 className="text-blue-11 text-base font-semibold tracking-widest">
         TRUST & SAFETY
       </h4>
 
       <h3
-        className="text-3xl sm:text-4xl font-medium mt-3.5 mb-3 max-w-80 sm:max-w-130 mx-auto text-center"
+        className="text-3xl sm:text-4xl lg:text-[40px] font-medium mt-3.5 mb-3 max-w-80 sm:max-w-130 mx-auto text-center"
         role="heading"
       >
         Health care you can trust
       </h3>
 
       <p
-        className="text-[#788498] max-w-112.5 text-center mx-auto"
+        className="text-text-muted max-w-112.5 text-center mx-auto"
         role="description"
       >
         EzzyCare is built on verified medical networks, secure technology, and

@@ -10,7 +10,7 @@ import EmptyTeamsTable from '@/components/Dashboard/Team/EmptyTeamsTable';
 import InviteMemberModal from '@/components/Dashboard/Team/InviteMemberModal';
 import RolesTable from '@/components/Dashboard/Team/RolesTable';
 import TeamMembersTable from '@/components/Dashboard/Team/TeamMembersTable';
-import { Button } from '@/components/Ui/Button';
+import Button from '@/components/Ui/Button';
 import { UserIconLocal, UsersIconLocal } from '@/icons/DashboardNavIcons';
 import { RoleType, TeamMemberType } from '@/types/team';
 import { paginateData } from '@/utils/helper';

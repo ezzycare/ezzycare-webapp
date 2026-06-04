@@ -1,12 +1,12 @@
 'use client';
 
 import WhyEzzyImage from '@/assets/img/why-ezzycare-img.png';
-import Image from 'next/image';
-import clsx from 'clsx';
-import { ScrollTrigger } from 'gsap/all';
-import { gsap } from 'gsap';
-import React from 'react';
 import { useGSAP } from '@gsap/react';
+import clsx from 'clsx';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/all';
+import Image from 'next/image';
+import React from 'react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -71,7 +71,7 @@ const About = () => {
       >
         <h4
           className={clsx(
-            'text-center md:text-left text-primary-text',
+            'text-center md:text-left text-primary',
             'text-base font-semibold tracking-widest  opacity-0'
           )}
         >

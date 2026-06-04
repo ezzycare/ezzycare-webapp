@@ -1,8 +1,8 @@
 import AppLinkBg from '@/assets/img/app-link-bg.png';
-import Image from 'next/image';
 import AppStoreIcon from '@/icons/AppStoreIcon';
 import GooglePlayIcon from '@/icons/GooglePlayIcon';
 import clsx from 'clsx';
+import Image from 'next/image';
 
 const AppLink = () => {
   return (
@@ -23,7 +23,7 @@ const AppLink = () => {
         />
         <div className="z-2">
           <h3
-            className="text-4xl text-white font-medium mt-3.5 mb-3 max-w-80 sm:max-w-130 mx-auto text-center"
+            className="text-4xl lg:text-[46px] text-white font-medium mt-3.5 mb-3 max-w-80 sm:max-w-130 mx-auto text-center"
             role="heading"
           >
             Healthcare, simplified

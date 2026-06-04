@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
 import Pagination from '@/components/Base/Pagination';
 import { paginatePosts } from '@/data/blog';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 
 const BlogItems = ({ isHighlight = false }: { isHighlight?: boolean }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,11 +49,13 @@ const BlogItems = ({ isHighlight = false }: { isHighlight?: boolean }) => {
       </div>
 
       {!isHighlight && (
-        <Pagination
-          pages={meta.totalPages}
-          page={currentPage}
-          setPage={setCurrentPage}
-        />
+        <div className="mt-10 w-full">
+          <Pagination
+            pages={meta.totalPages}
+            page={currentPage}
+            setPage={setCurrentPage}
+          />
+        </div>
       )}
     </div>
   );

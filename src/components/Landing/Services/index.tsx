@@ -1,7 +1,7 @@
 'use client';
 
-import clsx from 'clsx';
 import MenuBoardIcon from '@/icons/MenuBoardIcon';
+import clsx from 'clsx';
 
 const servicesList = [
   {
@@ -60,7 +60,7 @@ const Services = () => {
         'relative items-center pt-15 pb-20 px-5 lg:px-0 font-geist-sans'
       )}
     >
-      <h4 className="text-primary-text text-base font-semibold tracking-widest">
+      <h4 className="text-primary text-base font-semibold tracking-widest">
         SERVICES
       </h4>
 

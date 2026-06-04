@@ -1,7 +1,6 @@
 'use client';
 
 import ImageUpload from '@/components/Base/ImageUpload';
-import { Button } from '@/components/Ui/Button';
 import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import TextArea from '@/components/Ui/TextArea';

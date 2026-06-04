@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import BlogItems from '../Blog/BlogItems';
 import Link from 'next/link';
+import BlogItems from '../Blog/BlogItems';
 
 const Insights = () => {
   return (
@@ -11,19 +11,19 @@ const Insights = () => {
         'relative items-center py-10 sm:py-20 px-5 lg:px-0 font-geist-sans'
       )}
     >
-      <h4 className="text-primary-text text-base font-semibold tracking-widest">
+      <h4 className="text-blue-11 text-base font-semibold tracking-widest">
         Insights & ideas
       </h4>
 
       <h3
-        className="text-3xl sm:text-4xl font-medium mt-3.5 mb-3 max-w-80 sm:max-w-130 mx-auto text-center"
+        className="text-3xl sm:text-4xl lg:text-[40px] font-medium mt-3.5 mb-3 max-w-80 sm:max-w-135 mx-auto text-center"
         role="heading"
       >
         Latest blog posts
       </h3>
 
       <p
-        className="text-[#788498] max-w-112.5 text-center mx-auto"
+        className="text-text-muted max-w-112.5 text-center mx-auto"
         role="description"
       >
         Everything you need to know about getting care on EzzyCare.
@@ -38,9 +38,7 @@ const Insights = () => {
           'cursor-pointer border border-primary rounded-lg'
         )}
       >
-        <p className="text-primary-text text-base font-medium">
-          View all posts
-        </p>
+        <p className="text-primary text-base font-medium">View all posts</p>
       </Link>
     </section>
   );

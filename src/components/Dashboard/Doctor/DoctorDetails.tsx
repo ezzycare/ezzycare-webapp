@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/Ui/Button';
 import Button from '@/components/Ui/Button';
 import { DepartmentIconLocal } from '@/icons/DashboardIcons';
 import { FolderIconLocal } from '@/icons/FolderIconLocal';

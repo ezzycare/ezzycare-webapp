@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/Ui/Button';
+import Button from '@/components/Ui/Button';
 import { RadioItem } from '@/components/Ui/RadioGroup';
 import { TextInput } from '@/components/Ui/TextInput';
 import { useState } from 'react';

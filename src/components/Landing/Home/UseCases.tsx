@@ -80,19 +80,19 @@ const UseCases = () => {
         'relative items-center py-10 sm:py-20 px-5 lg:px-0 font-geist-sans'
       )}
     >
-      <h4 className="text-primary-text text-base font-semibold tracking-widest">
+      <h4 className="text-blue-11 text-base font-semibold tracking-widest">
         USE CASES
       </h4>
 
       <h3
-        className="text-3xl sm:text-4xl font-medium mt-3.5 mb-3 max-w-80 sm:max-w-130 mx-auto text-center"
+        className="font-geist-sans text-3xl sm:text-4xl lg:text-[40px] font-medium mt-3.5 mb-3 max-w-80 sm:max-w-135 mx-auto text-center"
         role="heading"
       >
         Get care when you need it
       </h3>
 
       <p
-        className="text-[#788498] max-w-112.5 text-center mx-auto"
+        className="text-text-muted max-w-112.5 text-center mx-auto"
         role="description"
       >
         From urgent health concerns to routine medical needs, EzzyCare connects
@@ -107,7 +107,7 @@ const UseCases = () => {
           <div
             key={index}
             className="group h-50 sm:h-68.5 flex flex-col p-7 rounded-2xl hover:text-white opacity-0
-              bg-[#F7F9FE] transition-colors duration-300 cursor-pointer"
+              bg-[#F7F9FE] transition-colors duration-300 cursor-pointer text-text"
           >
             <div
               className={`${clsx(
@@ -126,7 +126,7 @@ const UseCases = () => {
                 <useCase.icon className="text-black group-hover:text-white transition-colors duration-300" />
               </span>
             </h5>
-            <p className="mt-auto text-[#788498] group-hover:text-white transition-colors duration-300 z-1">
+            <p className="mt-auto text-text-muted group-hover:text-white transition-colors duration-300 z-1">
               {useCase.description}
             </p>
           </div>

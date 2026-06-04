@@ -1,8 +1,8 @@
 import MarkdownViewer from '@/components/Base/MarkdownViewer';
 import { getPost } from '@/lib/getPost';
 import clsx from 'clsx';
-import Image from 'next/image';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 
 export async function generateMetadata({
   params,
@@ -50,7 +50,7 @@ export default async function Page({
         'relative items-center py-10 sm:py-16 px-5 lg:px-0 font-geist-sans'
       )}
     >
-      <h4 className="text-primary-text text-base font-semibold tracking-widest uppercase">
+      <h4 className="text-primary text-base font-semibold tracking-widest uppercase">
         Insights & ideas
       </h4>
 

@@ -4,7 +4,7 @@
 import Pagination from '@/components/Base/Pagination';
 import CreateHospitalModal from '@/components/Dashboard/Hospital/CreateHospitalModal';
 import HospitalsTable from '@/components/Dashboard/Hospital/HospitalsTable';
-import { Button } from '@/components/Ui/Button';
+import Button from '@/components/Ui/Button';
 import { HospitalType } from '@/types/hospitals';
 import { useState } from 'react';
 

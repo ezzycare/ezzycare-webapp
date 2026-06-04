@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/Ui/Button';
+import Button from '@/components/Ui/Button';
 import Modal, { type ModalProps } from '@/components/Ui/Modal';
 import { cn } from '@/lib/utils';
 import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react';

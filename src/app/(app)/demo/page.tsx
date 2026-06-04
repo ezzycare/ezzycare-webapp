@@ -1,15 +1,15 @@
 'use client';
 
 import BaseTable from '@/components/Base/Table';
-import { Button } from '@/components/Ui/Button';
+import Button from '@/components/Ui/Button';
 import Checkbox from '@/components/Ui/Checkbox';
 import Dropdown from '@/components/Ui/Dropdown';
 import Modal from '@/components/Ui/Modal';
 import RadioGroup from '@/components/Ui/RadioGroup';
 import {
-  PasswordInput,
-  PhoneInput,
-  TextInput,
+    PasswordInput,
+    PhoneInput,
+    TextInput,
 } from '@/components/Ui/TextInput';
 import { useState } from 'react';
 

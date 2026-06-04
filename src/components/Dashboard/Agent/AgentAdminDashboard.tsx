@@ -2,7 +2,7 @@
 
 // import { redirect } from 'next/navigation';
 import IconBase from '@/components/Dashboard/IconBase';
-import { Button } from '@/components/Ui/Button';
+import Button from '@/components/Ui/Button';
 import { NotificationDarkIconLocal } from '@/icons/DashboardNavIcons';
 import PeopleIconLocal from '@/icons/PeopleIcon';
 import { BookingType } from '@/types/bookings';

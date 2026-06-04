@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/Ui/Button';
+import Button from '@/components/Ui/Button';
 import StatusText from '@/components/Ui/StatusText';
 import { CalendarIconLocal, UserIconLocal } from '@/icons/DashboardNavIcons';
 import { PatientType } from '@/types/patients';

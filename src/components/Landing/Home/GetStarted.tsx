@@ -1,16 +1,16 @@
 'use client';
 
-import styles from './Home.module.css';
-import ArrowTopRight from '@/icons/ArrowTopRight';
 import Button from '@/components/Ui/Button';
+import ArrowTopRight from '@/icons/ArrowTopRight';
 import HealthPlusIcon from '@/icons/HealthPlusIcon';
-import clsx from 'clsx';
-import { useGSAP } from '@gsap/react';
-import React from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/all';
 import HospitalIcon from '@/icons/HospitalIcon';
 import StethoscopeIcon from '@/icons/StethoscopeIcon';
+import { useGSAP } from '@gsap/react';
+import clsx from 'clsx';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/all';
+import React from 'react';
+import styles from './Home.module.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -111,18 +111,19 @@ const GetStarted = () => {
             aria-label="Get Started"
           >
             Get Started{' '}
-            <span className={`${styles['title-italics']}`}>Today</span>
+            <span
+              className={`${styles['title-italics']} font-playfair-display`}
+            >
+              Today
+            </span>
           </h2>
-          <p className="text-base mt-3 mb-6" role="description">
+          <p className="text-base text-text mt-3 mb-6" role="description">
             Take some quicks actions today and get started with improving your
             health...
           </p>
-          <Button
-            variant="primary"
-            icon={<ArrowTopRight />}
-            className="px-6!"
-          >
+          <Button variant="primary" className="px-6! gap-2">
             Book Appointment
+            <ArrowTopRight />
           </Button>
         </div>
 
@@ -146,22 +147,22 @@ const GetStarted = () => {
               >
                 <item.icon width={13} height={14} />
               </div>
-              <h3 className="text-lg font-semibold mb-2.5 text-black group-hover:text-white">
+              <h3 className="text-lg font-semibold mb-2.5 text-text group-hover:text-white">
                 {item.title}
               </h3>
-              <p className="mb-6 text-black group-hover:text-white">
+              <p className="mb-6 max-w-75 text-sm text-text group-hover:text-white">
                 {item.description}
               </p>
               <Button
                 variant="primary"
-                icon={<ArrowTopRight />}
                 className={clsx(
-                  'px-6! group-hover:bg-[#00ADDB94]!  text-lg! w-full font-medium rounded-xl',
-                  'items-center justify-center transition-colors'
+                  'px-6! group-hover:bg-[#00ADDB94]! text-lg! w-full font-medium rounded-xl',
+                  'items-center justify-center transition-colors gap-2'
                 )}
                 href={item.link}
               >
                 {item.btnTitle}
+                <ArrowTopRight />
               </Button>
             </div>
           ))}

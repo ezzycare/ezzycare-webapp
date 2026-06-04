@@ -1,14 +1,14 @@
 'use client';
 
 import WhyEzzyImage from '@/assets/img/why-ezzycare-img.png';
-import Image from 'next/image';
-import styles from './Home.module.css';
 import TickCircle from '@/icons/TickCircle';
-import clsx from 'clsx';
-import { ScrollTrigger } from 'gsap/all';
-import { gsap } from 'gsap';
-import React from 'react';
+import { cn } from '@/lib/utils';
 import { useGSAP } from '@gsap/react';
+import clsx from 'clsx';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/all';
+import Image from 'next/image';
+import React from 'react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -118,18 +118,21 @@ const WhyEzzycare = () => {
         <header ref={titleRef}>
           <h4
             className={clsx(
-              'text-center md:text-left text-primary-text',
+              'text-center md:text-left text-blue-11',
               'text-base font-semibold tracking-widest'
             )}
           >
             WHY EZZYCARE?
           </h4>
           <h3
-            className="text-3xl sm:text-4xl font-medium mt-3.5 mb-3 max-w-80 sm:max-w-130 mx-auto text-center"
+            className={cn(
+              `font-geist-sans text-3xl sm:text-4xl lg:text-[46px] font-medium mt-3.5 
+              mb-3 max-w-80 sm:max-w-113 mx-auto sm:mx-0`
+            )}
             role="heading"
           >
             Built for
-            <span className={`${styles['title-italics']} opacity-60`}>
+            <span className={`opacity-60 font-playfair-display italic`}>
               Unique{' '}
             </span>
             Health Care Needs

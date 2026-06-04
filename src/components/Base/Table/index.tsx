@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/Ui/Button';
+import Button from '@/components/Ui/Button';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Dropdown from '@/components/Ui/Dropdown';
 import { TextInput } from '@/components/Ui/TextInput';

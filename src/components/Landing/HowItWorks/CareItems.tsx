@@ -1,8 +1,5 @@
 'use client';
 
-import DoctorIcon from '@/icons/DoctorIcon';
-import HospitalIcon from '@/icons/HospitalIcon';
-import StethoscopeIcon from '@/icons/StethoscopeIcon';
 import TestTubeIcon from '@/icons/TestTubeIcon';
 import { useGSAP } from '@gsap/react';
 import clsx from 'clsx';
@@ -86,7 +83,7 @@ const CareItems = () => {
           <div
             key={index}
             className="group h-92.5 flex flex-col p-7 rounded-2xl hover:text-white opacity-0
-              bg-[#F7F9FE] hover:bg-[#1D5FE6] transition-colors duration-500 cursor-pointer"
+              bg-[#F7F9FE] hover:bg-primary transition-colors duration-500 cursor-pointer"
           >
             <h5 className="font-semibold text-lg flex gap-3 items-center">
               {careItem.title}
@@ -94,7 +91,7 @@ const CareItems = () => {
                 <careItem.icon className="text-black group-hover:text-white transition-colors duration-300" />
               </span>
             </h5>
-            <p className="mt-10 text-[#788498] group-hover:text-white transition-colors duration-300">
+            <p className="mt-10 text-text-muted group-hover:text-white transition-colors duration-300">
               {careItem.description}
             </p>
           </div>

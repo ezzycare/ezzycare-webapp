@@ -69,11 +69,11 @@ const NavBar = () => {
               key={item.name}
               href={item.path}
               className={`${clsx(
-                'text-sm font-medium hover:text-primary ',
+                'text-base font-medium hover:text-primary ',
                 'cursor-pointer hover:scale-105 transition-colors',
                 'p-2.5'
               )} 
-              ${pathname === item.path ? 'text-primary font-bold!' : 'text-[#005365]'}`}
+              ${pathname === item.path ? 'text-primary font-bold!' : 'text-text-alt'}`}
             >
               {item.name}
             </Link>

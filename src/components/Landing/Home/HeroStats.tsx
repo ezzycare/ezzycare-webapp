@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
+import { useEffect, useRef, useState } from 'react';
 
 const stats = [
   { label: 'Care givers', value: 2500, unit: '+' },
@@ -53,23 +53,28 @@ const HeroStats = () => {
   }, [start]);
 
   return (
-    <div ref={ref} className="w-full grid grid-cols-4 justify-evenly">
-      {stats.map((stat, i) => (
-        <div key={stat.label} className="flex flex-col items-center">
-          <h2
-            className={clsx(
-              'font-geist-sans text-center font-medium text-[#005365]',
-              'text:2xl sm:text-3xl md:text-[35px]'
-            )}
-          >
-            {counts[i]}
-            {!!counts[i] && <span>{stat.unit}</span>}
-          </h2>
-          <p className="text-xs sm:text-sm md:text-lg text-center text-[#788498]">
-            {stat.label}
-          </p>
-        </div>
-      ))}
+    <div className="w-full mt-auto bg-[#F9F9FB] py-5 sm:py-10 mb-10 sm:mb-20 font-inter">
+      <div
+        ref={ref}
+        className="w-full max-w-280 mx-auto grid grid-cols-4 justify-evenly"
+      >
+        {stats.map((stat, i) => (
+          <div key={stat.label} className="flex flex-col gap-3">
+            <h2
+              className={clsx(
+                'text-left font-medium text-text',
+                'text:2xl sm:text-3xl md:text-[35px]'
+              )}
+            >
+              {counts[i]}
+              {!!counts[i] && <span>{stat.unit}</span>}
+            </h2>
+            <p className="text-xs sm:text-sm md:text-lg text-left text-[#788498]">
+              {stat.label}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

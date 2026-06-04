@@ -7,7 +7,7 @@ import Pagination from '@/components/Base/Pagination';
 import DoctorsTable from '@/components/Dashboard/Doctor/DoctorsTable';
 import InviteDoctorModal from '@/components/Dashboard/Doctor/InviteDoctorModal';
 import IconBase from '@/components/Dashboard/IconBase';
-import { Button } from '@/components/Ui/Button';
+import Button from '@/components/Ui/Button';
 import { UserIconLocal } from '@/icons/DashboardNavIcons';
 import { DoctorType } from '@/types/doctors';
 import { Plus } from 'lucide-react';

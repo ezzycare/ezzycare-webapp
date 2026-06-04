@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/Ui/Button';
 import Button from '@/components/Ui/Button';
 import StatusText from '@/components/Ui/StatusText';
 import { useGetAccountType } from '@/hooks/useGetAccountType';
