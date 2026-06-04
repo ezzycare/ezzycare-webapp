@@ -1,59 +1,41 @@
 'use client';
 
-import FullLogo from '@/icons/FullLogo';
-import clsx from 'clsx';
-import Link from 'next/link';
-import { useState } from 'react';
+import NavBar from '@/components/Base/Nav';
+import { Error404Icon } from '@/icons/Error404Icon';
+import { AuthStore, useAuthStore } from '@/stores/authStore';
 
 export default function NotFoundPage() {
-  const [showSecret, setShowSecret] = useState(false);
+  const isAuthenticated = useAuthStore((state: AuthStore) =>
+    state.isAuthenticated()
+  );
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-surface-default px-4">
-      <FullLogo className="h-12 w-44 mb-8" />
-
-      {/* 404 Text */}
-      <div className="text-center space-y-6">
-        <h1 className="text-8xl font-extrabold text-text-muted tracking-tight animate-pulse">
-          404
-        </h1>
-        <p className="text-xl text-text-muted max-w-md mx-auto animate-fadeIn">
-          Oops! The page you’re looking for doesn’t exist.
-        </p>
-
-        {/* Buttons */}
-        <div className="flex flex-col sm:flex-row justify-center gap-4 mt-4">
-          <Link
-            href="/dashboard"
-            className={clsx(
-              'px-6 py-3 rounded-xl font-medium text-sm bg-blue-3a text-blue-11a hover:bg-blue-4a transition-all duration-300 transform hover:scale-105'
-            )}
-          >
-            Go Home
-          </Link>
+    <div className="w-full h-full">
+      <NavBar />
+      <div className="max-w-238 mx-auto w-full h-full grid grid-cols-1 md:grid-cols-2 gap-4 items-center justify-center bg-surface-default px-4">
+        <div>
+          <h1 className="text-4xl font-semibold text-text ">Page Not Found</h1>
+          <p className="text-text-muted mt-3">
+            We couldn’t find the page you were looking for. Please check the URL
+            to be sure it’s correct and try again.
+          </p>
 
           <button
-            className={clsx(
-              'px-6 py-3 rounded-xl font-medium text-sm border border-neutral-3a text-text-alt hover:bg-neutral-3a transition-all duration-300 transform hover:scale-105'
-            )}
-            onClick={() => setShowSecret(!showSecret)}
+            className="cursor-pointer bg-blue-3a text-blue-11 py-2 px-4 rounded-xl mt-10"
+            onClick={() => {
+              if (isAuthenticated) {
+                window.location.href = '/dashboard';
+              } else {
+                window.location.href = '/';
+              }
+            }}
           >
-            {showSecret ? 'Hide Secret' : 'Reveal Secret'}
+            Back to home page
           </button>
         </div>
-
-        {/* Secret Box */}
-        {showSecret && (
-          <div className="mt-4 p-4 rounded-xl bg-surface-card shadow-lg text-sm text-text-alt max-w-md mx-auto animate-fadeIn">
-            👀 Surprise! Even 404 pages can be stylish. Keep exploring our
-            dashboard.
-          </div>
-        )}
-      </div>
-
-      {/* Animated Emoji / Illustration */}
-      <div className="mt-12 animate-bounce">
-        <span className="text-9xl">🙈</span>
+        <div className="text-center mt-20">
+          <Error404Icon />
+        </div>
       </div>
     </div>
   );
