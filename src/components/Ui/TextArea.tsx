@@ -26,7 +26,7 @@ const TextArea = ({
   };
 
   return (
-    <div className="w-full space-y-2">
+    <div className="w-full flex flex-col gap-2">
       {label && (
         <label className="text-sm font-medium text-text tracking-wide">
           {label}

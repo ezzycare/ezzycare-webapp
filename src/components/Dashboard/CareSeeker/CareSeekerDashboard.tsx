@@ -3,8 +3,11 @@
 // import { redirect } from 'next/navigation';
 import { useGetHospitalDashboard } from '@/apiQuery/hospital';
 import AlertBanner from '@/components/Base/AlertBanner';
+import Button from '@/components/Ui/Button';
+import SearchInput from '@/components/Ui/SearchInput';
 import {
   CalendarIconLocal,
+  HospitalIconLocal,
   StethoscopeIconLocal,
   UsersIconLocal,
 } from '@/icons/DashboardNavIcons';
@@ -15,9 +18,9 @@ import { ArrowRight, Banknote } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import BookingTable from '../Booking/BookingTable';
+import EmptyAppointment from '../Hospital/EmptyAppointment';
+import HospitalDetailsModal from '../Hospital/HospitalDetailsModal';
 import IconBase from '../IconBase';
-import EmptyAppointment from './EmptyAppointment';
-import HospitalDetailsModal from './HospitalDetailsModal';
 
 interface Totals {
   title: string;
@@ -35,7 +38,7 @@ const hospital: HospitalType = {
   status: 'active',
 };
 
-const HospitalAdminDashboard = () => {
+const CareSeekerDashboard = () => {
   const { dashboard: dashboardData } = useGetHospitalDashboard();
   const user = useAuthStore((state: AuthStore) => state.user);
 
@@ -116,17 +119,49 @@ const HospitalAdminDashboard = () => {
 
   return (
     <div className="p-7.5 w-full">
+      <div>
+        <div className="text-text-muted">
+          <h2>
+            Morning,{' '}
+            <span className="text-text font-medium">
+              {user?.firstName}
+            </span>{' '}
+          </h2>
+          <p className="text-sm">How are you doing today? </p>
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          <SearchInput
+            value=""
+            onChange={() => {}}
+            placeholder="Search for doctors or hospitals"
+            filters={[]}
+            onFilterChange={() => {}}
+          />
+
+          <Button variant="primary" className="">
+            <StethoscopeIconLocal />
+            Doctors
+          </Button>
+          <Button variant="primary" className="bg-pink-10 hover:bg-pink-10/80">
+            <HospitalIconLocal />
+            Hospitals
+          </Button>
+        </div>
+      </div>
       {user && user?.status === 'PROFILE_NOT_COMPLETE' && (
-        <AlertBanner
-          type="info"
-          title="Complete Hospital Profile & Brand Setup"
-          content="Complete your hospital profile and brand setup to get discovered by more patients"
-          btnText="Complete profile"
-          btnIcon={<ArrowRight size={16} className="text-white" />}
-          btnAction={() => {
-            setShowProfileModal(true);
-          }}
-        />
+        <div className="w-full mt-5">
+          <AlertBanner
+            type="info"
+            title="Complete Hospital Profile & Brand Setup"
+            content="Complete your hospital profile and brand setup to get discovered by more patients"
+            btnText="Complete profile"
+            btnIcon={<ArrowRight size={16} className="text-white" />}
+            btnAction={() => {
+              setShowProfileModal(true);
+            }}
+          />
+        </div>
       )}
       <h1 className="text-muted text-[28px] font-medium mb-4 mt-2">
         Welcome back,{' '}
@@ -214,7 +249,7 @@ const HospitalAdminDashboard = () => {
   );
 };
 
-export default HospitalAdminDashboard;
+export default CareSeekerDashboard;
 
 const getStatus = (): string => {
   const rand = Math.random();

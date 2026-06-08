@@ -1,6 +1,5 @@
 'use client';
-
-import { ACCOUNT_TYPE } from '@/apiQuery/hospital/auth/types';
+import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
 import AdminDashboard from '@/components/Dashboard/Admin/AdminDashboard';
 import AgentAdminDashboard from '@/components/Dashboard/Agent/AgentAdminDashboard';
 import HospitalAdminDashboard from '@/components/Dashboard/Hospital/HospitalAdminDashboard';
@@ -14,6 +13,8 @@ const Dashboard = () => {
     ADMIN: <AdminDashboard />,
     HOSPITAL: <HospitalAdminDashboard />,
     AGENT: <AgentAdminDashboard />,
+    DOCTOR: <div>Doctor Dashboard</div>,
+    CARE_SEEKER: <div>Care Seeker Dashboard</div>,
   };
 
   if (!accountType) {

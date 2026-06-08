@@ -13,7 +13,7 @@ export const login = async (credentials: LoginType): Promise<LoginResponse> => {
     return response.data;
   } catch (error: any) {
     // console.log({ error: error?.response?.data?.message });
-    return error;
+    throw error;
   }
 };
 

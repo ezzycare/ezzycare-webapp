@@ -1,4 +1,4 @@
-import { User } from '@/apiQuery/hospital/auth/types';
+import { ACCOUNT_TYPE, User } from '@/apiQuery/auth/types';
 import { general } from '@/enums';
 import { getAuthToken } from '@/services/getAuthToken';
 import { create } from 'zustand';
@@ -18,7 +18,7 @@ export interface HospitalRegDetails {
   mobileNo: string;
   password: string;
   location: string;
-  accountType: 'HOSPITAL';
+  accountType: ACCOUNT_TYPE;
   phone: string;
   adminName?: string;
   docs: HospitalDocs;

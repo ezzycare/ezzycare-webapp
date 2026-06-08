@@ -1,12 +1,12 @@
 'use client';
 
-import { useRegisterHospital } from '@/apiQuery/hospital/auth/register';
+import { useSignUpMutation } from '@/apiQuery/auth/signup';
 import Button from '@/components/Ui/Button';
 import Card from '@/components/Ui/Card';
 import {
-    PasswordInput,
-    PhoneInput,
-    TextInput,
+  PasswordInput,
+  PhoneInput,
+  TextInput,
 } from '@/components/Ui/TextInput';
 import { HospitalIconLocal, UserIconLocal } from '@/icons/DashboardNavIcons';
 import { toaster } from '@/lib/toaster';
@@ -36,12 +36,12 @@ const RegisterHospital = () => {
     (state: AuthStore) => state
   );
 
-  const { mutateAsync, isPending } = useRegisterHospital();
+  const { mutateAsync, isPending } = useSignUpMutation();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
   } = useForm({
     resolver: zodResolver(HospitalRegistrationSchema),
@@ -63,7 +63,7 @@ const RegisterHospital = () => {
 
       toaster.success(res.message || 'Verification code sent');
       updateHospitalRegDetails(payload);
-      router.push('/auth/signup/hospital/verify-email');
+      router.push('/auth/signup/verify-email');
     } catch (error) {
       // toaster.error(error?.message || 'Registration failed');
     }
@@ -87,27 +87,23 @@ const RegisterHospital = () => {
             label="Hospital Name"
             leftIcon={<HospitalIconLocal className="text-text-muted" />}
             {...register('hospitalName')}
-            name="hospitalName"
             error={errors.hospitalName?.message}
           />
           <TextInput
             label="Hospital Email"
             leftIcon={<EnvelopeClosedIcon />}
             {...register('email')}
-            name="email"
             error={errors.email?.message}
           />
           <PhoneInput
             label="Phone"
             {...register('phone')}
-            name="phone"
             error={errors.phone?.message}
           />
           <TextInput
             label="Location"
             leftIcon={<MapPinIcon size={18} className="text-text-muted" />}
             {...register('location')}
-            name="location"
             error={errors.location?.message}
           />
           <div className="grid grid-cols-2 gap-2">
@@ -115,21 +111,18 @@ const RegisterHospital = () => {
               label="First Name"
               leftIcon={<UserIconLocal className="text-text-muted" />}
               {...register('firstName')}
-              name="firstName"
               error={errors.firstName?.message}
             />
             <TextInput
               label="Last Name"
               leftIcon={<UserIconLocal className="text-text-muted" />}
               {...register('lastName')}
-              name="lastName"
               error={errors.lastName?.message}
             />
           </div>
           <PasswordInput
             label="Password"
             {...register('password')}
-            name="password"
             error={errors.password?.message}
           />
           <Button
@@ -137,7 +130,7 @@ const RegisterHospital = () => {
             className="w-full mt-10 h-12 flex justify-center"
             variant="primary"
             loading={isPending}
-            disabled={Object.keys(errors).length > 0 || isPending}
+            disabled={!isValid || isPending}
           >
             Continue
           </Button>

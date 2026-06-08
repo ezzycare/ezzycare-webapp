@@ -1,4 +1,4 @@
-import { ACCOUNT_TYPE } from '@/apiQuery/hospital/auth/types';
+import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
 import { getCookie } from '@/services/getAuthToken';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { getAccountNavItems } from '@/utils/route';

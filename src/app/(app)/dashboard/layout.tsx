@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetProfile } from '@/apiQuery/hospital/auth/getProfile';
+import { useGetProfile } from '@/apiQuery/users/getProfile';
 import SideNav from '@/components/Dashboard/SideNav';
 import TopNav from '@/components/Dashboard/TopNav';
 import { useTrackPreviousRoute } from '@/hooks/useTrackPreviousRoute';

@@ -1,4 +1,4 @@
-import { ACCOUNT_TYPE } from '@/apiQuery/hospital/auth/types';
+import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
 import {
   AnalyticsIconLocal,
   CalendarIconLocal,

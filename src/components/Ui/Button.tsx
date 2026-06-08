@@ -35,7 +35,8 @@ export const Button = ({
     outline: 'border border-gray-8a text-gray-11 hover:bg-gray-11/5',
   };
 
-  const disabledStyles = 'disabled:opacity-50 disabled:cursor-not-allowed';
+  const disabledStyles =
+    'disabled:bg-neutral-3a disabled:text-neutral-8a disabled:opacity-50 disabled:cursor-not-allowed';
 
   // Only override PRIMARY background if color is provided
   const colorOverride =

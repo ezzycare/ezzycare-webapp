@@ -1,13 +1,13 @@
 'use client';
 
 import { resendOtp } from '@/apiQuery/auth/login';
-import { User } from '@/apiQuery/hospital/auth/types';
+import { User } from '@/apiQuery/auth/types';
 import {
   useVerifyEmail,
   VerifyEmailPayload,
-} from '@/apiQuery/hospital/auth/verifyEmail';
-import Card from '@/components/Ui/Card';
+} from '@/apiQuery/auth/verifyEmail';
 import Button from '@/components/Ui/Button';
+import Card from '@/components/Ui/Card';
 import OtpInput from '@/components/Ui/OtpInput';
 import { toaster } from '@/lib/toaster';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
@@ -67,7 +67,7 @@ const VerifyEmailContent = () => {
   };
 
   return (
-    <Card onCancel={() => router.push('/auth/hospital/signin')}>
+    <Card onCancel={() => router.back()}>
       <div className="flex flex-col items-center justify-center gap-4">
         <h2 className="text-2xl text-text font-medium">Verify your email</h2>
 

@@ -1,16 +1,16 @@
 'use client';
 
-import SelectSignUpType from '@/components/Auth/SelectSignUpType';
+import SelectAuthMode from '@/components/Auth/SelectAuthMode';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 const Page = () => {
   const router = useRouter();
-  const [state, setState] = useState<string>('');
+  const [state, setState] = useState<string>('select-mode');
 
   return (
     <>
-      <SelectSignUpType />
+      <SelectAuthMode updateState={setState} />
     </>
   );
 };

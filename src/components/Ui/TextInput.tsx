@@ -30,7 +30,7 @@ const TextInput = ({
   ...props
 }: TextInputProps) => {
   return (
-    <div className="w-full space-y-2">
+    <div className="w-full flex flex-col gap-2">
       {label && (
         <label className="text-sm font-medium text-text tracking-wide">
           {label}
@@ -91,7 +91,7 @@ const PhoneInput = ({
   const [country, setCountry] = useState(countries[0]);
 
   return (
-    <div className="w-full space-y-2 relative">
+    <div className="w-full flex flex-col gap-2 relative">
       {label && (
         <label className="text-sm font-medium text-text tracking-wide">
           {label}

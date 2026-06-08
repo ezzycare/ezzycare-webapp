@@ -1,8 +1,8 @@
+import { User } from '@/apiQuery/auth/types';
 import { ApiResponse } from '@/apiQuery/types';
 import { axiosClient } from '@/services/axiosClient';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { User } from './types';
 
 export const getProfile = async (): Promise<ApiResponse<User>> => {
   try {

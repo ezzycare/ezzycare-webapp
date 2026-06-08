@@ -11,8 +11,10 @@
   --blue-1: #F9FDFE;
   --blue-2: #F1FBFD;
   --blue-2a: #00B7DB0E;
+  --blue-3: #DAF7FF;
   --blue-3a: #00C8FF25;
   --blue-6a: #00B2E66D;
+  --blue-7: #6BCFEA;
   --blue-9: #17C9ED;
   --blue-10: #00BEE2;
   --blue-10a: #00BEE2FA;
@@ -136,8 +138,10 @@
   --color-blue-1: var(--blue-1);
   --color-blue-2: var(--blue-2);
   --color-blue-2a: var(--blue-2a);
+  --color-blue-3: var(--blue-3);
   --color-blue-3a: var(--blue-3a);
   --color-blue-6a: var(--blue-6a);
+  --color-blue-7: var(--blue-7);
   --color-blue-9: var(--blue-9);
   --color-blue-10: var(--blue-10);
   --color-blue-10a: var(--blue-10a);

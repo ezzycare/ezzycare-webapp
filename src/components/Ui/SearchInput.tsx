@@ -48,7 +48,7 @@ const SearchInput = ({
   };
 
   return (
-    <div className={clsx('w-full space-y-2', className)}>
+    <div className={clsx('w-full flex flex-col gap-2', className)}>
       {label && (
         <label className="text-sm font-medium text-text tracking-wide">
           {label}
