@@ -24,14 +24,7 @@ export type VerifyOtpRequestPropsType = {
   otp: string;
 };
 
-export type LoginResponse = ApiResponse<VerifiedUserResponse>;
-
-export type ACCOUNT_TYPE =
-  | 'HOSPITAL'
-  | 'AGENT'
-  | 'ADMIN'
-  | 'DOCTOR'
-  | 'CARE_SEEKER';
+export type ACCOUNT_TYPE = 'HOSPITAL' | 'AGENT' | 'ADMIN' | 'DOCTOR' | 'SEEKER';
 
 export interface User {
   id: string;
@@ -156,3 +149,5 @@ export interface VerifiedUserResponse {
   is_account_type_selected: boolean;
   user: User;
 }
+
+export type LoginResponse = ApiResponse<VerifiedUserResponse>;

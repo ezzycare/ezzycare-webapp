@@ -14,12 +14,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 
-const userData = {
-  name: 'John Doe',
-  role: 'Admin',
-  email: 'F7i0k@example.com',
-};
-
 const DashNav = ({
   sidebarOpen,
   setSideBarOpen,

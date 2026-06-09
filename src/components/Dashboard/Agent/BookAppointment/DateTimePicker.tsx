@@ -1,9 +1,10 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import Button from '@/components/Ui/Button';
 import { cn } from '@/lib/utils';
 import { TimeSlot } from '@/utils/timeSlotsGenerator';
 import dayjs from 'dayjs';
 import { Clock } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
@@ -21,6 +22,8 @@ const MONTHS = [
   'November',
   'December',
 ];
+
+const YEARS = Array.from({ length: 10 }, (_, i) => 2026 + i);
 
 function isSameDay(a: Date, b: Date) {
   return (
@@ -66,6 +69,7 @@ export default function DateTimePicker({
   defaultTimeSlot = null,
   onSelect,
   applyLabel = 'Apply',
+  applyImmediately,
 }: {
   interval: number;
   blockedDates?: Date[];
@@ -76,6 +80,7 @@ export default function DateTimePicker({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSelect?: any;
   applyLabel?: string;
+  applyImmediately?: boolean;
 }) {
   const today = new Date();
   const [viewYear, setViewYear] = useState(
@@ -108,6 +113,22 @@ export default function DateTimePicker({
 
   const isToday = (day: number) =>
     isSameDay(new Date(viewYear, viewMonth, day), today);
+
+  useEffect(() => {
+    if (!selectedDate) return;
+
+    const daysInNewMonth = getDaysInMonth(viewYear, viewMonth);
+    const safeDay = Math.min(selectedDate.getDate(), daysInNewMonth);
+
+    setSelectedDate(new Date(viewYear, viewMonth, safeDay));
+    setSelectedSlot(null);
+  }, [viewMonth, viewYear]);
+
+  const isPastDay = (day: number) => {
+    const date = new Date(viewYear, viewMonth, day);
+
+    return dayjs(date).startOf('day').isBefore(dayjs().startOf('day'));
+  };
 
   const handlePrevMonth = () => {
     if (viewMonth === 0) {
@@ -147,6 +168,10 @@ export default function DateTimePicker({
   }) => {
     if (slot.blocked) return;
     setSelectedSlot(slot.value);
+
+    if (applyImmediately) {
+      onSelect?.({ date: selectedDate, timeSlot: slot.value });
+    }
   };
 
   const handleApply = () => {
@@ -180,7 +205,8 @@ export default function DateTimePicker({
             marginBottom: 16,
           }}
         >
-          <button
+          <NavButton onClick={handlePrevMonth} direction="left" />
+          {/* <button
             onClick={() => {}}
             style={{
               background: 'none',
@@ -197,11 +223,34 @@ export default function DateTimePicker({
           >
             {MONTHS[viewMonth]} {viewYear}
             <ChevronRightIcon size={14} />
-          </button>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <NavButton onClick={handlePrevMonth} direction="left" />
-            <NavButton onClick={handleNextMonth} direction="right" />
+          </button> */}
+          <div className="flex gap-2 items-center">
+            <select
+              id="month"
+              value={viewMonth}
+              className="py-1.5 px-2 border border-border2 rounded-lg text-sm text-text-alt"
+              onChange={(e) => setViewMonth(Number(e.target.value))}
+            >
+              {MONTHS.map((m, i) => (
+                <option key={m} value={i}>
+                  {m}
+                </option>
+              ))}
+            </select>
+            <select
+              id="year"
+              value={viewYear}
+              className="py-1.5 px-2 border border-border2 rounded-lg text-sm text-text-alt"
+              onChange={(e) => setViewYear(Number(e.target.value))}
+            >
+              {YEARS.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
           </div>
+          <NavButton onClick={handleNextMonth} direction="right" />
         </div>
 
         {/* Day labels */}
@@ -242,6 +291,7 @@ export default function DateTimePicker({
             const blocked = isBlocked(day);
             const selected = isSelected(day);
             const todayDay = isToday(day);
+            const pastDay = isPastDay(day);
 
             return (
               <button
@@ -250,26 +300,28 @@ export default function DateTimePicker({
                   handleDayClick(day);
                   setShowSelected(false);
                 }}
-                disabled={blocked}
+                disabled={blocked || pastDay}
+                className="rounded-lg"
                 style={{
                   width: '100%',
                   aspectRatio: '1',
                   border: 'none',
-                  borderRadius: '50%',
                   background: selected
                     ? 'var(--blue-10)'
                     : todayDay && !selected
                       ? 'var(--blue-3a)'
-                      : 'transparent',
+                      : blocked
+                        ? 'var(--gray-3)'
+                        : 'transparent',
                   color: selected
                     ? '#fff'
-                    : blocked
-                      ? 'var(--gray-8a)'
-                      : 'var(--blue-10)',
+                    : blocked || pastDay
+                      ? 'var(--gray-11)'
+                      : 'var(--text-text)',
                   fontWeight: selected ? 600 : 400,
                   fontSize: 15,
-                  cursor: blocked ? 'not-allowed' : 'pointer',
-                  textDecoration: blocked ? 'line-through' : 'none',
+                  cursor: blocked || pastDay ? 'not-allowed' : 'pointer',
+                  opacity: pastDay ? 0.6 : 1,
                   transition: 'background 0.15s, transform 0.1s',
                   outline: 'none',
                   display: 'flex',
@@ -304,7 +356,7 @@ export default function DateTimePicker({
         />
       ) : (
         <div
-          className="max-h-57.5 overflow-y-auto flex flex-col gap-2"
+          className="max-h-20 overflow-y-auto grid grid-cols-2 gap-2"
           style={{
             scrollbarWidth: 'thin',
             scrollbarColor: 'var(--primary), transparent',
@@ -317,13 +369,9 @@ export default function DateTimePicker({
                 key={slot.value}
                 onClick={() => handleSlotClick(slot)}
                 disabled={slot.blocked}
+                className="text-sm py-1.5 px-5 font-medium border border-border2 hover:border-primary rounded-lg"
                 style={{
                   width: '100%',
-                  padding: '13px 16px',
-                  borderRadius: 12,
-                  border: isSelectedSlot
-                    ? '2px solid var(--blue-10)'
-                    : '1.5px solid var(--gray-4)',
                   background: isSelectedSlot
                     ? 'var(--blue-2a)'
                     : 'var(--gray-1)',
@@ -332,8 +380,6 @@ export default function DateTimePicker({
                     : isSelectedSlot
                       ? 'var(--blue-11)'
                       : 'var(--gray-12)',
-                  fontSize: 15,
-                  fontWeight: isSelectedSlot ? 600 : 400,
                   cursor: slot.blocked ? 'not-allowed' : 'pointer',
                   textAlign: 'center',
                   textDecoration: slot.blocked ? 'line-through' : 'none',
@@ -357,26 +403,28 @@ export default function DateTimePicker({
         </div>
       )}
 
-      <div className="mt-5">
-        {!showSelected && (
-          <Button
-            variant="primary"
-            className="w-full text-lg py-3.5"
-            onClick={handleApply}
-          >
-            Apply
-          </Button>
-        )}
-        {showSelected && (
-          <Button
-            variant="primary"
-            className="w-full text-lg py-3.5"
-            onClick={handleContinue}
-          >
-            Continue
-          </Button>
-        )}
-      </div>
+      {!applyImmediately && (
+        <div className="mt-5">
+          {!showSelected && (
+            <Button
+              variant="primary"
+              className="w-full text-lg py-3.5"
+              onClick={handleApply}
+            >
+              {applyLabel}
+            </Button>
+          )}
+          {showSelected && (
+            <Button
+              variant="primary"
+              className="w-full text-lg py-3.5"
+              onClick={handleContinue}
+            >
+              Continue
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -465,14 +513,14 @@ export const SelectedSlotDisplay = ({
   className?: string;
 }) => {
   const slot = slots.find((s) => s.value === selectedSlot);
-  const timeMeridian = slot?.label.split(' ')[1]?.slice(0, 1);
-  const splitSlot = selectedSlot.split(':');
+  const timeMeridian = slot?.label?.split(' ')[1]?.slice(0, 1);
+  const splitSlot = selectedSlot?.split(':');
   return (
     <div
       className={cn(`
         flex flex-col items-center gap-2 text-text-alt 
         text-xs w-full px-4 sm:px-9 py-4.5 bg-surface-card rounded-xl
-        shadow-md ${className}
+        ${className}
       `)}
     >
       <div className="flex w-full items-center gap-2 justify-between">

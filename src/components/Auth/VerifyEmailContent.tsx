@@ -18,6 +18,7 @@ const VerifyEmailContent = () => {
   const searchParams = useSearchParams();
   const resend = searchParams.get('resend');
   const loginEmail = searchParams.get('email');
+  const verifyType = searchParams.get('type');
 
   const router = useRouter();
   const [otpCode, setOtpCode] = useState('');
@@ -25,13 +26,13 @@ const VerifyEmailContent = () => {
   const { mutateAsync, isPending } = useVerifyEmail();
 
   const authStore = useAuthStore((state: AuthStore) => state);
-  const authEmail = authStore.hospitalRegDetails.email;
+  const authEmail = authStore.signupDetails.email;
 
   const handleResendOtp = async () => {
     try {
       await resendOtp({
         email: loginEmail || authEmail,
-        reason: 'signup',
+        reason: verifyType || 'signup',
       });
 
       toaster.success('Verification code sent');
@@ -46,6 +47,7 @@ const VerifyEmailContent = () => {
   }, [resend]);
 
   const handleVerifyEmail = async () => {
+    console.log({ authEmail, otpCode });
     if (!authEmail || !otpCode?.length) {
       return;
     }

@@ -1,3 +1,4 @@
+import { ConsultationType } from '@/apiQuery/hospital/types';
 import { ApiResponse } from '@/apiQuery/types';
 import { axiosClient } from '@/services/axiosClient';
 import {
@@ -8,14 +9,13 @@ import {
 } from '@tanstack/react-query';
 import axios from 'axios';
 
-export type AppointmentType = 'VIDEO' | 'IN_PERSON' | 'PHONE';
 export type Gender = 'MALE' | 'FEMALE' | 'OTHER';
 
 export interface CreateAppointmentParams {
   userId: number;
-  hospitalId: number;
+  hospitalId?: number;
   myAppointment: 0 | 1;
-  appointmentType: AppointmentType;
+  appointmentType: ConsultationType;
   urgent: 0 | 1;
   name: string;
   email: string;

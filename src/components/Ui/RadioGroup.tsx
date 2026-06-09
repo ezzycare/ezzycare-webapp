@@ -60,6 +60,7 @@ interface RadioItemProps {
   name?: string;
   option: RadioOption;
   checked: boolean;
+  inverted?: boolean;
   onChange?: () => void;
   interactive?: boolean;
 }
@@ -68,6 +69,7 @@ export const RadioItem = ({
   name,
   option,
   checked,
+  inverted,
   onChange,
   interactive = true,
 }: RadioItemProps) => {
@@ -91,7 +93,7 @@ export const RadioItem = ({
         value={option.value}
         checked={checked}
         disabled={isDisabled}
-        onChange={interactive ? onChange : undefined}
+        onChange={interactive ? onChange : () => {}}
         className="sr-only peer"
       />
 
@@ -106,7 +108,7 @@ export const RadioItem = ({
           transition
           peer-focus-visible:border-primary
           group-hover:border-primary
-          ${checked ? 'border-primary bg-primary' : 'border-neutral-3a'}
+          ${checked ? (inverted ? 'border-neutral-3a' : 'border-primary bg-primary') : 'border-neutral-3a'}
         `}
       >
         {/* Inner dot */}
@@ -115,8 +117,8 @@ export const RadioItem = ({
             absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
             w-2.5 h-2.5
             rounded-full
-            bg-surface-card
             transition-all duration-200
+            ${inverted ? 'bg-primary' : 'bg-surface-card'}
             ${checked ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}
           `}
         />

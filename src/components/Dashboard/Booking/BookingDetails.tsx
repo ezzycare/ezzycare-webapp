@@ -4,18 +4,18 @@ import Button from '@/components/Ui/Button';
 import StatusText from '@/components/Ui/StatusText';
 import { ClockIconLocal } from '@/icons/DashboardIcons';
 import {
-    CalendarIconLocal,
-    HospitalIconLocal,
-    StethoscopeIconLocal,
-    UserIconLocal,
+  CalendarIconLocal,
+  HospitalIconLocal,
+  StethoscopeIconLocal,
+  UserIconLocal,
 } from '@/icons/DashboardNavIcons';
 import { BookingType } from '@/types/bookings';
 import {
-    ArrowLeft,
-    Briefcase,
-    Edit,
-    MessageCircleMore,
-    NotepadText,
+  ArrowLeft,
+  Briefcase,
+  Edit,
+  MessageCircleMore,
+  NotepadText,
 } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';

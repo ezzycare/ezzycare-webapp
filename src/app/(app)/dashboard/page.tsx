@@ -2,6 +2,7 @@
 import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
 import AdminDashboard from '@/components/Dashboard/Admin/AdminDashboard';
 import AgentAdminDashboard from '@/components/Dashboard/Agent/AgentAdminDashboard';
+import CareSeekerDashboard from '@/components/Dashboard/CareSeeker/CareSeekerDashboard';
 import HospitalAdminDashboard from '@/components/Dashboard/Hospital/HospitalAdminDashboard';
 import { useGetAccountType } from '@/hooks/useGetAccountType';
 import { JSX } from 'react';
@@ -14,14 +15,15 @@ const Dashboard = () => {
     HOSPITAL: <HospitalAdminDashboard />,
     AGENT: <AgentAdminDashboard />,
     DOCTOR: <div>Doctor Dashboard</div>,
-    CARE_SEEKER: <div>Care Seeker Dashboard</div>,
+    SEEKER: <CareSeekerDashboard />,
   };
 
   if (!accountType) {
     return null; // or a loading spinner/skeleton
   }
 
-  return <>{dashboards[accountType]}</>;
+  return <>{dashboards['SEEKER']}</>;
+  // return <>{dashboards[accountType]}</>;
 };
 
 export default Dashboard;

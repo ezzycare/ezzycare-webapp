@@ -1,138 +1,139 @@
-@import "tailwindcss";
-@import "@heroui/styles";
-@import "flag-icons/css/flag-icons.min.css";
+@import 'tailwindcss';
+@import '@heroui/styles';
+@import 'flag-icons/css/flag-icons.min.css';
 
 :root {
-
   --surface-card: #ffffff;
   /* =========================
     BLUE
   ========================= */
-  --blue-1: #F9FDFE;
-  --blue-2: #F1FBFD;
-  --blue-2a: #00B7DB0E;
-  --blue-3: #DAF7FF;
-  --blue-3a: #00C8FF25;
-  --blue-6a: #00B2E66D;
-  --blue-7: #6BCFEA;
-  --blue-9: #17C9ED;
-  --blue-10: #00BEE2;
-  --blue-10a: #00BEE2FA;
-  --blue-10ab: #0086F0FA;
-  --blue-11: #007E9B;
-  --blue-11a: #007E9B;
-  --blue-12: #003D4C;
+  --blue-1: #f9fdfe;
+  --blue-2: #f1fbfd;
+  --blue-2a: #00b7db0e;
+  --blue-3: #daf7ff;
+  --blue-3a: #00c8ff25;
+  --blue-6a: #00b2e66d;
+  --blue-7: #6bcfea;
+  --blue-9: #17c9ed;
+  --blue-10: #00bee2;
+  --blue-10a: #00bee2fa;
+  --blue-10ab: #0086f0fa;
+  --blue-11: #007e9b;
+  --blue-11a: #007e9b;
+  --blue-12: #003d4c;
 
   /* =========================
     GRAY
   ========================= */
-  --gray-1: #FBFCFE;
-  --gray-2: #F7F9FE;
-  --gray-3: #EDF1F7;
-  --gray-3a: #00398E12;
-  --gray-4: #E4E9F1;
-  --gray-8a: #002A6E4F;
+  --gray-1: #fbfcfe;
+  --gray-2: #f7f9fe;
+  --gray-3: #edf1f7;
+  --gray-3a: #00398e12;
+  --gray-4: #e4e9f1;
+  --gray-8a: #002a6e4f;
   --gray-10: #788498;
-  --gray-11: #5B6575;
-  --gray-11a: #001029A4;
-  --gray-12: #1A202A;
+  --gray-11: #5b6575;
+  --gray-11a: #001029a4;
+  --gray-12: #1a202a;
 
   /* =========================
     NEUTRAL
   ========================= */
-  --neutral-3a: #0000330F;
-  --neutral-5a: #0009321F;
-  --neutral-6a: #00002F26;
+  --neutral-3a: #0000330f;
+  --neutral-5a: #0009321f;
+  --neutral-6a: #00002f26;
   --neutral-8a: #00083046;
-  --neutral-9a: #00051D74;
-  --neutral-10: #80838D;
-  --neutral-11a: #0007149F;
-  --neutral-12: #1C2024;
+  --neutral-9a: #00051d74;
+  --neutral-10: #80838d;
+  --neutral-11a: #0007149f;
+  --neutral-12: #1c2024;
 
   /* =========================
     GREEN
   ========================= */
-  --green-3a: #00DB6623;
-  --green-5: #ACF0CE;
-  --green-6a: #00BE6B70;
-  --green-8: #00C485;
-  --green-10: #00CA8A;
+  --green-3a: #00db6623;
+  --green-5: #acf0ce;
+  --green-6a: #00be6b70;
+  --green-8: #00c485;
+  --green-10: #00ca8a;
   --green-11a: #008051;
-  --green-12: #00432C;
+  --green-12: #00432c;
 
   /* =========================
     CRIMSON / PINK
   ========================= */
-  --crimson-11: #CB1D63;
+  --crimson-11: #cb1d63;
 
-  --plum-11a: #730086C1;
+  --plum-11a: #730086c1;
 
-  --pink-3a: #F400FF17;
-  --pink-10: #A036AE;
-  --pink-11a: #850096CE;
-  --pink-11: #9C31AA;
-  --pink-12a: #5F006B;
+  --pink-3a: #f400ff17;
+  --pink-10: #a036ae;
+  --pink-11a: #850096ce;
+  --pink-11: #9c31aa;
+  --pink-12a: #5f006b;
 
-  --purple-3a: #8E00F112;
-  --purple-10: #8347B9;
-  --purple-11a: #52009ABA;
+  --purple-3a: #8e00f112;
+  --purple-10: #8347b9;
+  --purple-11a: #52009aba;
 
-  --orange-10a: #EF5F00;                      
+  --orange-10a: #ef5f00;
 
   /* =========================
     ACCENT
   ========================= */
-  --accent-3a: #00C8FF25;
-  --accent-8a: #00BADE;
-  --accent-10: #00BEE2;
-  --accent-11a: #007E9B;
-  --accent-12: #003D4C;
+  --accent-3a: #00c8ff25;
+  --accent-8a: #00bade;
+  --accent-10: #00bee2;
+  --accent-11a: #007e9b;
+  --accent-12: #003d4c;
 
   /* =========================
     BASE
   ========================= */
-  --background: #F8F8F8;
-  --border: #0009321F;
-  --text-muted: #00051D74;
+  --background: #f8f8f8;
+  --border: #0009321f;
+  --text-muted: #00051d74;
 
   /* =========================
     PRIMARY
   ========================= */
-  --primary: #17C9ED;
-  --sidebar-primary: #0F172A;
+  --primary: #17c9ed;
+  --sidebar-primary: #0f172a;
 
   /* =========================
     SEMANTIC COLORS
   ========================= */
-  --success: #4BB543;
-  --success-600: #4BB543;
+  --success: #4bb543;
+  --success-600: #4bb543;
 
-  --warning: #AB6400;
-  --warning-2a: #F4D10016;
-  --warning-3a: #FFDE003D;
-  --warning-8a: #DA8A00C9;
-  --warning-11a: #AB6400;
+  --warning: #ab6400;
+  --warning-2a: #f4d10016;
+  --warning-3a: #ffde003d;
+  --warning-8a: #da8a00c9;
+  --warning-11a: #ab6400;
 
-  --info: #00749E;
-  --info-3a: #00B3EE1E;
-  --info-11a: #00749E;
+  --info: #00749e;
+  --info-3a: #00b3ee1e;
+  --info-11a: #00749e;
 
-  --error: #C40006D3;
-  --error-3a: #F3000D14;
-  --error-8a: #D2000571;
-  --error-11a: #C40006D3;
-
+  --error: #c40006d3;
+  --error-3a: #f3000d14;
+  --error-8a: #d2000571;
+  --error-11a: #c40006d3;
 }
 
 @theme inline {
-  
   /* Fonts */
-  --font-display: var(--font-sf-pro), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-body: var(--font-sf-pro), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display:
+    var(--font-sf-pro), -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+  --font-body:
+    var(--font-sf-pro), -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   --font-sans: var(--font-sf-pro), system-ui, sans-serif;
   --font-geist-sans: var(--font-geist-sans);
   --font-inter: var(--font-inter);
-  --font-mono: "Geist Mono", monospace;
+  --font-mono: 'Geist Mono', monospace;
 
   /* BLUE */
   --color-blue-1: var(--blue-1);
@@ -241,13 +242,28 @@
   --animate-shake: shake 0.4s ease-in-out;
 
   @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70% { transform: translateX(-6px); }
-    20%, 40%, 60% { transform: translateX(6px); }
-    80% { transform: translateX(-4px); }
-    90% { transform: translateX(4px); }
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    10%,
+    30%,
+    50%,
+    70% {
+      transform: translateX(-6px);
+    }
+    20%,
+    40%,
+    60% {
+      transform: translateX(6px);
+    }
+    80% {
+      transform: translateX(-4px);
+    }
+    90% {
+      transform: translateX(4px);
+    }
   }
-
 }
 
 .dark {
@@ -256,9 +272,9 @@
   /* =========================
     BASE SURFACES
   ========================= */
-  --background: #0B0F17;        /* deep slate navy */
-  --border: #1B2433;           /* subtle separation */
-  --text-muted: #8A93A6;
+  --background: #0b0f17; /* deep slate navy */
+  --border: #1b2433; /* subtle separation */
+  --text-muted: #8a93a6;
 
   /* foreground = cards / elevated surfaces */
   --foreground: #111827;
@@ -266,72 +282,72 @@
   /* =========================
     TEXT COLORS
   ========================= */
-  --gray-12: #E6EAF2;
-  --gray-11: #B6C0D1;
-  --gray-10: #8A93A6;
+  --gray-12: #e6eaf2;
+  --gray-11: #b6c0d1;
+  --gray-10: #8a93a6;
 
-  --neutral-12: #E8ECF5;
-  --neutral-11a: #A3ADC2;
-  --neutral-9a: #6B768A;
+  --neutral-12: #e8ecf5;
+  --neutral-11a: #a3adc2;
+  --neutral-9a: #6b768a;
 
   /* =========================
     SURFACE OVERRIDES
   ========================= */
-  --gray-2: #111827;   /* cards */
-  --gray-3: #141B2A;   /* elevated cards */
-  --gray-3a: #FFFFFF0A;
-  --gray-8a: #FFFFFF1A;
+  --gray-2: #111827; /* cards */
+  --gray-3: #141b2a; /* elevated cards */
+  --gray-3a: #ffffff0a;
+  --gray-8a: #ffffff1a;
 
-  --neutral-3a: #FFFFFF0A;
-  --neutral-5a: #FFFFFF14;
-  --neutral-8a: #FFFFFF22;
+  --neutral-3a: #ffffff0a;
+  --neutral-5a: #ffffff14;
+  --neutral-8a: #ffffff22;
 
   /* =========================
     PRIMARY (keep brand consistent)
   ========================= */
-  --primary: #17C9ED;
-  --blue-9: #17C9ED;
-  --blue-10: #00BEE2;
-  --blue-10a: #00BEE2E6;
-  --blue-11: #56D9F5;
+  --primary: #17c9ed;
+  --blue-9: #17c9ed;
+  --blue-10: #00bee2;
+  --blue-10a: #00bee2e6;
+  --blue-11: #56d9f5;
 
   /* soften glow in dark mode */
-  --blue-3a: #17C9ED1A;
+  --blue-3a: #17c9ed1a;
 
   /* =========================
     ACCENT (slightly brighter in dark UI)
   ========================= */
-  --accent-10: #2DD4FF;
-  --accent-11a: #00A7D6;
-  --accent-12: #0A2A36;
+  --accent-10: #2dd4ff;
+  --accent-11a: #00a7d6;
+  --accent-12: #0a2a36;
 
   /* =========================
     SEMANTIC COLORS (adjusted for dark contrast)
   ========================= */
-  --success: #22C55E;
-  --success-600: #16A34A;
+  --success: #22c55e;
+  --success-600: #16a34a;
 
-  --warning: #FBBF24;
-  --warning-2a: #FBBF2420;
+  --warning: #fbbf24;
+  --warning-2a: #fbbf2420;
 
-  --info: #38BDF8;
-  --info-3a: #38BDF820;
+  --info: #38bdf8;
+  --info-3a: #38bdf820;
 
-  --error: #F87171;
-  --error-3a: #F8717120;
+  --error: #f87171;
+  --error-3a: #f8717120;
 
   /* =========================
     SPECIAL COLORS
   ========================= */
-  --crimson-11: #FB4E7C;
-  --pink-11: #D946EF;
-  --purple-10: #A855F7;
-  --orange-10a: #FB923C;
+  --crimson-11: #fb4e7c;
+  --pink-11: #d946ef;
+  --purple-10: #a855f7;
+  --orange-10a: #fb923c;
 
   /* =========================
     SURFACE / LAYOUT OVERRIDES
   ========================= */
-  --sidebar-primary: #0F172A;
+  --sidebar-primary: #0f172a;
 }
 
 @layer base {

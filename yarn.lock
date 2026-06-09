@@ -857,6 +857,11 @@
     react-aria "3.48.0"
     react-stately "3.46.0"
 
+"@react-oauth/google@^0.13.5":
+  version "0.13.5"
+  resolved "https://registry.yarnpkg.com/@react-oauth/google/-/google-0.13.5.tgz#78fba5f0051cdde055079f83e41eff167d56c326"
+  integrity sha512-xQWri2s/3nNekZJ4uuov2aAfQYu83bN3864KcFqw2pK1nNbFurQIjPFDXhWaKH3IjYJ2r/9yyIIpsn5lMqrheQ==
+
 "@react-spectrum/color@^3.2.0":
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/@react-spectrum/color/-/color-3.2.0.tgz#d57da62038f31d32329a915c3cef2c2efcc6b7ab"
@@ -3039,6 +3044,11 @@ jws@^4.0.1:
   dependencies:
     jwa "^2.0.1"
     safe-buffer "^5.0.1"
+
+jwt-decode@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-4.0.0.tgz#2270352425fd413785b2faf11f6e755c5151bd4b"
+  integrity sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==
 
 keyv@^4.5.4:
   version "4.5.4"

@@ -1,6 +1,6 @@
-const EmptyAppointment = () => {
+const EmptyAppointment = ({ children }: { children?: React.ReactNode }) => {
   return (
-    <div className="flex flex-col items-center justify-center h-full">
+    <div className="flex flex-col items-center justify-center h-full min-h-[50vh]">
       <span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -75,6 +75,7 @@ const EmptyAppointment = () => {
           </defs>
         </svg>
       </span>
+      {children}
     </div>
   );
 };

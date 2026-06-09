@@ -3,9 +3,14 @@
 import { useSignUpMutation } from '@/apiQuery/auth/signup';
 import Button from '@/components/Ui/Button';
 import Card from '@/components/Ui/Card';
-import { PasswordInput, TextInput } from '@/components/Ui/TextInput';
+import {
+  PasswordInput,
+  PhoneInput,
+  TextInput,
+} from '@/components/Ui/TextInput';
 import { UserIconLocal } from '@/icons/DashboardNavIcons';
 import { toaster } from '@/lib/toaster';
+import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EnvelopeClosedIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
@@ -16,6 +21,10 @@ import * as z from 'zod';
 const SignUpSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
+  mobileNo: z
+    .string()
+    .min(10, 'Enter a valid phone number')
+    .regex(/^[+]?[0-9\s\-()]{7,20}$/),
   email: z.string().email('Enter a valid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters long'),
 });
@@ -24,6 +33,7 @@ type Registration = z.infer<typeof SignUpSchema>;
 const CareSeekerSignup = ({ action }: { action: () => void }) => {
   const router = useRouter();
 
+  const { updateSignupDetails } = useAuthStore((state: AuthStore) => state);
   const { mutateAsync, isPending } = useSignUpMutation();
 
   const {
@@ -41,11 +51,13 @@ const CareSeekerSignup = ({ action }: { action: () => void }) => {
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
+      mobileNo: data.mobileNo,
       password: data.password,
-      accountType: 'CARE_SEEKER' as const,
+      accountType: 'SEEKER' as const,
     };
     try {
       const res = await mutateAsync(payload);
+      updateSignupDetails(payload);
 
       toaster.success(res.message || 'Verification code sent');
       action();
@@ -86,6 +98,12 @@ const CareSeekerSignup = ({ action }: { action: () => void }) => {
             leftIcon={<EnvelopeClosedIcon />}
             {...register('email')}
             error={errors.email?.message}
+          />
+          <PhoneInput
+            label="Phone"
+            placeholder="08012345678"
+            {...register('mobileNo')}
+            error={errors?.mobileNo?.message}
           />
           <PasswordInput
             label="Password"

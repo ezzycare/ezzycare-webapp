@@ -1,10 +1,10 @@
 import { ApiResponse } from '@/apiQuery/types';
 import { axiosClient } from '@/services/axiosClient';
 import {
-    useMutation,
-    UseMutationOptions,
-    UseMutationResult,
-    useQueryClient,
+  useMutation,
+  UseMutationOptions,
+  UseMutationResult,
+  useQueryClient,
 } from '@tanstack/react-query';
 import axios from 'axios';
 

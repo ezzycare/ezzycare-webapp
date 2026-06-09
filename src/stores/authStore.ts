@@ -3,17 +3,17 @@ import { general } from '@/enums';
 import { getAuthToken } from '@/services/getAuthToken';
 import { create } from 'zustand';
 
-export interface HospitalDocs {
+export interface Docs {
   cac: File | null;
   license: File | null;
   permit: File | null;
   address: File | null;
 }
 
-export interface HospitalRegDetails {
+export interface SignupDetails {
   firstName: string;
   lastName: string;
-  hospitalName: string;
+  Name: string;
   email: string;
   mobileNo: string;
   password: string;
@@ -21,7 +21,7 @@ export interface HospitalRegDetails {
   accountType: ACCOUNT_TYPE;
   phone: string;
   adminName?: string;
-  docs: HospitalDocs;
+  docs: Docs;
 }
 
 export interface AuthStore {
@@ -30,11 +30,11 @@ export interface AuthStore {
   setForgotPasswordEmail: (email: string) => void;
   user: User;
   authToken: string | null;
-  hospitalRegDetails: HospitalRegDetails;
+  signupDetails: SignupDetails;
   updateUser: (user: User) => void;
   setToken: (token: string) => void;
   removeAuth: () => void;
-  updateHospitalRegDetails: (details: Partial<HospitalRegDetails>) => void;
+  updateSignupDetails: (details: Partial<SignupDetails>) => void;
 }
 
 const isBrowser = typeof window !== 'undefined';
@@ -43,7 +43,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   forgotPasswordEmail: null,
   user: {} as User,
   authToken: getAuthToken(),
-  hospitalRegDetails: {} as HospitalRegDetails,
+  signupDetails: {} as SignupDetails,
 
   isAuthenticated: () => !!getAuthToken(),
 
@@ -67,8 +67,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
-  updateHospitalRegDetails: (details) =>
+  updateSignupDetails: (details) =>
     set((state) => ({
-      hospitalRegDetails: { ...state.hospitalRegDetails, ...details },
+      signupDetails: { ...state.signupDetails, ...details },
     })),
 }));

@@ -5,29 +5,22 @@ import { useGetHospitalDashboard } from '@/apiQuery/hospital';
 import AlertBanner from '@/components/Base/AlertBanner';
 import Button from '@/components/Ui/Button';
 import SearchInput from '@/components/Ui/SearchInput';
+import { BoldWalletIcon, DashboardStarsIcon } from '@/icons/DashboardIcons';
 import {
   CalendarIconLocal,
   HospitalIconLocal,
   StethoscopeIconLocal,
-  UsersIconLocal,
 } from '@/icons/DashboardNavIcons';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { BookingType } from '@/types/bookings';
 import { HospitalType } from '@/types/hospitals';
-import { ArrowRight, Banknote } from 'lucide-react';
+import { ArrowRight, EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import BookingTable from '../Booking/BookingTable';
 import EmptyAppointment from '../Hospital/EmptyAppointment';
-import HospitalDetailsModal from '../Hospital/HospitalDetailsModal';
-import IconBase from '../IconBase';
-
-interface Totals {
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-  timeRange?: string[];
-}
+import BioDetailsModal from './BioDetailsModal';
+import BookPatientAppointment from './BookAppointment';
 
 const hospital: HospitalType = {
   id: 1,
@@ -41,85 +34,25 @@ const hospital: HospitalType = {
 const CareSeekerDashboard = () => {
   const { dashboard: dashboardData } = useGetHospitalDashboard();
   const user = useAuthStore((state: AuthStore) => state.user);
-
-  const [timeRange, setTimeRange] = React.useState([
-    {
-      title: '24h',
-      active: true,
-    },
-    {
-      title: '7d',
-      active: false,
-    },
-    {
-      title: '30d',
-      active: false,
-    },
-  ]);
-
-  const totals: Totals[] = [
-    {
-      title: 'Total Appointments',
-      value: dashboardData?.totalAppointments || 0,
-      icon: <CalendarIconLocal className="text-text" />,
-    },
-    {
-      title: 'Total Patients',
-      value: dashboardData?.totalPatients || 0,
-      icon: <UsersIconLocal className="text-blue-10a" />,
-    },
-    {
-      title: 'Pending Appointments',
-      value: dashboardData?.pendingAppointments || 0,
-      icon: <CalendarIconLocal className="text-warning-10" />,
-    },
-    {
-      title: 'Revenue',
-      value: dashboardData?.revenue || 0,
-      icon: <Banknote size={18} className="text-green-10" />,
-      timeRange: timeRange.map((item) => item.title),
-    },
-  ];
-
-  const doctorStats = [
-    {
-      title: 'Total Doctors',
-      value: dashboardData?.totalDoctors || 0,
-      icon: <StethoscopeIconLocal className="text-blue-10a" />,
-    },
-    {
-      title: 'Available Doctors',
-      value: dashboardData?.availableDoctors || 0,
-      icon: <StethoscopeIconLocal className="text-blue-10a" />,
-    },
-    {
-      title: 'Doctors in session',
-      value: dashboardData?.doctorsInSession || 0,
-      icon: <StethoscopeIconLocal className="text-blue-10a" />,
-    },
-    {
-      title: 'Unavailable Doctors',
-      value: dashboardData?.unavailableDoctors || 0,
-      icon: <StethoscopeIconLocal className="text-blue-10a" />,
-    },
-  ];
-
   const [showProfileModal, setShowProfileModal] = React.useState(false);
+  const [showBookDoctorModal, setShowBookDoctorModal] = React.useState(false);
+  const [showBalance, setShowBalance] = useState(true);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
-  const handleSetTimeRange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setTimeRange((time) =>
-      time
-        .map((t) => ({ ...t, active: false }))
-        .map((t) => ({
-          ...t,
-          active: t.title === e.target.value,
-        }))
-    );
+  useEffect(() => {
+    const storedShowBalance = localStorage.getItem('showCareSeekerBalance');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setShowBalance(storedShowBalance === 'true');
+  }, []);
+
+  const handleShowBalance = () => {
+    setShowBalance(!showBalance);
+    localStorage.setItem('showCareSeekerBalance', String(!showBalance));
   };
 
   return (
     <div className="p-7.5 w-full">
-      <div>
+      <div className="flex items-center justify-between flex-wrap">
         <div className="text-text-muted">
           <h2>
             Morning,{' '}
@@ -130,20 +63,40 @@ const CareSeekerDashboard = () => {
           <p className="text-sm">How are you doing today? </p>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex gap-3">
           <SearchInput
             value=""
             onChange={() => {}}
             placeholder="Search for doctors or hospitals"
-            filters={[]}
-            onFilterChange={() => {}}
+            className="max-w-90! rounded-xl! h-10!"
+            inputClassName="text-xs!"
+            filters={[
+              {
+                key: 'specialization',
+                label: 'Specialty',
+              },
+            ]}
+            onFilterChange={(filter) => {
+              setActiveFilters((prev) =>
+                prev.includes(filter.key)
+                  ? prev.filter((f) => f !== filter.key)
+                  : [...prev, filter.key]
+              );
+            }}
           />
 
-          <Button variant="primary" className="">
+          <Button
+            variant="primary"
+            className="gap-2 h-10! text-sm"
+            onClick={() => setShowBookDoctorModal(true)}
+          >
             <StethoscopeIconLocal />
             Doctors
           </Button>
-          <Button variant="primary" className="bg-pink-10 hover:bg-pink-10/80">
+          <Button
+            variant="primary"
+            className="bg-pink-10! hover:bg-pink-10/80! gap-2 h-10! text-sm"
+          >
             <HospitalIconLocal />
             Hospitals
           </Button>
@@ -153,8 +106,8 @@ const CareSeekerDashboard = () => {
         <div className="w-full mt-5">
           <AlertBanner
             type="info"
-            title="Complete Hospital Profile & Brand Setup"
-            content="Complete your hospital profile and brand setup to get discovered by more patients"
+            title="Complete Hospital Profile"
+            content="To fully enjoy your experience on EzzyCare"
             btnText="Complete profile"
             btnIcon={<ArrowRight size={16} className="text-white" />}
             btnAction={() => {
@@ -163,87 +116,55 @@ const CareSeekerDashboard = () => {
           />
         </div>
       )}
-      <h1 className="text-muted text-[28px] font-medium mb-4 mt-2">
-        Welcome back,{' '}
-        <span className="text-text">Metropolitan Health Institute</span>
-      </h1>
-      <p>Here&apos;s what is happening on the platform today...</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4 justify-between items-center">
-        {totals.map((item) => (
-          <div
-            key={item.title}
-            className="flex gap-4 items-center justify-left p-5 bg-surface-card rounded-lg"
-          >
-            <IconBase>{item.icon}</IconBase>
-            <div className="w-full flex flex-col gap-2">
-              <div className="flex items-center justify-between w-full">
-                <h2 className="text-xs text-muted font-semibold font-500 uppercase">
-                  {item.title}
-                </h2>
-                {item.timeRange && (
-                  <select
-                    className="text-xs text-text-muted font-semibold font-500 bg-gray-3 p-1 rounded-sm"
-                    defaultValue={item.timeRange[0]}
-                    onChange={handleSetTimeRange}
-                  >
-                    {item.timeRange.map((time) => (
-                      <option key={time}>{time}</option>
-                    ))}
-                  </select>
-                )}
-              </div>
-              <p className="text-text font-semibold">{item.value}</p>
-            </div>
+      <div className="flex gap-2 justify-between items-center bg-blue-3a rounded-xl mt-2.5">
+        <div className="flex items-center gap-6.25 max-w-68 p-2">
+          <BoldWalletIcon />
+          <div>
+            <p className="text-xs text-accent-12">Available Balance</p>
+            <h2 className="text-lg text-blue-12 font-semibold">
+              {showBalance ? 'N5,000.00' : '*********'}
+            </h2>
           </div>
-        ))}
-      </div>
-      <div className="mt-6.5">
-        <div className="w-full flex items-center justify-between">
-          <h2 className="text-text font-semibold mb-4.5">Doctors</h2>
-          <Link href="/dashboard/doctors">
-            <p className="text-primary text-sm font-medium cursor-pointer">
-              View all
-            </p>
-          </Link>
+
+          <div className="ml-auto text-text" onClick={handleShowBalance}>
+            {showBalance ? <EyeOffIcon size={24} /> : <EyeIcon size={24} />}
+          </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  gap-4 justify-between items-center">
-          {doctorStats.map((item) => (
-            <div
-              key={item.title}
-              className="flex gap-4 items-center justify-left p-5 bg-surface-card rounded-lg"
-            >
-              <IconBase>{item.icon}</IconBase>
-              <div className="flex flex-col gap-2">
-                <h2 className="text-xs text-muted font-semibold font-500 uppercase">
-                  {item.title}
-                </h2>
-                <p className="text-text font-semibold">{item.value}</p>
-              </div>
-            </div>
-          ))}
+
+        <div>
+          <DashboardStarsIcon />
         </div>
       </div>
-      <div className="mt-4 rounded-xl bg-surface-card min-h-97.5">
+
+      <div className="mt-5 rounded-xl bg-surface-card min-h-97.5">
         <div className="flex items-center gap-2 px-5.5 pt-6.5">
           <CalendarIconLocal className="text-text" />
-          <h2 className="text-text font-semibold">Todays Appointments</h2>
+          <h2 className="text-text font-semibold">Upcoming Appointments</h2>
           {!!bookings?.length && (
             <Link href="/dashboard/appointments" className="ml-auto">
               <p className="text-primary text-sm font-medium cursor-pointer">
-                View all appointments
+                View all
               </p>
             </Link>
           )}
         </div>
         <div className="-mt-3">
-          {!bookings?.length && <EmptyAppointment />}
+          {!bookings?.length && (
+            <EmptyAppointment>
+              <Button variant="primary">Book Appointment</Button>
+            </EmptyAppointment>
+          )}
           {!!bookings?.length && <BookingTable data={bookings.slice(0, 10)} />}
         </div>
       </div>
-      <HospitalDetailsModal
+      <BioDetailsModal
         openModal={showProfileModal}
         setOpenModal={setShowProfileModal}
         data={hospital}
+      />
+      <BookPatientAppointment
+        openModal={showBookDoctorModal}
+        setOpenModal={setShowBookDoctorModal}
       />
     </div>
   );
@@ -260,7 +181,7 @@ const getStatus = (): string => {
   return 'completed';
 };
 
-const bookings: BookingType[] = Array.from({ length: 30 }, (_, i) => ({
+const bookings: BookingType[] = Array.from({ length: 0 }, (_, i) => ({
   id: i + 1,
   bookingId: 'B001',
   patientName: 'John Smith',

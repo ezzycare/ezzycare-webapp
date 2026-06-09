@@ -32,9 +32,7 @@ type HospitalRegistration = z.infer<typeof HospitalRegistrationSchema>;
 const RegisterHospital = () => {
   const router = useRouter();
 
-  const { hospitalRegDetails, updateHospitalRegDetails } = useAuthStore(
-    (state: AuthStore) => state
-  );
+  const { updateSignupDetails } = useAuthStore((state: AuthStore) => state);
 
   const { mutateAsync, isPending } = useSignUpMutation();
 
@@ -62,7 +60,7 @@ const RegisterHospital = () => {
       const res = await mutateAsync(payload);
 
       toaster.success(res.message || 'Verification code sent');
-      updateHospitalRegDetails(payload);
+      updateSignupDetails(payload);
       router.push('/auth/signup/verify-email');
     } catch (error) {
       // toaster.error(error?.message || 'Registration failed');

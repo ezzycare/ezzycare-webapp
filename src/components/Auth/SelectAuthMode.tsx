@@ -2,13 +2,62 @@
 
 import { ArrowRight, Mail } from 'lucide-react';
 
+import { useSocialLogin } from '@/apiQuery/auth/socialLogin';
+import { LoginResponse } from '@/apiQuery/auth/types';
 import { AppleIcon, FacebookIcon, GoogleIcon } from '@/icons/DashboardIcons'; // replace with yours
+import { toaster } from '@/lib/toaster';
 import { cn } from '@/lib/utils';
+import { AuthStore, useAuthStore } from '@/stores/authStore';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useRouter } from 'next/navigation';
 import Card from '../Ui/Card';
 
 export default function SelectAuthMode({ action }: { action: () => void }) {
   const router = useRouter();
+  const authStore = useAuthStore((state: AuthStore) => state);
+
+  const { mutate: socialLogin, isPending } = useSocialLogin();
+
+  const completeLogin = (response: LoginResponse | null) => {
+    if (response?.data) {
+      authStore.updateUser(response.data?.user);
+      authStore.setToken(response.data.access_token);
+      if (!response.data?.email_verified) {
+        router.push(
+          '/auth/signup/hospital/verify-email?resend=true&email=' +
+            response.data?.user?.email
+        );
+        return;
+      }
+      toaster.success('Login successful');
+      router.push('/dashboard');
+    }
+  };
+
+  const handleGoogleSignin = useGoogleLogin({
+    flow: 'implicit',
+
+    onSuccess: async (tokenResponse) => {
+      socialLogin(
+        {
+          provider: 'google',
+          accessToken: tokenResponse.access_token,
+          idToken: '',
+        },
+        {
+          onSuccess: (data) => {
+            console.log({ data });
+            completeLogin(data?.data);
+            action();
+          },
+        }
+      );
+    },
+
+    onError: () => {
+      console.error('Google Login Failed');
+    },
+  });
 
   return (
     <Card onCancel={() => router.back()}>
@@ -56,6 +105,7 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
             </IconWrapper>
           }
           label="Continue with Google"
+          action={handleGoogleSignin}
         />
 
         <ContinueButton

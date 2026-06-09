@@ -8,6 +8,7 @@ interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   className?: string;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 const TextArea = ({
@@ -15,6 +16,7 @@ const TextArea = ({
   leftIcon,
   rightIcon,
   className = '',
+  onChange,
   ...props
 }: TextAreaProps) => {
   const [text, setText] = React.useState(props?.value ?? '');
@@ -23,6 +25,8 @@ const TextArea = ({
     e.target.style.height = 'auto'; // reset height
     e.target.style.height = e.target.scrollHeight + 'px'; // expand
     setText(e.target.value);
+
+    onChange?.(e);
   };
 
   return (
