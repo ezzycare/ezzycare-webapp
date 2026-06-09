@@ -1,15 +1,15 @@
+import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import Button from '@/components/Ui/Button';
 import { CalendarIconLocal } from '@/icons/DashboardNavIcons';
-import { formatCurrency } from '@/utils/helper';
 import { CircleDollarSign, MapPin } from 'lucide-react';
 import DoctorCard from './DoctorCard';
-import { SelectDoctorType, StateType } from './type';
+import { StateType } from './type';
 
 const ViewDoctor = ({
   doctor,
   setState,
 }: {
-  doctor: SelectDoctorType;
+  doctor: DoctorProfile;
   setState: React.Dispatch<React.SetStateAction<StateType>>;
 }) => {
   return (
@@ -30,7 +30,7 @@ const ViewDoctor = ({
             Years of experience
           </p>
           <p className="text-text text-sm font-medium mt-1">
-            {doctor.experience}
+            {doctor.userDetails?.totalExperienceYear}
           </p>
         </article>
 
@@ -38,7 +38,9 @@ const ViewDoctor = ({
 
         <article>
           <p className="text-text-muted text-sm font-medium">About</p>
-          <p className="text-text text-sm font-medium mt-1">{doctor.about}</p>
+          <p className="text-text text-sm font-medium mt-1">
+            {doctor.userDetails?.aboutUs}
+          </p>
         </article>
 
         <div aria-label="divider" className="border-t border-border2"></div>
@@ -47,7 +49,7 @@ const ViewDoctor = ({
           <p className="text-text-muted text-sm font-medium mb-1">
             Time Availability
           </p>
-          {doctor.timeAvailability.map((time, index) => (
+          {doctor.availability.map((time, index) => (
             <span key={index} className="w-full flex items-center gap-2">
               <CalendarIconLocal className="text-text-muted" />
               <span className="text-text-alt text-sm font-medium">
@@ -55,7 +57,7 @@ const ViewDoctor = ({
                 {time.day} :
               </span>
               <span className="text-blue-11 text-sm font-medium ml-auto">
-                {time.timeStart} - {time.timeEnd}{' '}
+                {/* {time.timeStart} - {time.timeEnd}{' '} */}
               </span>
             </span>
           ))}
@@ -68,7 +70,7 @@ const ViewDoctor = ({
             <CircleDollarSign size={16} />
             <span>Consultation charges</span>
           </p>
-          {doctor.consultationCharges &&
+          {/* {doctor.consultationCharges &&
             (() => {
               const charge = doctor.consultationCharges;
               const chargeItems = [
@@ -93,7 +95,7 @@ const ViewDoctor = ({
                   ))}
                 </>
               );
-            })()}
+            })()} */}
         </article>
 
         <div aria-label="divider" className="border-t border-border2"></div>
@@ -103,7 +105,7 @@ const ViewDoctor = ({
             <MapPin size={16} />
             <span>Location</span>
           </p>
-          <p>{doctor.location}</p>
+          <p>{doctor.userDetails?.address}</p>
         </article>
       </section>
     </div>

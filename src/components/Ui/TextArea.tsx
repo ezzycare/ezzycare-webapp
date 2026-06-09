@@ -2,12 +2,14 @@
 
 import clsx from 'clsx';
 import React from 'react';
+import { FieldError } from 'react-hook-form';
 
 interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   className?: string;
+  error?: string | FieldError | undefined;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
@@ -16,6 +18,7 @@ const TextArea = ({
   leftIcon,
   rightIcon,
   className = '',
+  error,
   onChange,
   ...props
 }: TextAreaProps) => {
@@ -61,6 +64,12 @@ const TextArea = ({
           <div className="absolute right-2 top-2 text-neutral-11a">
             {rightIcon}
           </div>
+        )}
+
+        {error && (
+          <span className="text-sm text-error">
+            {typeof error === 'string' ? error : error?.message}
+          </span>
         )}
       </div>
     </div>

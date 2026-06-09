@@ -1,16 +1,16 @@
+import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { RadioItem } from '@/components/Ui/RadioGroup';
 import TextArea from '@/components/Ui/TextArea';
 import { TextInput } from '@/components/Ui/TextInput';
-import { formatCurrency } from '@/utils/helper';
 import { timeSlotGenerator } from '@/utils/timeSlotsGenerator';
 import { CircleDollarSign } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import DateTimePicker, { SelectedSlotDisplay } from './DateTimePicker';
 import DoctorCard from './DoctorCard';
 import { doctors } from './sampleDoctors';
-import { SelectDoctorType, StateType } from './type';
+import { StateType } from './type';
 
 const TIME_INTERVAL = 30; // minutes
 
@@ -23,7 +23,7 @@ const CreateAppointment = ({
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setState: React.Dispatch<React.SetStateAction<StateType>>;
 }) => {
-  const doctor: SelectDoctorType = doctors[0];
+  const doctor: DoctorProfile = doctors[0] as unknown as DoctorProfile;
   const consultationType = ['Video', 'Home', 'Clinic'];
 
   const [selectedConsultationType, setSelectedConsultationType] = useState(
@@ -36,13 +36,8 @@ const CreateAppointment = ({
   } | null>(null);
 
   const getConsultationFee = useMemo(() => {
-    const retrieved =
-      doctor.consultationCharges[
-        selectedConsultationType?.toLowerCase() as 'home' | 'video' | 'clinic'
-      ];
-
-    return `${formatCurrency(retrieved * TIME_INTERVAL)}/${TIME_INTERVAL} mins`;
-  }, [doctor.consultationCharges, selectedConsultationType]);
+    return ` mins`;
+  }, [doctor, selectedConsultationType]);
 
   const blockedDates: Date[] = [
     new Date(2025, 5, 7), // June 7

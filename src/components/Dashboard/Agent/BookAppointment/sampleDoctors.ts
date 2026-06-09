@@ -1,6 +1,6 @@
-import { SelectDoctorType } from './type';
+import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 
-export const doctors: SelectDoctorType[] = [
+export const doctors: DoctorProfile[] = [
   {
     id: 'doc-001',
     name: 'Dr. Sarah Johnson',
@@ -334,4 +334,4 @@ export const doctors: SelectDoctorType[] = [
       clinic: 5,
     },
   },
-];
+] as unknown as DoctorProfile[];

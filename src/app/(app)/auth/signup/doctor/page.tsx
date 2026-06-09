@@ -10,7 +10,7 @@ const Page = () => {
 
   return (
     <>
-      <SelectAuthMode updateState={setState} />
+      <SelectAuthMode action={() => setState('signup-details')} />
     </>
   );
 };

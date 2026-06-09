@@ -34,7 +34,7 @@ interface BookAppointmentCompParams {
     React.SetStateAction<AppointmentTimes | null>
   >;
   selectedAppointmentType: 0 | 1;
-  setSelectedAppointmentType: React.Dispatch<React.SetStateAction<0 | 1>>;
+  setSelectedAppointmentType: (value: 0 | 1) => void;
   appointmentTypes: { id: 0 | 1; name: string }[];
   action: () => void;
   goBack: () => void;

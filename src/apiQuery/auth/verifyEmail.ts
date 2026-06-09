@@ -6,7 +6,7 @@ import {
   UseMutationResult,
 } from '@tanstack/react-query';
 import axios from 'axios';
-import { VerifiedUserResponse } from '../hospital/auth/types';
+import { VerifiedUserResponse } from './types';
 
 export type VerifyEmailPayload = {
   email: string;

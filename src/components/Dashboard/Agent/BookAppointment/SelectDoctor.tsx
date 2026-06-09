@@ -1,10 +1,11 @@
+import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import Modal from '@/components/Ui/Modal';
 import SearchInput from '@/components/Ui/SearchInput';
 import { ArrowLeft, Star } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import DoctorCard from './DoctorCard';
 import { doctors } from './sampleDoctors';
-import { SelectDoctorType, StateType } from './type';
+import { StateType } from './type';
 import ViewDoctor from './ViewDoctor';
 
 const SelectDoctor = ({
@@ -18,34 +19,35 @@ const SelectDoctor = ({
 }) => {
   const [searchText, setSearchText] = useState('');
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  const [clickedDoctor, setClickedDoctor] = useState<SelectDoctorType | null>(
+  const [clickedDoctor, setClickedDoctor] = useState<DoctorProfile | null>(
     null
   );
 
   const [selectedDoctors, setSelectedDoctors] = useState(doctors);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSelectedDoctors(
-      doctors
-        .filter((doctor) => {
-          if (searchText) {
-            return (
-              doctor.name.toLowerCase().includes(searchText.toLowerCase()) ||
-              doctor.specialization
-                .toLowerCase()
-                .includes(searchText.toLowerCase())
-            );
-          }
-          return true;
-        })
-        .filter((doctor) => {
-          if (activeFilters.length > 0) {
-            return activeFilters.includes(doctor.specialization);
-          }
-          return true;
-        })
-    );
+    // setSelectedDoctors(
+    //   doctors
+    //     .filter((doctor: DoctorProfile) => {
+    //       if (searchText) {
+    //         return (
+    //           doctor.firstName
+    //             .toLowerCase()
+    //             .includes(searchText.toLowerCase()) ||
+    //           doctor.specialization
+    //             .toLowerCase()
+    //             .includes(searchText.toLowerCase())
+    //         );
+    //       }
+    //       return true;
+    //     })
+    //     .filter((doctor) => {
+    //       if (activeFilters.length > 0) {
+    //         return activeFilters.includes(doctor.specialization);
+    //       }
+    //       return true;
+    //     })
+    // );
   }, [searchText, activeFilters]);
 
   const handleClose = () => {
@@ -100,18 +102,15 @@ const SelectDoctor = ({
               </div>
 
               <div>
-                {doctors
-                  ?.filter((doctor) => doctor.isTopDoctor)
-                  ?.slice(0, 1)
-                  ?.map((doctor) => (
-                    <div
-                      key={doctor.id}
-                      className="cursor-pointer w-full"
-                      onClick={() => setClickedDoctor(doctor)}
-                    >
-                      <DoctorCard key={doctor.id} doctor={doctor} showArrow />
-                    </div>
-                  ))}
+                {doctors?.slice(0, 1)?.map((doctor: DoctorProfile) => (
+                  <div
+                    key={doctor.id}
+                    className="cursor-pointer w-full"
+                    onClick={() => setClickedDoctor(doctor)}
+                  >
+                    <DoctorCard key={doctor.id} doctor={doctor} showArrow />
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -128,18 +127,15 @@ const SelectDoctor = ({
                   scrollBehavior: 'smooth',
                 }}
               >
-                {doctors
-                  ?.filter((doctor) => !doctor.isTopDoctor)
-                  ?.slice(0, 10)
-                  ?.map((doctor) => (
-                    <div
-                      key={doctor.id}
-                      className="w-full cursor-pointer"
-                      onClick={() => setClickedDoctor(doctor)}
-                    >
-                      <DoctorCard key={doctor.id} doctor={doctor} showArrow />
-                    </div>
-                  ))}
+                {doctors?.slice(0, 10)?.map((doctor: DoctorProfile) => (
+                  <div
+                    key={doctor.id}
+                    className="w-full cursor-pointer"
+                    onClick={() => setClickedDoctor(doctor)}
+                  >
+                    <DoctorCard key={doctor.id} doctor={doctor} showArrow />
+                  </div>
+                ))}
               </div>
             </div>
           </div>

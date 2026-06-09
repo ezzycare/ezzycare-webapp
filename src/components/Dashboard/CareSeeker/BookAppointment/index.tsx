@@ -24,6 +24,7 @@ import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
 import React, { useEffect, useMemo, useState } from 'react';
 import AllDoctorsComp from './AllDoctorsComp';
 import BookAppointmentComp from './BookAppointmentComp';
+import BookOthers from './BookOthers';
 import DoctorFilter from './DoctorFilter';
 import SelectDoctorSpecialty from './SelectDoctorSpecialty';
 import SelectPatientCareMode from './SelectPatientCareMode';
@@ -36,6 +37,7 @@ const allStates = [
   'select-doctor',
   'set-filter',
   'book-appointment',
+  'book-others',
   'select-payment',
 ];
 
@@ -112,7 +114,13 @@ const BookPatientAppointment = ({
   }, []);
 
   const showModalHeader = useMemo(
-    () => !['select-doctor', 'set-filter', 'book-appointment'].includes(state),
+    () =>
+      ![
+        'select-doctor',
+        'set-filter',
+        'book-appointment',
+        'book-others',
+      ].includes(state),
     [state]
   );
 
@@ -299,9 +307,21 @@ const BookPatientAppointment = ({
               selectedTimes={selectedTimes}
               setSelectedTimes={setSelectedTimes}
               selectedAppointmentType={selectedAppointmentType}
-              setSelectedAppointmentType={setSelectedAppointmentType}
+              setSelectedAppointmentType={(value: 0 | 1) => {
+                setSelectedAppointmentType(value);
+                if (value === 1) {
+                  setState('book-others');
+                }
+              }}
               appointmentTypes={appointmentTypes}
               goBack={goBack}
+              action={handleCreateAppointment}
+            />
+          )}
+
+          {state === 'book-others' && (
+            <BookOthers
+              goBack={() => setState('book-appointment')}
               action={handleCreateAppointment}
             />
           )}
