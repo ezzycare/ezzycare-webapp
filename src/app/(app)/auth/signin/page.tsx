@@ -1,15 +1,15 @@
 'use client';
 
-import Card from '@/components/Ui/Card';
 import Button from '@/components/Ui/Button';
+import Card from '@/components/Ui/Card';
 import { PasswordInput, TextInput } from '@/components/Ui/TextInput';
 import { toaster } from '@/lib/toaster';
 import { loginAction } from '@/serverActions/login';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EnvelopeClosedIcon } from '@radix-ui/react-icons';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -20,8 +20,11 @@ const LoginUserSchema = z.object({
 
 type LoginUser = z.infer<typeof LoginUserSchema>;
 
-const SignIn = () => {
-  const { push, back } = useRouter();
+const SignInForm = () => {
+  const { replace, back } = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get('next');
+
   const authStore = useAuthStore((state: AuthStore) => state);
 
   const [loading, setLoading] = useState(false);
@@ -47,16 +50,15 @@ const SignIn = () => {
       }
 
       if (response.data) {
+        if (!response.data.email_verified) {
+          replace('/auth/signup/verify-email?resend=true&email=' + data.email);
+        } else {
+          replace(next || '/dashboard');
+        }
         authStore.updateUser(response.data.user);
         authStore.setToken(response.data.access_token);
-        if (!response.data.email_verified) {
-          push(
-            '/auth/signup/hospital/verify-email?resend=true&email=' + data.email
-          );
-          return;
-        }
+
         toaster.success('Login successful');
-        push('/dashboard');
       }
     } catch (error) {
       console.error(error);
@@ -107,5 +109,11 @@ const SignIn = () => {
     </Card>
   );
 };
+
+const SignIn = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <SignInForm />
+  </Suspense>
+);
 
 export default SignIn;

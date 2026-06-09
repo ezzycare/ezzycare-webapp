@@ -14,6 +14,7 @@ import {
 import { ConsultationType } from '@/apiQuery/hospital/types';
 import { useInitializePaymentMutation } from '@/apiQuery/payment/initiatePayment';
 import Modal from '@/components/Ui/Modal';
+import { BoldWalletIcon, PaypalIconLocal } from '@/icons/DashboardIcons';
 import { toaster } from '@/lib/toaster';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import {
@@ -26,6 +27,7 @@ import AllDoctorsComp from './AllDoctorsComp';
 import BookAppointmentComp from './BookAppointmentComp';
 import BookOthers from './BookOthers';
 import DoctorFilter from './DoctorFilter';
+import SeekerAppointmentPending from './SeekerAppointmentPending';
 import SelectDoctorSpecialty from './SelectDoctorSpecialty';
 import SelectPatientCareMode from './SelectPatientCareMode';
 import SelectPatientCareType from './SelectPatientCareType';
@@ -39,6 +41,7 @@ const allStates = [
   'book-appointment',
   'book-others',
   'select-payment',
+  'appointment-pending',
 ];
 
 export type DoctorFiltersType = {
@@ -225,6 +228,7 @@ const BookPatientAppointment = ({
         onSuccess: (res) => {
           if (res.data?.authorizationUrl) {
             window.location.href = res.data?.authorizationUrl;
+            // setState('appointment-pending')
           }
         },
         onError: () => toaster.error('Failed to initialize payment'),
@@ -241,6 +245,7 @@ const BookPatientAppointment = ({
         description={showModalHeader ? 'Book an appointment with ease' : ''}
         size="md"
         className="min-h-[60vh]"
+        persistent
       >
         <div>
           {state === 'select-specialty' && (
@@ -325,6 +330,15 @@ const BookPatientAppointment = ({
               action={handleCreateAppointment}
             />
           )}
+
+          {state === 'appointment-pending' && (
+            <SeekerAppointmentPending
+              action={() => {
+                setState('select-doctor');
+                handleCloseModal();
+              }}
+            />
+          )}
         </div>
       </Modal>
     </div>
@@ -345,4 +359,16 @@ const careModes: { id: number; name: ConsultationType }[] = [
 const appointmentTypes: { id: 0 | 1; name: string }[] = [
   { id: 0, name: 'Self' },
   { id: 1, name: 'Others' },
+];
+const paymentMethods = [
+  {
+    id: 0,
+    name: 'Pay from wallet',
+    icon: <BoldWalletIcon />,
+  },
+  {
+    id: 0,
+    name: 'Pay Online',
+    icon: <PaypalIconLocal />,
+  },
 ];

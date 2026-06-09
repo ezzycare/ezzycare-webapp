@@ -11,6 +11,10 @@ const navPrefixes = navItems
 const PUBLIC_PREFIXES = [...navPrefixes, '/auth'];
 const PUBLIC_EXACT = new Set<string>(['/']);
 
+const AUTH_PATHS_FOR_AUTHENTICATED = new Set<string>([
+  '/auth/signup/verify-email',
+]);
+
 export async function proxy(req: NextRequest) {
   const { pathname, origin } = req.nextUrl;
 
@@ -35,7 +39,11 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (session?.access_token && pathname?.includes('/auth')) {
+  if (
+    session?.access_token &&
+    pathname?.includes('/auth') &&
+    !AUTH_PATHS_FOR_AUTHENTICATED.has(pathname)
+  ) {
     req.headers.set('Authorization', `Bearer ${session.access_token}`);
     return NextResponse.redirect(new URL('/dashboard', origin));
   }

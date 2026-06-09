@@ -33,6 +33,13 @@ export async function loginAction({ email, password }: LoginPayload) {
       };
     }
 
+    if (!loginResponse?.data.email_verified) {
+      return {
+        success: true,
+        data: loginResponse?.data,
+      };
+    }
+
     const updatedUser: LoginResponse['data'] & { expires: string } = {
       ...loginResponse?.data,
       expires: dayjs().add(10, 'minute').toISOString(),

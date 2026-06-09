@@ -24,7 +24,7 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
       authStore.setToken(response.data.access_token);
       if (!response.data?.email_verified) {
         router.push(
-          '/auth/signup/hospital/verify-email?resend=true&email=' +
+          '/auth/signup/verify-email?resend=true&email=' +
             response.data?.user?.email
         );
         return;
