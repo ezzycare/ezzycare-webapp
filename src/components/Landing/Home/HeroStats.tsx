@@ -62,14 +62,14 @@ const HeroStats = () => {
           <div key={stat.label} className="flex flex-col gap-3">
             <h2
               className={clsx(
-                'text-left font-medium text-text',
+                'text-center sm:text-left font-medium text-text',
                 'text:2xl sm:text-3xl md:text-[35px]'
               )}
             >
               {counts[i]}
               {!!counts[i] && <span>{stat.unit}</span>}
             </h2>
-            <p className="text-xs sm:text-sm md:text-lg text-left text-[#788498]">
+            <p className="text-xs sm:text-sm md:text-lg text-center sm:text-left text-[#788498]">
               {stat.label}
             </p>
           </div>
