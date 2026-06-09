@@ -53,10 +53,10 @@ const HeroStats = () => {
   }, [start]);
 
   return (
-    <div className="w-full mt-auto bg-[#F9F9FB] py-5 sm:py-10 mb-10 sm:mb-20 font-inter">
+    <div className="w-full mt-auto bg-[#F9F9FB] py-5 px-5 sm:py-10 mb-10 sm:mb-20 font-inter">
       <div
         ref={ref}
-        className="w-full max-w-280 mx-auto grid grid-cols-4 justify-evenly"
+        className="w-full max-w-280 mx-auto grid grid-cols-4 items-center justify-evenly"
       >
         {stats.map((stat, i) => (
           <div key={stat.label} className="flex flex-col gap-3">
