@@ -36,7 +36,6 @@ const VerifyEmailContent = () => {
       });
 
       toaster.success('Verification code sent');
-      router.push('/auth/signup/hospitals/upload-docs');
     } catch (error) {}
   };
 
@@ -47,13 +46,13 @@ const VerifyEmailContent = () => {
   }, [resend]);
 
   const handleVerifyEmail = async () => {
-    console.log({ authEmail, otpCode });
-    if (!authEmail || !otpCode?.length) {
+    const emailForVerification = loginEmail || authEmail;
+    if (!emailForVerification || !otpCode?.length) {
       return;
     }
 
     const payload: VerifyEmailPayload = {
-      email: authEmail,
+      email: emailForVerification,
       code: otpCode,
     };
 
@@ -64,7 +63,7 @@ const VerifyEmailContent = () => {
 
       toaster.success(message || 'Email verified successfully');
 
-      router.push('/auth/signup/hospital/upload-docs');
+      // router.push('/auth/signup/hospital/upload-docs');
     } catch (error) {}
   };
 

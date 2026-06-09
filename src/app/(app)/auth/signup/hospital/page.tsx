@@ -61,7 +61,7 @@ const RegisterHospital = () => {
 
       toaster.success(res.message || 'Verification code sent');
       updateSignupDetails(payload);
-      router.push('/auth/signup/verify-email');
+      router.push(`/auth/signup/verify-email?type=signup&email=${data.email}`);
     } catch (error) {
       // toaster.error(error?.message || 'Registration failed');
     }

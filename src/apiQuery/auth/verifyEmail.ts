@@ -1,11 +1,11 @@
 import { ApiResponse } from '@/apiQuery/types';
-import { axiosClient } from '@/services/axiosClient';
 import {
   useMutation,
   UseMutationOptions,
   UseMutationResult,
 } from '@tanstack/react-query';
 import axios from 'axios';
+import { baseURL } from '../baseUrl';
 import { VerifiedUserResponse } from './types';
 
 export type VerifyEmailPayload = {
@@ -17,8 +17,8 @@ export const verifyEmail = async (
   payload: VerifyEmailPayload
 ): Promise<ApiResponse<VerifiedUserResponse>> => {
   try {
-    const response = await axiosClient.post<ApiResponse<VerifiedUserResponse>>(
-      '/auth/verify-email',
+    const response = await axios.post<ApiResponse<VerifiedUserResponse>>(
+      `${baseURL}/auth/verify-email`,
       payload
     );
 

@@ -52,7 +52,7 @@ const Hero = () => {
         {
           x: 0,
           rotate: 0,
-          opacity: isMobile ? 0.3 : 1,
+          opacity: isMobile ? 0 : 1,
           duration: 1.5,
           ease: 'elastic.out(0.5, 0.3)',
         }
@@ -64,7 +64,7 @@ const Hero = () => {
         {
           x: 0,
           rotate: 0,
-          opacity: isMobile ? 0.3 : 1,
+          opacity: isMobile ? 0 : 1,
           duration: 1.5,
           ease: 'elastic.out(0.5, 0.3)',
         }
