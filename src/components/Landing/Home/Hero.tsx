@@ -28,8 +28,8 @@ const Hero = () => {
     window.addEventListener('resize', () => {
       const isMobile = window.innerWidth < 768;
       if (isMobile) {
-        gsap.to(leftImageRef.current, { opacity: 0.3 });
-        gsap.to(rightImageRef.current, { opacity: 0.3 });
+        gsap.to(leftImageRef.current, { opacity: 0 });
+        gsap.to(rightImageRef.current, { opacity: 0 });
       } else {
         gsap.to(leftImageRef.current, { opacity: 1 });
         gsap.to(rightImageRef.current, { opacity: 1 });
