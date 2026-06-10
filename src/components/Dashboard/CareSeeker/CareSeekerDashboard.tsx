@@ -1,7 +1,6 @@
 'use client';
 
 // import { redirect } from 'next/navigation';
-import { useGetHospitalDashboard } from '@/apiQuery/hospital';
 import AlertBanner from '@/components/Base/AlertBanner';
 import Button from '@/components/Ui/Button';
 import SearchInput from '@/components/Ui/SearchInput';
@@ -32,7 +31,7 @@ const hospital: HospitalType = {
 };
 
 const CareSeekerDashboard = () => {
-  const { dashboard: dashboardData } = useGetHospitalDashboard();
+  // const { dashboard: dashboardData } = useGetAppointments();
   const user = useAuthStore((state: AuthStore) => state.user);
   const [showProfileModal, setShowProfileModal] = React.useState(false);
   const [showBookDoctorModal, setShowBookDoctorModal] = React.useState(false);
@@ -46,8 +45,9 @@ const CareSeekerDashboard = () => {
   }, []);
 
   const handleShowBalance = () => {
-    setShowBalance(!showBalance);
-    localStorage.setItem('showCareSeekerBalance', String(!showBalance));
+    const value = !showBalance;
+    setShowBalance(value);
+    localStorage.setItem('showCareSeekerBalance', String(value));
   };
 
   return (

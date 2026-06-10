@@ -306,3 +306,47 @@ export const PaypalIconLocal = (props: React.SVGProps<SVGSVGElement>) => (
     </defs>
   </svg>
 );
+
+export const ChatIconLocal = ({ size = 16, ...props }: IconProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 16 16"
+    width={size}
+    height={size}
+    fill="none"
+    {...props}
+  >
+    <path
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeMiterlimit={10}
+      strokeWidth={1.5}
+      d="M5.667 12.667h-.333c-2.667 0-4-.666-4-4V5.334c0-2.667 1.333-4 4-4h5.333c2.667 0 4 1.333 4 4v3.333c0 2.667-1.333 4-4 4h-.333c-.207 0-.407.1-.534.267l-1 1.333c-.44.587-1.16.587-1.6 0l-1-1.333a.753.753 0 0 0-.533-.267Z"
+    />
+    <path
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M10.664 7.333h.006M7.997 7.333h.006M5.33 7.333h.006"
+    />
+  </svg>
+);
+
+export const ChatTailIconLocal = ({ size = 16, ...props }: IconProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={13}
+    height={17}
+    fill="none"
+    {...props}
+  >
+    <path
+      fill="currentColor"
+      stroke="currentColor"
+      strokeWidth={0.66}
+      d="M6.273-2.33V2c0 6.7-4.123 11.514-5.752 13.151-.408.412-.138 1.182.498 1.153 1.247-.057 3.63-.239 6.164-.818 2.526-.577 5.248-1.557 7.14-3.239l.11-.099V-2.33h-8.16Z"
+    />
+  </svg>
+);

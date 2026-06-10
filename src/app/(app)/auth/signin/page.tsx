@@ -8,6 +8,7 @@ import { loginAction } from '@/serverActions/login';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EnvelopeClosedIcon } from '@radix-ui/react-icons';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -21,7 +22,7 @@ const LoginUserSchema = z.object({
 type LoginUser = z.infer<typeof LoginUserSchema>;
 
 const SignInForm = () => {
-  const { replace, back } = useRouter();
+  const { replace, back, push } = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next');
 
@@ -104,7 +105,10 @@ const SignInForm = () => {
       </form>
       <p className="text-sm text-text/50 mt-4 text-center">
         Don&apos;t have an account?{' '}
-        <span className="text-blue-11a ">Sign up</span>
+        <Link href="/auth/signup" className="text-blue-11a">
+          {' '}
+          Sign up
+        </Link>
       </p>
     </Card>
   );

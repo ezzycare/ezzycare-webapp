@@ -296,3 +296,27 @@ export const SideBarBaseIcon = ({ size = 16, ...props }: IconProps) => (
     />
   </svg>
 );
+
+export const WalletIconLocal = ({ size = 16, ...props }: IconProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 16 16"
+    width={size}
+    height={size}
+    fill="none"
+    {...props}
+  >
+    <path
+      stroke="#788498"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M12.028 9.033c-.28.273-.44.666-.4 1.086.06.72.72 1.247 1.44 1.247h1.267v.793a2.512 2.512 0 0 1-2.507 2.507H4.175a2.512 2.512 0 0 1-2.507-2.507V7.673a2.512 2.512 0 0 1 2.507-2.507h7.653a2.512 2.512 0 0 1 2.507 2.507v.96h-1.347c-.373 0-.713.146-.96.4Z"
+    />
+    <path
+      stroke="#788498"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M1.668 8.273V5.226c0-.793.487-1.5 1.227-1.78l5.293-2c.827-.313 1.713.3 1.713 1.187v2.533M15.039 9.313v1.373a.684.684 0 0 1-.667.68h-1.307c-.72 0-1.38-.527-1.44-1.246-.04-.42.12-.814.4-1.087.247-.254.587-.4.96-.4h1.387a.685.685 0 0 1 .667.68ZM4.666 8h4.667"
+    />
+  </svg>
+);

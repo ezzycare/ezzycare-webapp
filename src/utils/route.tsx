@@ -1,4 +1,5 @@
 import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
+import { ChatIconLocal } from '@/icons/DashboardIcons';
 import {
   AnalyticsIconLocal,
   CalendarIconLocal,
@@ -11,6 +12,7 @@ import {
   StethoscopeIconLocal,
   UserIconLocal,
   UsersIconLocal,
+  WalletIconLocal,
 } from '@/icons/DashboardNavIcons';
 
 export const navItems = [
@@ -51,6 +53,16 @@ export const dashNavItems = [
     name: 'Appointments',
     href: '/dashboard/appointments',
     icon: <MenuBoardIconLocal />,
+  },
+  {
+    name: 'Messages',
+    href: '/dashboard/messages',
+    icon: <ChatIconLocal />,
+  },
+  {
+    name: 'Wallet',
+    href: '/dashboard/wallet',
+    icon: <WalletIconLocal />,
   },
   {
     name: 'Verifications',
@@ -108,11 +120,22 @@ export const getAccountNavItems = (accountType: ACCOUNT_TYPE) => {
       return [
         '',
         'doctors',
+        // 'messages', // TODO: REMOVE
         'appointments',
         'agents',
         'patients',
         'notifications',
         'departments',
+        'settings',
+      ].map((val) => (val?.length ? `/dashboard/${val}` : `/dashboard`));
+
+    case 'SEEKER':
+      return [
+        '',
+        'appointments',
+        'messages',
+        'wallet',
+        'profile',
         'settings',
       ].map((val) => (val?.length ? `/dashboard/${val}` : `/dashboard`));
 

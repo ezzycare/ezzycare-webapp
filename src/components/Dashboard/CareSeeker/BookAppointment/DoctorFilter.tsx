@@ -8,7 +8,7 @@ import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { cn } from '@heroui/styles';
 import { StarIcon } from '@radix-ui/react-icons';
 import { useMemo, useState } from 'react';
-import { DoctorFiltersType } from '.';
+import { DoctorFiltersType } from '@/stores/bookAppointmentStore';
 
 const DoctorFilter = ({
   specialties,

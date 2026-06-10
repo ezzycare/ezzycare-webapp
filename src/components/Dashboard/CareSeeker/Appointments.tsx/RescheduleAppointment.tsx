@@ -1,8 +1,4 @@
 import {
-  Doctor,
-  useGetDoctorsDiscoveryQuery,
-} from '@/apiQuery/doctor/getDoctorDiscovery';
-import {
   DoctorProfile,
   useGetSingleDoctorQuery,
 } from '@/apiQuery/doctor/getSingleDoctor';
@@ -10,38 +6,31 @@ import {
   Appointment,
   useCreateAppointmentMutation,
 } from '@/apiQuery/healthcareAppointments/post/createAppointment';
-import { ConsultationType } from '@/apiQuery/hospital/types';
 import { useInitializePaymentMutation } from '@/apiQuery/payment/initiatePayment';
 import Modal from '@/components/Ui/Modal';
-import { BoldWalletIcon, PaypalIconLocal } from '@/icons/DashboardIcons';
 import { toaster } from '@/lib/toaster';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
-import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
-import React, { JSX, useEffect, useMemo } from 'react';
-import AllDoctorsComp from './AllDoctorsComp';
-import BookAppointmentComp from './BookAppointmentComp';
-import BookOthers from './BookOthers';
-import DoctorFilter from './DoctorFilter';
-import SeekerAppointmentPending from './SeekerAppointmentPending';
-import SelectDoctorSpecialty from './SelectDoctorSpecialty';
-import SelectPatientCareMode from './SelectPatientCareMode';
-import SelectPatientCareType from './SelectPatientCareType';
-import SelectPaymentMethod from './SelectPaymentMethod';
+import React, { useEffect, useMemo } from 'react';
+import {
+  appointmentTypes,
+  careModes,
+  careTypes,
+  paymentMethods,
+} from '../BookAppointment';
+import BookAppointmentComp from '../BookAppointment/BookAppointmentComp';
+import BookOthers from '../BookAppointment/BookOthers';
+import SeekerAppointmentPending from '../BookAppointment/SeekerAppointmentPending';
+import SelectPaymentMethod from '../BookAppointment/SelectPaymentMethod';
 
 const allStates = [
-  'select-specialty',
-  'select-care-type',
-  'select-care-mode',
-  'select-doctor',
-  'set-filter',
   'book-appointment',
   'book-others',
   'select-payment',
   'appointment-pending',
 ];
 
-const BookPatientAppointment = ({
+const ReschedulePatientAppointment = ({
   openModal,
   setOpenModal,
 }: {
@@ -50,16 +39,13 @@ const BookPatientAppointment = ({
 }) => {
   const {
     state,
-    selectedSpecialty,
     selectedCareType,
-    selectedCareMode,
     reason,
     promoCode,
     clickedDoctor,
     selectedAppointmentType,
     selectedConsultationType,
     selectedTimes,
-    activeFilters,
     updateBooking,
   } = useBookAppointmentStore();
   const user = useAuthStore((state: AuthStore) => state.user);
@@ -80,39 +66,9 @@ const BookPatientAppointment = ({
     }
   }, []);
 
-  const showModalHeader = useMemo(
-    () =>
-      ![
-        'select-doctor',
-        'set-filter',
-        'book-appointment',
-        'book-others',
-        'select-payment',
-      ].includes(state),
-    [state]
-  );
-
   const modalClassName = useMemo(() => {
     return ['select-payment'].includes(state) ? 'min-h-auto' : 'min-h-[60vh]';
   }, [state]);
-
-  const categories = useCategoryStore(
-    (state: CategoryStore) => state.categories?.doctors?.children
-  );
-
-  const specialties = useMemo(() => {
-    return categories?.length ? categories : [];
-  }, [categories]);
-
-  const {
-    doctors: doctorsData,
-    isFetching: loadingDoctors,
-    ...restDoctorQueries
-  } = useGetDoctorsDiscoveryQuery({ ...activeFilters });
-
-  const doctors: Doctor[] = useMemo(() => {
-    return doctorsData?.filter((doctor): doctor is Doctor => !!doctor) ?? [];
-  }, [doctorsData]);
 
   const { doctor: doctorData, isFetching: loadingSingleDoctor } =
     useGetSingleDoctorQuery({
@@ -124,8 +80,8 @@ const BookPatientAppointment = ({
   }, [doctorData]);
 
   const isLoading = useMemo(() => {
-    return loadingDoctors || loadingSingleDoctor;
-  }, [loadingDoctors, loadingSingleDoctor]);
+    return loadingSingleDoctor;
+  }, [loadingSingleDoctor]);
 
   const handleResetModal = () => {
     updateBooking({
@@ -217,100 +173,11 @@ const BookPatientAppointment = ({
       <Modal
         open={openModal}
         onClose={handleCloseModal}
-        title={showModalHeader ? 'Book Appointment' : ''}
-        description={showModalHeader ? 'Book an appointment with ease' : ''}
         size="md"
         className={modalClassName}
         persistent
       >
         <div>
-          {state === 'select-specialty' && (
-            <SelectDoctorSpecialty
-              specialties={specialties}
-              selectedSpecialty={selectedSpecialty}
-              setSelectedSpecialty={(value) =>
-                updateBooking({
-                  selectedSpecialty:
-                    typeof value === 'function'
-                      ? value(selectedSpecialty)
-                      : value,
-                })
-              }
-              action={() => updateBooking({ state: 'select-care-type' })}
-            />
-          )}
-          {state === 'select-care-type' && (
-            <SelectPatientCareType
-              careTypes={careTypes}
-              selectedCareType={selectedCareType}
-              setSelectedCareType={(value) =>
-                updateBooking({
-                  selectedCareType:
-                    typeof value === 'function'
-                      ? value(selectedCareType)
-                      : value,
-                })
-              }
-              action={() => updateBooking({ state: 'select-care-mode' })}
-            />
-          )}
-          {state === 'select-care-mode' && (
-            <SelectPatientCareMode
-              careModes={careModes}
-              selectedCareMode={selectedCareMode}
-              setSelectedCareMode={(value) =>
-                updateBooking({
-                  selectedCareMode:
-                    typeof value === 'function'
-                      ? value(selectedCareMode)
-                      : value,
-                })
-              }
-              action={() => updateBooking({ state: 'select-doctor' })}
-            />
-          )}
-          {state === 'select-doctor' && (
-            <AllDoctorsComp
-              isLoading={isLoading}
-              doctors={doctors}
-              selectedDoctor={doctor}
-              hasNextPage={restDoctorQueries.hasNextPage}
-              fetchNextPage={restDoctorQueries.fetchNextPage}
-              filters={activeFilters}
-              setFilters={(value) =>
-                updateBooking({
-                  activeFilters:
-                    typeof value === 'function' ? value(activeFilters) : value,
-                })
-              }
-              clickedDoctor={clickedDoctor}
-              setClickedDoctor={(value) =>
-                updateBooking({
-                  clickedDoctor:
-                    typeof value === 'function' ? value(clickedDoctor) : value,
-                })
-              }
-              openFilter={() => updateBooking({ state: 'set-filter' })}
-              action={() => updateBooking({ state: 'book-appointment' })}
-              goBack={goBack}
-            />
-          )}
-          {state === 'set-filter' && (
-            <DoctorFilter
-              specialties={specialties}
-              careTypes={careTypes}
-              careModes={careModes}
-              filters={activeFilters}
-              setFilters={(value) =>
-                updateBooking({
-                  activeFilters:
-                    typeof value === 'function' ? value(activeFilters) : value,
-                })
-              }
-              goBack={goBack}
-            />
-          )}
-
           {state === 'book-appointment' && (
             <BookAppointmentComp
               doctor={doctor}
@@ -387,37 +254,4 @@ const BookPatientAppointment = ({
   );
 };
 
-export default BookPatientAppointment;
-
-export const careTypes: { id: 0 | 1; name: string }[] = [
-  { id: 0, name: 'Non-Urgent Care' },
-  { id: 1, name: 'Urgent Care' },
-];
-export const careModes: { id: number; name: ConsultationType }[] = [
-  { id: 0, name: 'VIDEO' },
-  { id: 1, name: 'HOME' },
-  { id: 2, name: 'CLINIC' },
-];
-export const appointmentTypes: { id: 0 | 1; name: string }[] = [
-  { id: 1, name: 'Self' },
-  { id: 0, name: 'Others' },
-];
-
-export type PaymentMethodType = {
-  id: number;
-  name: string;
-  icon: JSX.Element;
-};
-
-export const paymentMethods: PaymentMethodType[] = [
-  {
-    id: 0,
-    name: 'Pay from wallet',
-    icon: <BoldWalletIcon />,
-  },
-  {
-    id: 0,
-    name: 'Pay Online',
-    icon: <PaypalIconLocal />,
-  },
-];
+export default ReschedulePatientAppointment;

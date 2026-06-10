@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import { ConsultationType } from '@/apiQuery/hospital/types';
 import Button from '@/components/Ui/Button';
@@ -5,12 +6,12 @@ import { RadioItem } from '@/components/Ui/RadioGroup';
 import TextArea from '@/components/Ui/TextArea';
 import { TextInput } from '@/components/Ui/TextInput';
 import ArrowLeft from '@/icons/ArrowLeft';
+import { AppointmentTimes } from '@/stores/bookAppointmentStore';
 import { formatCurrency } from '@/utils/helper';
 import { timeSlotGenerator } from '@/utils/timeSlotsGenerator';
 import dayjs from 'dayjs';
 import { CircleDollarSign } from 'lucide-react';
-import React, { useMemo, useState } from 'react';
-import { AppointmentTimes } from '.';
+import React, { useEffect, useMemo, useState } from 'react';
 import DateTimePicker, {
   SelectedSlotDisplay,
 } from '../../Agent/BookAppointment/DateTimePicker';
@@ -38,6 +39,8 @@ interface BookAppointmentCompParams {
   appointmentTypes: { id: 0 | 1; name: string }[];
   action: () => void;
   goBack: () => void;
+  isLoading?: boolean;
+  isReschedule?: boolean;
 }
 
 const BookAppointmentComp = ({
@@ -56,13 +59,36 @@ const BookAppointmentComp = ({
   appointmentTypes,
   action,
   goBack,
+  isLoading,
+  isReschedule = false,
 }: BookAppointmentCompParams) => {
+  const timeSlots = [...timeSlotGenerator(8, 17, TIME_INTERVAL)];
+
   const [isSelectingTime, setIsSelectingTime] = useState(false);
   const [currentSelectedTimes, setCurrentSelectedTimes] = useState<{
     date: Date;
     timeSlot: string;
   } | null>(null);
   const [canProceedToPayment, setCanProceedToPayment] = useState(false);
+
+  useEffect(() => {
+    if (isReschedule) {
+      setIsSelectingTime(true);
+    }
+  }, [isReschedule]);
+
+  useEffect(() => {
+    if (selectedTimes?.appointmentDate) {
+      const startTime = selectedTimes.appointmentTime.split(' ')[0];
+      const timeSlot = timeSlots.find(
+        (timeSlot) => timeSlot.value === startTime
+      );
+      setCurrentSelectedTimes({
+        date: dayjs(selectedTimes.appointmentDate).toDate(),
+        timeSlot: timeSlot?.value ?? '',
+      });
+    }
+  }, [selectedTimes]);
 
   const getConsultationFee = useMemo(() => {
     const charges = {
@@ -83,8 +109,6 @@ const BookAppointmentComp = ({
 
     return `${formatCurrency(retrieved * TIME_INTERVAL)}/${TIME_INTERVAL} mins`;
   }, [doctor, selectedConsultationType]);
-
-  const timeSlots = [...timeSlotGenerator(8, 17, TIME_INTERVAL)];
 
   const blockedDates = useMemo(
     () => buildBlockedDates(doctor.availability ?? []),
@@ -135,13 +159,6 @@ const BookAppointmentComp = ({
   };
 
   const isValid = useMemo(() => {
-    console.log({
-      appointmentDate: selectedTimes?.appointmentDate,
-      appointmentTime: selectedTimes?.appointmentTime,
-      appointmentEndTime: selectedTimes?.appointmentEndTime,
-      selectedConsultationType,
-      reason,
-    });
     return (
       selectedTimes?.appointmentDate &&
       selectedTimes?.appointmentTime &&
@@ -163,7 +180,7 @@ const BookAppointmentComp = ({
 
       <div className="flex flex-col space-y-3">
         <h3 className="text-base text-text-alt font-medium">
-          Book Appointment
+          {isReschedule ? 'Reschedule' : 'Book'} Appointment
         </h3>
         <DoctorCard key={doctor.id} doctor={doctor} />
 
@@ -196,8 +213,8 @@ const BookAppointmentComp = ({
               blockedTimesByDate={blockedTimesByDate}
               defaultDate={currentSelectedTimes?.date}
               onSelect={handleSelectTimes}
-              applyImmediately
-              applyLabel="Apply"
+              applyImmediately={!isReschedule}
+              applyLabel={isReschedule ? 'Proceed' : 'Apply'}
             />
           </div>
         ) : (
@@ -292,12 +309,13 @@ const BookAppointmentComp = ({
             <Button
               variant="primary"
               className="py-2.5! w-full"
-              disabled={!isValid}
+              disabled={!isValid || isLoading}
+              loading={isLoading}
               onClick={() => {
                 setCanProceedToPayment(true);
               }}
             >
-              Book Appointment
+              {isReschedule ? 'Reschedule' : 'Book'} Appointment
             </Button>
           </>
         )}
@@ -306,7 +324,8 @@ const BookAppointmentComp = ({
             <Button
               variant="primary"
               className="py-2.5! w-full"
-              disabled={!isValid}
+              disabled={!isValid || isLoading}
+              loading={isLoading}
               onClick={() => {
                 action();
               }}
@@ -316,7 +335,7 @@ const BookAppointmentComp = ({
             <Button
               variant="outline"
               className="py-2.5! w-full"
-              disabled={!isValid}
+              disabled={!isValid || isLoading}
               onClick={() => {
                 setCanProceedToPayment(false);
               }}

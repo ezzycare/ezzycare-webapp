@@ -3,10 +3,10 @@ import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import SpiralLoader from '@/components/Base/SpiralLoader';
 import Button from '@/components/Ui/Button';
 import SearchInput from '@/components/Ui/SearchInput';
+import type { DoctorFiltersType } from '@/stores/bookAppointmentStore';
 import { debounce } from '@/utils/helper';
 import { ArrowLeft, Star } from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import type { DoctorFiltersType } from '.';
 import DoctorCard from '../../Agent/BookAppointment/DoctorCard';
 import DoctorProfileComp from './DoctorProfileComp';
 
@@ -58,9 +58,12 @@ const AllDoctorsComp = ({
 
   useEffect(() => {
     return () => {
-      handleSearch('');
+      setFilters((prev) => ({
+        ...prev,
+        search: '',
+      }));
     };
-  }, [searchText]);
+  }, []);
 
   const hasOtherFilters = useMemo(() => {
     return Object.entries(filters)
