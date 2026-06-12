@@ -21,6 +21,12 @@ export type DoctorFiltersType = {
   distance?: number | undefined;
 };
 
+export type PaymentReference = {
+  access_code: string;
+  authorization_url: string;
+  reference: string;
+};
+
 export interface BookAppointmentStore {
   patientName: string;
   patientEmail: string;
@@ -46,12 +52,14 @@ export interface BookAppointmentStore {
   activeFilters: DoctorFiltersType;
   state: string;
   createdAppointment: CreateAppointmentInterface | null;
+  paymentReference: PaymentReference | null;
 
   updateBooking: (payload: Partial<BookAppointmentStore>) => void;
   setDoctors: (doctors: Record<number, DoctorProfile>) => void;
   setCreatedAppointment: (
     appointment: CreateAppointmentInterface | null
   ) => void;
+  updatePaymentReference: (paymentReference: PaymentReference | null) => void;
 }
 
 export const useBookAppointmentStore = create<BookAppointmentStore>((set) => ({
@@ -79,6 +87,7 @@ export const useBookAppointmentStore = create<BookAppointmentStore>((set) => ({
   activeFilters: {},
   state: 'select-specialty',
   createdAppointment: null,
+  paymentReference: null,
 
   updateBooking: (payload) =>
     set((state) => ({
@@ -88,4 +97,5 @@ export const useBookAppointmentStore = create<BookAppointmentStore>((set) => ({
   setDoctors: (doctors) => set({ doctors }),
   setCreatedAppointment: (appointment) =>
     set({ createdAppointment: appointment }),
+  updatePaymentReference: (paymentReference) => set({ paymentReference }),
 }));

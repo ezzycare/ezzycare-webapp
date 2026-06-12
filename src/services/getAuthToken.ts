@@ -5,7 +5,7 @@ export const getCookie = () => {
 
   const match = document.cookie
     .split('; ')
-    .find((row) => row.startsWith('auth-user='));
+    .find((row) => row.startsWith('ezzy-auth-user='));
 
   if (match) {
     try {

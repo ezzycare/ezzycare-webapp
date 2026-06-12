@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { appUrl } from '@/apiQuery/baseUrl';
 import {
   Doctor,
   useGetDoctorsDiscoveryQuery,
@@ -12,7 +14,11 @@ import {
   useCreateAppointmentMutation,
 } from '@/apiQuery/healthcareAppointments/post/createAppointment';
 import { ConsultationType } from '@/apiQuery/hospital/types';
-import { useInitializePaymentMutation } from '@/apiQuery/payment/initiatePayment';
+import {
+  PaymentParams,
+  useInitializePaymentMutation,
+} from '@/apiQuery/payment/initiatePayment';
+import { usePayWithWalletMutation } from '@/apiQuery/payment/payWithWallet';
 import { ApiResponse } from '@/apiQuery/types';
 import Modal from '@/components/Ui/Modal';
 import { BoldWalletIcon, PaypalIconLocal } from '@/icons/DashboardIcons';
@@ -65,6 +71,8 @@ const BookPatientAppointment = ({
     createdAppointment,
     updateBooking,
     setCreatedAppointment,
+    paymentReference,
+    updatePaymentReference,
   } = useBookAppointmentStore();
   const user = useAuthStore((state: AuthStore) => state.user);
 
@@ -73,12 +81,16 @@ const BookPatientAppointment = ({
   const { mutate: initiateBooking, isPending } = useCreateAppointmentMutation();
   const { mutate: initiatePayment, isPending: isPendingPayment } =
     useInitializePaymentMutation();
+  const { mutate: initiateWalletPayment, isPending: isPendingWalletPayment } =
+    usePayWithWalletMutation();
   const { mutate: cancelAppointment, isPending: isPendingCancel } =
     useCancelAppointmentMutation();
 
   const isCreatingBooking = useMemo(() => {
-    return isPending || isPendingPayment || isPendingCancel;
-  }, [isPending, isPendingPayment]);
+    return (
+      isPending || isPendingPayment || isPendingWalletPayment || isPendingCancel
+    );
+  }, [isPending, isPendingPayment, isPendingWalletPayment, isPendingCancel]);
 
   useEffect(() => {
     if (openModal) {
@@ -99,7 +111,9 @@ const BookPatientAppointment = ({
   );
 
   const modalClassName = useMemo(() => {
-    return ['select-payment'].includes(state) ? 'min-h-auto' : 'min-h-[60vh]';
+    return ['select-payment'].includes(state)
+      ? 'min-h-auto'
+      : 'min-h-[60vh] max-h-[90vh] overflow-y-auto';
   }, [state]);
 
   const categories = useCategoryStore(
@@ -193,35 +207,56 @@ const BookPatientAppointment = ({
         console.log({ res: res.data });
         if (!res.data) return;
         setCreatedAppointment(res.data);
-        updateBooking({ state: 'select-payment' });
         toaster.success(res.message || 'Appointment created successfully');
       },
-      onError: () => {
-        toaster.error('Failed to create appointment');
+      onError: (error: Error | any) => {
+        toaster.error(error?.message || 'Failed to create appointment');
       },
     });
   };
 
-  const handlePayment = (appointment: CreateAppointmentInterface | null) => {
-    if (!appointment) return;
+  const handlePayment = (paymentMethod: string) => {
+    if (!createdAppointment) return;
 
-    initiatePayment(
-      {
-        amount: appointment.totalCharge,
-        email: appointment.email,
-        appointmentId: appointment.id,
-        callbackUrl: `${window.location.origin}/payment/callback`,
+    const payload = {
+      amount: createdAppointment.totalCharge,
+      email: createdAppointment.email,
+      appointmentId: Number(createdAppointment.id),
+      callbackUrl: `${appUrl}/dashboard?paymentCallback=true`,
+    };
+
+    if (paymentMethod === 'wallet') {
+      handleWalletPayment(payload);
+    } else {
+      handleOnlinePayment(payload);
+    }
+  };
+
+  const handleWalletPayment = (payload: PaymentParams) => {
+    initiateWalletPayment(payload, {
+      onSuccess: (res) => {
+        console.log({ paymentWithWalletRes: res });
+        updateBooking({ state: 'appointment-pending' });
       },
-      {
-        onSuccess: (res) => {
-          if (res.data?.authorizationUrl) {
-            window.location.href = res.data?.authorizationUrl;
-            // setState('appointment-pending')
-          }
-        },
-        onError: () => toaster.error('Failed to initialize payment'),
-      }
-    );
+      onError: (error: Error | any) => {
+        toaster.error(error?.message || 'Failed to initialize payment');
+      },
+    });
+  };
+  const handleOnlinePayment = (payload: PaymentParams) => {
+    initiatePayment(payload, {
+      onSuccess: (res) => {
+        console.log({ paymentWithWalletRes: res });
+        if (res.data?.data?.authorization_url) {
+          updatePaymentReference(res.data?.data);
+          window.location.href = res.data?.data?.authorization_url;
+        }
+        // updateBooking({ state: 'appointment-pending' });
+      },
+      onError: (error: Error | any) => {
+        toaster.error(error?.message || 'Failed to initialize payment');
+      },
+    });
   };
 
   const handleCancelAppointment = (reason: string) => {
@@ -276,6 +311,9 @@ const BookPatientAppointment = ({
                     typeof value === 'function'
                       ? value(selectedCareType)
                       : value,
+                  activeFilters: {
+                    categoryId: selectedCareType,
+                  },
                 })
               }
               action={() => updateBooking({ state: 'select-care-mode' })}
@@ -291,6 +329,9 @@ const BookPatientAppointment = ({
                     typeof value === 'function'
                       ? value(selectedCareMode)
                       : value,
+                  activeFilters: {
+                    type: selectedCareMode as ConsultationType,
+                  },
                 })
               }
               action={() => updateBooking({ state: 'select-doctor' })}
@@ -382,7 +423,12 @@ const BookPatientAppointment = ({
               goBack={goBack}
               action={handleCreateAppointment}
               isLoading={isCreatingBooking}
-              proceedToPayment={() => handlePayment(createdAppointment)}
+              proceedToPayment={() => {
+                if (!createdAppointment) {
+                  return;
+                }
+                updateBooking({ state: 'select-payment' });
+              }}
               cancelAppointment={() => handleCancelAppointment(reason)}
             />
           )}
@@ -397,7 +443,8 @@ const BookPatientAppointment = ({
           {state === 'select-payment' && (
             <SelectPaymentMethod
               goBack={() => updateBooking({ state: 'book-appointment' })}
-              action={() => updateBooking({ state: 'appointment-pending' })}
+              action={(paymentMethod: string) => handlePayment(paymentMethod)}
+              isLoading={isCreatingBooking}
               paymentMethods={paymentMethods}
             />
           )}
@@ -433,6 +480,7 @@ export const appointmentTypes: { id: 0 | 1; name: string }[] = [
 
 export type PaymentMethodType = {
   id: number;
+  slug: string;
   name: string;
   icon: JSX.Element;
 };
@@ -440,11 +488,13 @@ export type PaymentMethodType = {
 export const paymentMethods: PaymentMethodType[] = [
   {
     id: 0,
+    slug: 'wallet',
     name: 'Pay from wallet',
     icon: <BoldWalletIcon />,
   },
   {
-    id: 0,
+    id: 1,
+    slug: 'online',
     name: 'Pay Online',
     icon: <PaypalIconLocal />,
   },

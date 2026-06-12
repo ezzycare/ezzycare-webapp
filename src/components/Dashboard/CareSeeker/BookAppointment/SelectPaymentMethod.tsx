@@ -1,15 +1,17 @@
 import ArrowLeft from '@/icons/ArrowLeft';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import { PaymentMethodType } from '.';
 
 const SelectPaymentMethod = ({
   goBack,
   action,
+  isLoading,
   paymentMethods,
 }: {
-  action: () => void;
-  paymentMethods: PaymentMethodType[];
   goBack: () => void;
+  action: (value: string) => void;
+  isLoading?: boolean;
+  paymentMethods: PaymentMethodType[];
 }) => {
   return (
     <div className="flex flex-col -mt-5 pb-5">
@@ -28,12 +30,17 @@ const SelectPaymentMethod = ({
         {paymentMethods.map((method) => (
           <div
             key={method.id}
-            className="w-full flex items-center gap-3.75 p-3 rounded-xl shadow-md"
+            className={`w-full flex items-center gap-3.75 p-3 rounded-xl shadow-md cursor-pointer${isLoading ? ' pointer-events-none opacity-50' : ''}`}
+            onClick={() => action(method.slug)}
           >
-            <div className="flex items-center gap-2">
+            <div className="w-full flex items-center gap-2">
               {method.icon}
               <p className="text-sm text-text font-medium">{method.name}</p>
-              <ArrowRight className="text-text-muted ml-auto" />
+              {isLoading ? (
+                <Loader2 className="text-text-muted ml-auto animate-spin" />
+              ) : (
+                <ArrowRight className="text-text-muted ml-auto" />
+              )}
             </div>
           </div>
         ))}

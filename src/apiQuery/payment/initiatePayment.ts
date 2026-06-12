@@ -9,7 +9,7 @@ import axios from 'axios';
 import { ApiResponse } from '@/apiQuery/types';
 import { axiosClient } from '@/services/axiosClient';
 
-export interface InitializePaymentParams {
+export interface PaymentParams {
   amount: number;
   email: string;
   appointmentId?: number;
@@ -18,13 +18,16 @@ export interface InitializePaymentParams {
 }
 
 export interface InitializePaymentResponse {
-  authorizationUrl: string;
-  accessCode: string;
-  reference: string;
+  data: {
+    authorization_url: string;
+    access_code: string;
+    reference: string;
+  };
+  status: string;
 }
 
 export const initializePayment = async (
-  params: InitializePaymentParams
+  params: PaymentParams
 ): Promise<ApiResponse<InitializePaymentResponse>> => {
   try {
     const response = await axiosClient.post<
@@ -43,12 +46,12 @@ export const useInitializePaymentMutation = (
   options?: UseMutationOptions<
     ApiResponse<InitializePaymentResponse>,
     unknown,
-    InitializePaymentParams
+    PaymentParams
   >
 ): UseMutationResult<
   ApiResponse<InitializePaymentResponse>,
   unknown,
-  InitializePaymentParams
+  PaymentParams
 > => {
   const queryClient = useQueryClient();
 

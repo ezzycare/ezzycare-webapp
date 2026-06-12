@@ -14,6 +14,7 @@ import {
 } from '@/icons/DashboardNavIcons';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { HospitalType } from '@/types/hospitals';
+import { formatCurrency } from '@/utils/helper';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -71,43 +72,33 @@ const CareSeekerDashboard = () => {
           <p className="text-sm">How are you doing today? </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col md:flex-row gap-3 mt-4 md:mt-0">
           <SearchInput
             value=""
             onChange={() => {}}
             placeholder="Search for doctors or hospitals"
             className="max-w-90! rounded-xl! h-10!"
             inputClassName="text-xs!"
-            filters={[
-              {
-                key: 'specialization',
-                label: 'Specialty',
-              },
-            ]}
-            onFilterChange={(filter) => {
-              setActiveFilters((prev) =>
-                prev.includes(filter.key)
-                  ? prev.filter((f) => f !== filter.key)
-                  : [...prev, filter.key]
-              );
-            }}
+            onOpenFilter={() => {}}
           />
 
-          <Button
-            variant="primary"
-            className="gap-2 h-10! text-sm"
-            onClick={() => setShowBookDoctorModal(true)}
-          >
-            <StethoscopeIconLocal />
-            Doctors
-          </Button>
-          <Button
-            variant="primary"
-            className="bg-pink-10! hover:bg-pink-10/80! gap-2 h-10! text-sm"
-          >
-            <HospitalIconLocal />
-            Hospitals
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              variant="primary"
+              className="gap-2 h-10! text-sm"
+              onClick={() => setShowBookDoctorModal(true)}
+            >
+              <StethoscopeIconLocal />
+              Doctors
+            </Button>
+            <Button
+              variant="primary"
+              className="bg-pink-10! hover:bg-pink-10/80! gap-2 h-10! text-sm"
+            >
+              <HospitalIconLocal />
+              Hospitals
+            </Button>
+          </div>
         </div>
       </div>
       {user && user?.status === 'PROFILE_NOT_COMPLETE' && (
@@ -128,7 +119,9 @@ const CareSeekerDashboard = () => {
           <div>
             <p className="text-xs text-accent-12">Available Balance</p>
             <h2 className="text-lg text-blue-12 font-semibold">
-              {showBalance ? 'N5,000.00' : '*********'}
+              {showBalance
+                ? formatCurrency(user.walletBalance || 0)
+                : '*********'}
             </h2>
           </div>
 
@@ -138,7 +131,7 @@ const CareSeekerDashboard = () => {
         </div>
 
         <div>
-          <DashboardStarsIcon />
+          <DashboardStarsIcon className="w-20 sm:w-auto" />
         </div>
       </div>
 

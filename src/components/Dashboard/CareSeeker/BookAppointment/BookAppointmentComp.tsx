@@ -6,7 +6,10 @@ import { RadioItem } from '@/components/Ui/RadioGroup';
 import TextArea from '@/components/Ui/TextArea';
 import { TextInput } from '@/components/Ui/TextInput';
 import ArrowLeft from '@/icons/ArrowLeft';
-import { AppointmentTimes } from '@/stores/bookAppointmentStore';
+import {
+  AppointmentTimes,
+  useBookAppointmentStore,
+} from '@/stores/bookAppointmentStore';
 import { formatCurrency } from '@/utils/helper';
 import { timeSlotGenerator } from '@/utils/timeSlotsGenerator';
 import dayjs from 'dayjs';
@@ -67,6 +70,8 @@ const BookAppointmentComp = ({
   cancelAppointment,
 }: BookAppointmentCompParams) => {
   const timeSlots = [...timeSlotGenerator(8, 17, TIME_INTERVAL)];
+
+  const { createdAppointment } = useBookAppointmentStore();
 
   const [isSelectingTime, setIsSelectingTime] = useState(false);
   const [currentSelectedTimes, setCurrentSelectedTimes] = useState<{
@@ -263,19 +268,20 @@ const BookAppointmentComp = ({
                 <p>{getConsultationFee}</p>
               </div>
             )}
-            {!canProceedToPayment && (
-              <div className="w-full">
-                <p className="text-base text-text font-semibold">Reason</p>
-                <TextArea
-                  value={reason}
-                  placeholder="Please state reason including any symptoms"
-                  className="mt-2 min-h-38.25!"
-                  onChange={(e) => {
-                    setReason(e.target.value);
-                  }}
-                />
-              </div>
-            )}
+            {!canProceedToPayment ||
+              (!createdAppointment && (
+                <div className="w-full">
+                  <p className="text-base text-text font-semibold">Reason</p>
+                  <TextArea
+                    value={reason}
+                    placeholder="Please state reason including any symptoms"
+                    className="mt-2 min-h-38.25!"
+                    onChange={(e) => {
+                      setReason(e.target.value);
+                    }}
+                  />
+                </div>
+              ))}
 
             {canProceedToPayment && (
               <div>
@@ -303,24 +309,24 @@ const BookAppointmentComp = ({
           </>
         )}
 
-        {!canProceedToPayment && (
-          <>
-            {!isReschedule && (
-              <div className="w-full">
-                <p className="text-base text-text font-semibold">
-                  Promocode (optional)
-                </p>
-                <TextInput
-                  value={promoCode}
-                  placeholder="Enter promo code"
-                  className="mt-2"
-                  onChange={(e) => setPromoCode(e.target.value)}
-                />
-              </div>
-            )}
+        {!canProceedToPayment ||
+          (!createdAppointment && (
+            <>
+              {!isReschedule && (
+                <div className="w-full">
+                  <p className="text-base text-text font-semibold">
+                    Promocode (optional)
+                  </p>
+                  <TextInput
+                    value={promoCode}
+                    placeholder="Enter promo code"
+                    className="mt-2"
+                    onChange={(e) => setPromoCode(e.target.value)}
+                  />
+                </div>
+              )}
 
-            {!isReschedule ||
-              (isReschedule && !isSelectingTime && (
+              {!isReschedule && !isSelectingTime && (
                 <Button
                   variant="primary"
                   className="py-2.5! w-full"
@@ -333,10 +339,10 @@ const BookAppointmentComp = ({
                 >
                   {isReschedule ? 'Reschedule' : 'Book'} Appointment
                 </Button>
-              ))}
-          </>
-        )}
-        {canProceedToPayment && (
+              )}
+            </>
+          ))}
+        {canProceedToPayment && !!createdAppointment && (
           <div className="space-y-2">
             <Button
               variant="primary"

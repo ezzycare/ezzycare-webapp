@@ -226,6 +226,7 @@ const ReschedulePatientAppointment = ({
               goBack={() => updateBooking({ state: 'book-appointment' })}
               action={() => updateBooking({ state: 'appointment-pending' })}
               paymentMethods={paymentMethods}
+              isLoading={isCreatingBooking}
             />
           )}
         </div>
