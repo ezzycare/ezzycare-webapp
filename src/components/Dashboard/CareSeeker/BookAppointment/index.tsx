@@ -6,12 +6,14 @@ import {
   DoctorProfile,
   useGetSingleDoctorQuery,
 } from '@/apiQuery/doctor/getSingleDoctor';
+import { useCancelAppointmentMutation } from '@/apiQuery/healthcareAppointments/patch/cancelAppointment';
 import {
-  Appointment,
+  CreateAppointmentInterface,
   useCreateAppointmentMutation,
 } from '@/apiQuery/healthcareAppointments/post/createAppointment';
 import { ConsultationType } from '@/apiQuery/hospital/types';
 import { useInitializePaymentMutation } from '@/apiQuery/payment/initiatePayment';
+import { ApiResponse } from '@/apiQuery/types';
 import Modal from '@/components/Ui/Modal';
 import { BoldWalletIcon, PaypalIconLocal } from '@/icons/DashboardIcons';
 import { toaster } from '@/lib/toaster';
@@ -60,7 +62,9 @@ const BookPatientAppointment = ({
     selectedConsultationType,
     selectedTimes,
     activeFilters,
+    createdAppointment,
     updateBooking,
+    setCreatedAppointment,
   } = useBookAppointmentStore();
   const user = useAuthStore((state: AuthStore) => state.user);
 
@@ -69,9 +73,11 @@ const BookPatientAppointment = ({
   const { mutate: initiateBooking, isPending } = useCreateAppointmentMutation();
   const { mutate: initiatePayment, isPending: isPendingPayment } =
     useInitializePaymentMutation();
+  const { mutate: cancelAppointment, isPending: isPendingCancel } =
+    useCancelAppointmentMutation();
 
   const isCreatingBooking = useMemo(() => {
-    return isPending || isPendingPayment;
+    return isPending || isPendingPayment || isPendingCancel;
   }, [isPending, isPendingPayment]);
 
   useEffect(() => {
@@ -136,6 +142,7 @@ const BookPatientAppointment = ({
       clickedDoctor: null,
       activeFilters: {},
     });
+    setCreatedAppointment(null);
     setOpenModal(false);
   };
 
@@ -150,7 +157,7 @@ const BookPatientAppointment = ({
   const goBack = () => {
     const index = allStates.findIndex((item) => item === state);
     if (index > 0) {
-      if (allStates[index - 1] === 'set-filter') {
+      if (['set-filter'].includes(allStates[index - 1])) {
         updateBooking({ state: allStates[index - 2] });
         return;
       }
@@ -174,7 +181,7 @@ const BookPatientAppointment = ({
       appointmentDate: selectedTimes?.appointmentDate ?? '',
       appointmentTime: selectedTimes?.appointmentTime ?? '',
       appointmentEndTime: selectedTimes?.appointmentEndTime ?? '',
-      userServiceId: Number(user.id),
+      // userServiceId: Number(user.id),
       address: user?.userDetails?.address ?? '',
       city: user?.userDetails?.city ?? '',
       country: user?.userDetails?.country ?? '',
@@ -182,9 +189,12 @@ const BookPatientAppointment = ({
     };
     console.log({ payload, user });
     initiateBooking(payload, {
-      onSuccess: (res) => {
-        console.log({ res });
-        toaster.success('Appointment created successfully');
+      onSuccess: (res: ApiResponse<CreateAppointmentInterface>) => {
+        console.log({ res: res.data });
+        if (!res.data) return;
+        setCreatedAppointment(res.data);
+        updateBooking({ state: 'select-payment' });
+        toaster.success(res.message || 'Appointment created successfully');
       },
       onError: () => {
         toaster.error('Failed to create appointment');
@@ -192,11 +202,13 @@ const BookPatientAppointment = ({
     });
   };
 
-  const handlePay = (appointment: Appointment) => {
+  const handlePayment = (appointment: CreateAppointmentInterface | null) => {
+    if (!appointment) return;
+
     initiatePayment(
       {
-        amount: 0,
-        email: user.email,
+        amount: appointment.totalCharge,
+        email: appointment.email,
         appointmentId: appointment.id,
         callbackUrl: `${window.location.origin}/payment/callback`,
       },
@@ -208,6 +220,21 @@ const BookPatientAppointment = ({
           }
         },
         onError: () => toaster.error('Failed to initialize payment'),
+      }
+    );
+  };
+
+  const handleCancelAppointment = (reason: string) => {
+    if (!createdAppointment?.id) return;
+    cancelAppointment(
+      {
+        id: createdAppointment.id!,
+        reason,
+      },
+      {
+        onSuccess: () => {
+          handleCloseModal();
+        },
       }
     );
   };
@@ -355,6 +382,8 @@ const BookPatientAppointment = ({
               goBack={goBack}
               action={handleCreateAppointment}
               isLoading={isCreatingBooking}
+              proceedToPayment={() => handlePayment(createdAppointment)}
+              cancelAppointment={() => handleCancelAppointment(reason)}
             />
           )}
 
@@ -365,20 +394,19 @@ const BookPatientAppointment = ({
             />
           )}
 
-          {state === 'appointment-pending' && (
-            <SeekerAppointmentPending
-              action={() => {
-                updateBooking({ state: 'select-doctor' });
-                handleCloseModal();
-              }}
-            />
-          )}
-
           {state === 'select-payment' && (
             <SelectPaymentMethod
               goBack={() => updateBooking({ state: 'book-appointment' })}
               action={() => updateBooking({ state: 'appointment-pending' })}
               paymentMethods={paymentMethods}
+            />
+          )}
+
+          {state === 'appointment-pending' && (
+            <SeekerAppointmentPending
+              action={() => {
+                handleCloseModal();
+              }}
             />
           )}
         </div>

@@ -6,8 +6,6 @@ type BannerType = 'info' | 'warning' | 'error';
 const AlertBanner = ({
   title,
   content,
-  btnText,
-  btnIcon,
   btnAction,
   className,
   type = 'info',
@@ -15,8 +13,6 @@ const AlertBanner = ({
 }: {
   title?: string;
   content?: string;
-  btnText?: string;
-  btnIcon?: React.ReactNode;
   btnAction?: () => void;
   className?: string;
   type: BannerType;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { resendOtp } from '@/apiQuery/auth/login';
@@ -43,7 +44,7 @@ const VerifyEmailContent = () => {
     if (resend) {
       handleResendOtp();
     }
-  }, [resend]);
+  }, []);
 
   const handleVerifyEmail = async () => {
     const emailForVerification = loginEmail || authEmail;
@@ -64,11 +65,13 @@ const VerifyEmailContent = () => {
       toaster.success(message || 'Email verified successfully');
 
       // router.push('/auth/signup/hospital/upload-docs');
-    } catch (error) {}
+    } catch (error: Error | any) {
+      toaster.success(error?.message || 'Email verification failed');
+    }
   };
 
   return (
-    <Card onCancel={() => router.back()}>
+    <Card onCancel={() => router.push('/auth/signin')}>
       <div className="flex flex-col items-center justify-center gap-4">
         <h2 className="text-2xl text-text font-medium">Verify your email</h2>
 

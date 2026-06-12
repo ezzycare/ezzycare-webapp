@@ -11,7 +11,7 @@ import {
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { BookingType } from '@/types/bookings';
 import { HospitalType } from '@/types/hospitals';
-import { ArrowRight, Banknote } from 'lucide-react';
+import { Banknote } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import BookingTable from '../Booking/BookingTable';
@@ -121,8 +121,6 @@ const HospitalAdminDashboard = () => {
           type="info"
           title="Complete Hospital Profile & Brand Setup"
           content="Complete your hospital profile and brand setup to get discovered by more patients"
-          btnText="Complete profile"
-          btnIcon={<ArrowRight size={16} className="text-white" />}
           btnAction={() => {
             setShowProfileModal(true);
           }}

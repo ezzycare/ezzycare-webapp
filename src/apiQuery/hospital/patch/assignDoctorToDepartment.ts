@@ -13,7 +13,7 @@ interface AssignDoctorToDepartmentParams {
   doctorId: number;
 }
 
-export const updateHospitalProfile = async (
+export const assignDoctorToDepartment = async (
   params: AssignDoctorToDepartmentParams
 ): Promise<ApiResponse<unknown>> => {
   try {
@@ -48,7 +48,7 @@ export const useAssignDoctorToDepartmentMutation = (
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: updateHospitalProfile,
+    mutationFn: assignDoctorToDepartment,
 
     onSuccess: () => {
       queryClient.invalidateQueries({

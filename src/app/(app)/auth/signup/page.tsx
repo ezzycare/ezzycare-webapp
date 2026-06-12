@@ -1,13 +1,8 @@
 'use client';
 
 import SelectSignUpType from '@/components/Auth/SelectSignUpType';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
 const Page = () => {
-  const router = useRouter();
-  const [state, setState] = useState<string>('');
-
   return (
     <>
       <SelectSignUpType />

@@ -1,48 +1,50 @@
-import {
-  useQuery,
-  type UseQueryOptions,
-  type UseQueryResult,
-} from '@tanstack/react-query';
+import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 
+import { User } from '@/apiQuery/auth/types';
 import { ApiResponse } from '@/apiQuery/types';
 import { axiosClient } from '@/services/axiosClient';
-import { AppointmentResponse } from './getAppointments';
-
-export type AppointmentStatus =
-  | 'PENDING'
-  | 'UPCOMING'
-  | 'IN_PROGRESS'
-  | 'PAID'
-  | 'UNPAID'
-  | 'COMPLETED'
-  | 'CANCELLED';
+import { CreateAppointmentInterface } from '../post/createAppointment';
 
 export interface GetAppointmentParams {
   id: number;
 }
 
-export type GetSingleAppointmentResponse = AppointmentResponse;
+export interface GetSingleAppointmentType extends CreateAppointmentInterface {
+  user: User;
+  client: User;
+  uid: number;
+  seekerUid: number;
+}
 
 export const getAppointment = async (
   params: GetAppointmentParams
-): Promise<ApiResponse<GetSingleAppointmentResponse>> => {
-  const response = await axiosClient.get<
-    ApiResponse<GetSingleAppointmentResponse>
-  >(`/healthcare/appointments/${params.id}`);
+): Promise<ApiResponse<GetSingleAppointmentType>> => {
+  const response = await axiosClient.get<ApiResponse<GetSingleAppointmentType>>(
+    `/healthcare/appointments/${params.id}`
+  );
+  console.log({ response });
   return response.data;
 };
 
 export const useGetAppointmentQuery = (
   params: GetAppointmentParams,
   options?: Omit<
-    UseQueryOptions<ApiResponse<GetSingleAppointmentResponse>, unknown>,
+    UseQueryOptions<ApiResponse<GetSingleAppointmentType>, unknown>,
     'queryKey' | 'queryFn'
   >
-): UseQueryResult<ApiResponse<GetSingleAppointmentResponse>, unknown> => {
-  return useQuery({
+) => {
+  const result = useQuery({
     queryKey: ['healthcare', 'appointments', params.id],
     queryFn: () => getAppointment(params),
-    enabled: !!params.id,
+    enabled: params.id != null,
     ...options,
   });
+
+  const appointment = result.data?.data;
+
+  console.log({ result });
+  return {
+    ...result,
+    appointment,
+  };
 };

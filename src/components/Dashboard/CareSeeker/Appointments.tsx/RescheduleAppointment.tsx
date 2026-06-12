@@ -1,11 +1,6 @@
-import {
-  DoctorProfile,
-  useGetSingleDoctorQuery,
-} from '@/apiQuery/doctor/getSingleDoctor';
-import {
-  Appointment,
-  useCreateAppointmentMutation,
-} from '@/apiQuery/healthcareAppointments/post/createAppointment';
+import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
+import { GetSingleAppointmentType } from '@/apiQuery/healthcareAppointments/get/getSingleAppointment';
+import { useCreateAppointmentMutation } from '@/apiQuery/healthcareAppointments/post/createAppointment';
 import { useInitializePaymentMutation } from '@/apiQuery/payment/initiatePayment';
 import Modal from '@/components/Ui/Modal';
 import { toaster } from '@/lib/toaster';
@@ -31,9 +26,11 @@ const allStates = [
 ];
 
 const ReschedulePatientAppointment = ({
+  doctor,
   openModal,
   setOpenModal,
 }: {
+  doctor: DoctorProfile;
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
@@ -42,7 +39,6 @@ const ReschedulePatientAppointment = ({
     selectedCareType,
     reason,
     promoCode,
-    clickedDoctor,
     selectedAppointmentType,
     selectedConsultationType,
     selectedTimes,
@@ -67,40 +63,19 @@ const ReschedulePatientAppointment = ({
   }, []);
 
   const modalClassName = useMemo(() => {
-    return ['select-payment'].includes(state) ? 'min-h-auto' : 'min-h-[60vh]';
+    return ['select-payment'].includes(state)
+      ? 'min-h-auto'
+      : 'min-h-[60vh] max-h-[90vh] overflow-y-auto';
   }, [state]);
 
-  const { doctor: doctorData, isFetching: loadingSingleDoctor } =
-    useGetSingleDoctorQuery({
-      id: clickedDoctor?.id || '',
-    });
-
-  const doctor = useMemo(() => {
-    return doctorData ? doctorData : ({} as DoctorProfile);
-  }, [doctorData]);
-
-  const isLoading = useMemo(() => {
-    return loadingSingleDoctor;
-  }, [loadingSingleDoctor]);
-
-  const handleResetModal = () => {
+  const handleCloseModal = () => {
     updateBooking({
-      state: 'select-specialty',
+      state: 'book-appointment',
       selectedSpecialty: '',
       selectedCareType: 0,
       selectedCareMode: '',
-      clickedDoctor: null,
-      activeFilters: {},
     });
     setOpenModal(false);
-  };
-
-  const handleCloseModal = () => {
-    if (state === 'set-filter') {
-      updateBooking({ state: 'select-doctor' });
-    } else {
-      handleResetModal();
-    }
   };
 
   const goBack = () => {
@@ -148,7 +123,7 @@ const ReschedulePatientAppointment = ({
     });
   };
 
-  const handlePay = (appointment: Appointment) => {
+  const handlePay = (appointment: GetSingleAppointmentType) => {
     initiatePayment(
       {
         amount: 0,
@@ -177,7 +152,7 @@ const ReschedulePatientAppointment = ({
         className={modalClassName}
         persistent
       >
-        <div>
+        <div className="">
           {state === 'book-appointment' && (
             <BookAppointmentComp
               doctor={doctor}
@@ -222,6 +197,11 @@ const ReschedulePatientAppointment = ({
               goBack={goBack}
               action={handleCreateAppointment}
               isLoading={isCreatingBooking}
+              isReschedule={true}
+              proceedToPayment={() => handleCloseModal()}
+              cancelAppointment={() =>
+                updateBooking({ state: 'book-appointment' })
+              }
             />
           )}
 

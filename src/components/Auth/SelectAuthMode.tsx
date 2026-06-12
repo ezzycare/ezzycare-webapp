@@ -24,8 +24,7 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
       authStore.setToken(response.data.access_token);
       if (!response.data?.email_verified) {
         router.push(
-          '/auth/signup/verify-email?resend=true&email=' +
-            response.data?.user?.email
+          '/auth/verify-email?resend=true&email=' + response.data?.user?.email
         );
         return;
       }
@@ -60,7 +59,7 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
   });
 
   return (
-    <Card onCancel={() => router.back()}>
+    <Card onCancel={() => router.push('/auth/signup')}>
       {/* Heading */}
       <div className="mb-8">
         <h2 className="text-2xl font-medium tracking-[-0.03em] text-text">

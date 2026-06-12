@@ -11,7 +11,7 @@ import axios from 'axios';
 
 export type Gender = 'MALE' | 'FEMALE' | 'OTHER';
 
-export interface CreateAppointmentParams {
+export interface CreateAppointmentInterfaceParams {
   userId: number;
   hospitalId?: number;
   myAppointment: 0 | 1;
@@ -26,26 +26,75 @@ export interface CreateAppointmentParams {
   appointmentDate: string; // "YYYY-MM-DD"
   appointmentTime: string; // "hh:mm A"
   appointmentEndTime: string; // "hh:mm A"
-  userServiceId: number;
+  userServiceId?: number;
   address: string;
   city: string;
   country: string;
   duration: number;
 }
 
-export interface Appointment {
+export interface CreateAppointmentInterface {
   id: number;
-  // ...fill in the rest of what the API returns for a created appointment
+  userId: string;
+  clientId: string;
+  hospitalId: string | null;
+  appointmentType: ConsultationType;
+  urgent: number;
+  name: string;
+  email: string;
+  mobileNo: string;
+  age: string;
+  gender: 'MALE' | 'FEMALE';
+  reason: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  appointmentPrice: number;
+  otpCode: string | null;
+  cancelReason: string | null;
+  cancelDate: string | null;
+  cancelUserId: string | null;
+  status: 'PENDING' | 'ACCEPTED' | 'COMPLETED' | 'CANCELLED' | string;
+  transactionId: string | null;
+  consultNotes: string | null;
+  userRating: number | null;
+  userReview: string | null;
+  userServiceId: string | null;
+  completedDatetime: string | null;
+  voucherCodeId: string | null;
+  voucherAmount: number | null;
+  hcpFees: number | null;
+  homeVisitFees: number | null;
+  totalCharge: number;
+  fullDay: boolean | null;
+  address: string;
+  city: string;
+  country: string;
+  myAppointment: number;
+  videoStartTime: string | null;
+  videoEndTime: string | null;
+  longitude: number | null;
+  latitude: number | null;
+  acceptedDate: string | null;
+  appointmentEndDate: string | null;
+  appointmentEndTime: string;
+  startDatetime: string | null;
+  voucherCodeType: string | null;
+  isHappyClients: boolean | null;
+  roomName: string | null;
+  doctorToken: string | null;
+  seekerToken: string | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
 }
 
 export const createAppointment = async (
-  params: CreateAppointmentParams
-): Promise<ApiResponse<Appointment>> => {
+  params: CreateAppointmentInterfaceParams
+): Promise<ApiResponse<CreateAppointmentInterface>> => {
   try {
-    const response = await axiosClient.post<ApiResponse<Appointment>>(
-      '/healthcare/appointments',
-      params
-    );
+    const response = await axiosClient.post<
+      ApiResponse<CreateAppointmentInterface>
+    >('/healthcare/appointments', params);
 
     return response.data;
   } catch (error) {
@@ -59,14 +108,14 @@ export const createAppointment = async (
 
 export const useCreateAppointmentMutation = (
   options?: UseMutationOptions<
-    ApiResponse<Appointment>,
+    ApiResponse<CreateAppointmentInterface>,
     unknown,
-    CreateAppointmentParams
+    CreateAppointmentInterfaceParams
   >
 ): UseMutationResult<
-  ApiResponse<Appointment>,
+  ApiResponse<CreateAppointmentInterface>,
   unknown,
-  CreateAppointmentParams
+  CreateAppointmentInterfaceParams
 > => {
   const queryClient = useQueryClient();
 

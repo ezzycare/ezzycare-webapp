@@ -1,5 +1,6 @@
 import { type Doctor } from '@/apiQuery/doctor/getDoctorDiscovery';
 import { type DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
+import { CreateAppointmentInterface } from '@/apiQuery/healthcareAppointments/post/createAppointment';
 import { ConsultationType } from '@/apiQuery/hospital/types';
 import { create } from 'zustand';
 
@@ -44,9 +45,13 @@ export interface BookAppointmentStore {
   selectedTimes: AppointmentTimes | null;
   activeFilters: DoctorFiltersType;
   state: string;
+  createdAppointment: CreateAppointmentInterface | null;
 
   updateBooking: (payload: Partial<BookAppointmentStore>) => void;
   setDoctors: (doctors: Record<number, DoctorProfile>) => void;
+  setCreatedAppointment: (
+    appointment: CreateAppointmentInterface | null
+  ) => void;
 }
 
 export const useBookAppointmentStore = create<BookAppointmentStore>((set) => ({
@@ -73,6 +78,7 @@ export const useBookAppointmentStore = create<BookAppointmentStore>((set) => ({
   selectedTimes: null,
   activeFilters: {},
   state: 'select-specialty',
+  createdAppointment: null,
 
   updateBooking: (payload) =>
     set((state) => ({
@@ -80,4 +86,6 @@ export const useBookAppointmentStore = create<BookAppointmentStore>((set) => ({
       ...payload,
     })),
   setDoctors: (doctors) => set({ doctors }),
+  setCreatedAppointment: (appointment) =>
+    set({ createdAppointment: appointment }),
 }));

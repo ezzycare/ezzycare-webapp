@@ -29,9 +29,7 @@ const Page = () => {
           description=" We have sent a verification link to your email. Click on the link to
           verify your email"
           action={() =>
-            router.push(
-              `/auth/signup/verify-email?type=signup&email=${authEmail}`
-            )
+            router.push(`/auth/verify-email?type=signup&email=${authEmail}`)
           }
         />
       )}

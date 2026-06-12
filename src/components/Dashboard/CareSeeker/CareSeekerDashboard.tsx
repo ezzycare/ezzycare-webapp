@@ -1,7 +1,9 @@
 'use client';
 
 // import { redirect } from 'next/navigation';
+import { useGetAppointmentsInfiniteQuery } from '@/apiQuery/healthcareAppointments/get/getAppointments';
 import AlertBanner from '@/components/Base/AlertBanner';
+import SpiralLoader from '@/components/Base/SpiralLoader';
 import Button from '@/components/Ui/Button';
 import SearchInput from '@/components/Ui/SearchInput';
 import { BoldWalletIcon, DashboardStarsIcon } from '@/icons/DashboardIcons';
@@ -11,13 +13,12 @@ import {
   StethoscopeIconLocal,
 } from '@/icons/DashboardNavIcons';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
-import { BookingType } from '@/types/bookings';
 import { HospitalType } from '@/types/hospitals';
-import { ArrowRight, EyeIcon, EyeOffIcon } from 'lucide-react';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import BookingTable from '../Booking/BookingTable';
 import EmptyAppointment from '../Hospital/EmptyAppointment';
+import CareSeekerAppointmentsTable from './Appointments.tsx/CareSeekerAppointmentsTable';
 import BioDetailsModal from './BioDetailsModal';
 import BookPatientAppointment from './BookAppointment';
 
@@ -37,6 +38,13 @@ const CareSeekerDashboard = () => {
   const [showBookDoctorModal, setShowBookDoctorModal] = React.useState(false);
   const [showBalance, setShowBalance] = useState(true);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
+  const { appointments, isFetching: isLoadingAppointments } =
+    useGetAppointmentsInfiniteQuery({
+      limit: 10,
+    });
+
+  console.log({ appointments });
 
   useEffect(() => {
     const storedShowBalance = localStorage.getItem('showCareSeekerBalance');
@@ -108,8 +116,6 @@ const CareSeekerDashboard = () => {
             type="info"
             title="Complete Hospital Profile"
             content="To fully enjoy your experience on EzzyCare"
-            btnText="Complete profile"
-            btnIcon={<ArrowRight size={16} className="text-white" />}
             btnAction={() => {
               setShowProfileModal(true);
             }}
@@ -140,7 +146,7 @@ const CareSeekerDashboard = () => {
         <div className="flex items-center gap-2 px-5.5 pt-6.5">
           <CalendarIconLocal className="text-text" />
           <h2 className="text-text font-semibold">Upcoming Appointments</h2>
-          {!!bookings?.length && (
+          {!!appointments?.length && (
             <Link href="/dashboard/appointments" className="ml-auto">
               <p className="text-primary text-sm font-medium cursor-pointer">
                 View all
@@ -148,14 +154,25 @@ const CareSeekerDashboard = () => {
             </Link>
           )}
         </div>
-        <div className="-mt-3">
-          {!bookings?.length && (
-            <EmptyAppointment>
-              <Button variant="primary">Book Appointment</Button>
-            </EmptyAppointment>
-          )}
-          {!!bookings?.length && <BookingTable data={bookings.slice(0, 10)} />}
-        </div>
+        {isLoadingAppointments && (
+          <div className="w-full h-full flex items-center justify-center">
+            <SpiralLoader />
+          </div>
+        )}
+        {!isLoadingAppointments && (
+          <div className="-mt-3">
+            {!appointments?.length && (
+              <EmptyAppointment>
+                <Button variant="primary">Book Appointment</Button>
+              </EmptyAppointment>
+            )}
+            <div className="max-w-full overflow-x-auto">
+              {!!appointments?.length && (
+                <CareSeekerAppointmentsTable data={appointments} />
+              )}
+            </div>
+          </div>
+        )}
       </div>
       <BioDetailsModal
         openModal={showProfileModal}
@@ -171,42 +188,3 @@ const CareSeekerDashboard = () => {
 };
 
 export default CareSeekerDashboard;
-
-const getStatus = (): string => {
-  const rand = Math.random();
-
-  if (rand < 0.5) return 'cancelled';
-  if (rand < 0.8) return 'upcoming';
-  if (rand < 0.6) return 'active';
-  return 'completed';
-};
-
-const bookings: BookingType[] = Array.from({ length: 0 }, (_, i) => ({
-  id: i + 1,
-  bookingId: 'B001',
-  patientName: 'John Smith',
-  doctor: {
-    id: i + 1,
-    name: 'Dr. Sarah Johnson',
-    email: 'sarah.johnson@medical.com',
-    phoneNumber: '+1 (555) 123-4567',
-    assignedHospital: 'Emory',
-    experience: (i + 1) * 2 - i + ' years',
-    specialty: 'Cardiology',
-    createdAt: 'May 08, 2026 10:00 AM',
-    status: 'active',
-    address: 'Highlevel, Makurdi, Benue State',
-    medicalCertificate: 'MD',
-    practiceLicense: '12345',
-    specialtyCertificate: '12345',
-    licenseExpiryDate: '12 May 2035',
-    qualifications: ['MD', 'FAAP'],
-    university: 'University of California, San Francisco',
-    dateGraduated: '12 May 2015',
-    about: `Dr. Rodriguez is passionate about child health and development.`,
-  },
-  appointmentDate: '08069192646',
-  createdAt: '2023-01-01',
-  address: 'Highlevel, Makurdi, Benue State',
-  status: getStatus(),
-}));

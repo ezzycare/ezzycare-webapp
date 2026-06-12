@@ -37,7 +37,7 @@ const SelectSignUpType = () => {
     router.push('/auth/signup/' + selectedType?.toLowerCase());
   };
   return (
-    <Card onCancel={() => router.back()}>
+    <Card onCancel={() => router.push('/auth/signin')}>
       <div className="flex flex-col">
         <h1 className="font-medium text-text text-2xl">Sign Up</h1>
         <p className="text-text-alt text-sm mt-1.5">

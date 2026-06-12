@@ -26,7 +26,7 @@ interface BookAppointmentCompParams {
   promoCode: string;
   setPromoCode: React.Dispatch<React.SetStateAction<string>>;
   consultationTypes: ConsultationType[];
-  selectedConsultationType: string;
+  selectedConsultationType: ConsultationType;
   setSelectedConsultationType: React.Dispatch<
     React.SetStateAction<ConsultationType>
   >;
@@ -41,6 +41,8 @@ interface BookAppointmentCompParams {
   goBack: () => void;
   isLoading?: boolean;
   isReschedule?: boolean;
+  proceedToPayment: () => void;
+  cancelAppointment: () => void;
 }
 
 const BookAppointmentComp = ({
@@ -61,6 +63,8 @@ const BookAppointmentComp = ({
   goBack,
   isLoading,
   isReschedule = false,
+  proceedToPayment,
+  cancelAppointment,
 }: BookAppointmentCompParams) => {
   const timeSlots = [...timeSlotGenerator(8, 17, TIME_INTERVAL)];
 
@@ -111,13 +115,20 @@ const BookAppointmentComp = ({
   }, [doctor, selectedConsultationType]);
 
   const blockedDates = useMemo(
-    () => buildBlockedDates(doctor.availability ?? []),
-    [doctor.availability]
+    () =>
+      buildBlockedDates(doctor.availability ?? [], selectedConsultationType),
+    [doctor.availability, selectedConsultationType]
   );
 
   const blockedTimesByDate = useMemo(
-    () => buildBlockedTimesByDate(doctor.availability ?? [], timeSlots, 30),
-    [doctor.availability, timeSlots]
+    () =>
+      buildBlockedTimesByDate(
+        doctor.availability ?? [],
+        timeSlots,
+        30,
+        selectedConsultationType
+      ),
+    [doctor.availability, timeSlots, selectedConsultationType]
   );
 
   const handleSelectTimes = (val: { date: Date; timeSlot: string }) => {
@@ -294,29 +305,35 @@ const BookAppointmentComp = ({
 
         {!canProceedToPayment && (
           <>
-            <div className="w-full">
-              <p className="text-base text-text font-semibold">
-                Promocode (optional)
-              </p>
-              <TextInput
-                value={promoCode}
-                placeholder="Enter promo code"
-                className="mt-2"
-                onChange={(e) => setPromoCode(e.target.value)}
-              />
-            </div>
+            {!isReschedule && (
+              <div className="w-full">
+                <p className="text-base text-text font-semibold">
+                  Promocode (optional)
+                </p>
+                <TextInput
+                  value={promoCode}
+                  placeholder="Enter promo code"
+                  className="mt-2"
+                  onChange={(e) => setPromoCode(e.target.value)}
+                />
+              </div>
+            )}
 
-            <Button
-              variant="primary"
-              className="py-2.5! w-full"
-              disabled={!isValid || isLoading}
-              loading={isLoading}
-              onClick={() => {
-                setCanProceedToPayment(true);
-              }}
-            >
-              {isReschedule ? 'Reschedule' : 'Book'} Appointment
-            </Button>
+            {!isReschedule ||
+              (isReschedule && !isSelectingTime && (
+                <Button
+                  variant="primary"
+                  className="py-2.5! w-full"
+                  disabled={!isValid || isLoading}
+                  loading={isLoading}
+                  onClick={() => {
+                    action();
+                    setCanProceedToPayment(true);
+                  }}
+                >
+                  {isReschedule ? 'Reschedule' : 'Book'} Appointment
+                </Button>
+              ))}
           </>
         )}
         {canProceedToPayment && (
@@ -327,7 +344,7 @@ const BookAppointmentComp = ({
               disabled={!isValid || isLoading}
               loading={isLoading}
               onClick={() => {
-                action();
+                proceedToPayment();
               }}
             >
               Proceed to Payment
@@ -337,6 +354,7 @@ const BookAppointmentComp = ({
               className="py-2.5! w-full"
               disabled={!isValid || isLoading}
               onClick={() => {
+                cancelAppointment();
                 setCanProceedToPayment(false);
               }}
             >
@@ -367,11 +385,16 @@ type TimeSlot = {
 
 export const buildBlockedDates = (
   availability: Availability[],
+  consultationType: ConsultationType,
   numberOfDays = 90
 ): Date[] => {
   const availableDays = new Set(
     availability
-      .filter((item) => item.slots.length > 0)
+      .filter(
+        (item) =>
+          item.slots.length > 0 &&
+          item.slots[0].consultationType === consultationType
+      )
       .map((item) => item.day.toUpperCase())
   );
 
@@ -391,7 +414,8 @@ export const buildBlockedDates = (
 export const buildBlockedTimesByDate = (
   availability: Availability[],
   timeSlots: TimeSlot[],
-  numberOfDays = 90
+  numberOfDays = 90,
+  consultationType: ConsultationType
 ) => {
   const result: Record<string, string[]> = {};
 
@@ -409,6 +433,7 @@ export const buildBlockedTimesByDate = (
       dayAvailability.slots.forEach((slot) => {
         timeSlots.forEach((timeSlot) => {
           if (
+            slot.consultationType === consultationType &&
             timeSlot.value >= slot.startTime &&
             timeSlot.value < slot.endTime
           ) {

@@ -20,7 +20,7 @@ export const createHospitalAgent = async (
 ): Promise<ApiResponse<unknown>> => {
   try {
     const response = await axiosClient.post<ApiResponse<unknown>>(
-      '/hospitals/agent',
+      '/hospitals/agents',
       params
     );
     return response.data;

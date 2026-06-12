@@ -22,7 +22,7 @@ const LoginUserSchema = z.object({
 type LoginUser = z.infer<typeof LoginUserSchema>;
 
 const SignInForm = () => {
-  const { replace, back, push } = useRouter();
+  const { push } = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next');
 
@@ -50,27 +50,34 @@ const SignInForm = () => {
         return;
       }
 
+      console.log({ response });
+
       if (response.data) {
+        setLoading(true);
         if (!response.data.email_verified) {
-          replace('/auth/signup/verify-email?resend=true&email=' + data.email);
-        } else {
-          replace(next || '/dashboard');
+          push(
+            '/auth/verify-email?type=signin&email=' + data.email
+            // '/auth/verify-email?type=signin&resend=true&email=' + data.email
+          );
         }
+
         authStore.updateUser(response.data.user);
         authStore.setToken(response.data.access_token);
 
+        push(next || '/dashboard');
         toaster.success('Login successful');
       }
     } catch (error) {
       console.error(error);
       toaster.error('Something went wrong');
+      setLoading(false);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Card onCancel={() => back()}>
+    <Card onCancel={() => push('/')}>
       <h1 className="text-2xl text-text font-medium ">Login</h1>
       <p className="text-sm text-text/50 mt-1.5">login to your account</p>
       <form

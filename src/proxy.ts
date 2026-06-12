@@ -11,9 +11,7 @@ const navPrefixes = navItems
 const PUBLIC_PREFIXES = [...navPrefixes, '/auth'];
 const PUBLIC_EXACT = new Set<string>(['/']);
 
-const AUTH_PATHS_FOR_AUTHENTICATED = new Set<string>([
-  '/auth/signup/verify-email',
-]);
+const AUTH_PATHS_FOR_AUTHENTICATED = new Set<string>(['/auth/verify-email']);
 
 export async function proxy(req: NextRequest) {
   const { pathname, origin } = req.nextUrl;
