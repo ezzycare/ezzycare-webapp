@@ -77,6 +77,7 @@ const TextInput = ({
 interface PhoneInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string | FieldError | undefined;
+  className?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register?: UseFormRegister<any>;
 }
@@ -85,6 +86,7 @@ const PhoneInput = ({
   label = 'Phone Number',
   error,
   register,
+  className = '',
   ...props
 }: PhoneInputProps) => {
   const [open, setOpen] = useState(false);
@@ -101,16 +103,17 @@ const PhoneInput = ({
       {/* INPUT WRAPPER */}
       <div
         className={clsx(
-          'flex items-center border border-neutral-3a rounded-lg',
-          'bg-surface-card focus-within:border-primary transition'
+          'flex items-center border border-neutral-3a rounded-xl',
+          'bg-surface-card focus-within:border-primary transition',
+          className
         )}
       >
         {/* COUNTRY SELECT */}
         <div
           onClick={() => setOpen(!open)}
           className={clsx(
-            'flex items-center gap-2 px-3 py-3 border-r border-neutral-3a cursor-pointer select-none',
-            'bg-surface-card text-text rounded-xl'
+            'flex items-center gap-2 px-3 py-2 border-r border-neutral-3a cursor-pointer select-none',
+            'bg-surface-card text-text rounded-l-xl'
           )}
         >
           <span className={`fi fi-${country.code} fis w-5 h-4`} />
@@ -121,8 +124,8 @@ const PhoneInput = ({
         <input
           {...props}
           className={clsx(
-            'w-full border-r border-neutral-3a h-13.5 bg-surface-card',
-            'text-text text-sm rounded-xl px-4 py-4 outline-none',
+            'w-full border-r border-neutral-3a h-full bg-surface-card',
+            'text-text text-sm rounded-r-xl px-4 py-4 outline-none',
             'placeholder:text-neutral-8a rounded-r-lg'
           )}
           {...register}

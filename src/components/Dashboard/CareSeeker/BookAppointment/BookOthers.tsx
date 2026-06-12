@@ -1,24 +1,49 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Button from '@/components/Ui/Button';
 import ArrowLeft from '@/icons/ArrowLeft';
 import { useState } from 'react';
+import { OtherUserData } from '.';
 import BookForOthersPart1 from './BookForOthersPart1';
 import BookForOthersPart2 from './BookForOthersPart2';
 
 const BookOthers = ({
+  isLoading,
   goBack,
   action,
 }: {
+  isLoading?: boolean;
   goBack: () => void;
-  action: () => void;
+  action: (value: OtherUserData) => void;
 }) => {
   const states = ['part1', 'part2'];
   const [state, setState] = useState<string>(states[0]);
+  const [userData, setUserData] = useState<OtherUserData>({
+    fullName: null,
+    email: null,
+    phone: null,
+    gender: null,
+    age: null,
+    address: null,
+    city: null,
+    reason: null,
+    promoCode: null,
+  });
 
   const handleGoBack = () => {
     if (state === 'part2') {
       setState('part1');
     } else {
       goBack();
+    }
+  };
+
+  const handleSubmit = (values: any) => {
+    if (state === 'part2') {
+      setUserData((prev) => ({
+        ...prev,
+        ...values,
+      }));
+      action({ ...userData, ...values });
     }
   };
 
@@ -39,19 +64,37 @@ const BookOthers = ({
 
       <div className="max-h-[60vh] overflow-y-auto">
         {state === 'part1' && (
-          <BookForOthersPart1 onSubmit={() => setState('part2')} />
+          <BookForOthersPart1
+            userData={userData}
+            onSubmit={(values: any) => {
+              setUserData((prev) => ({
+                ...prev,
+                ...values,
+              }));
+              setState('part2');
+            }}
+          />
         )}
-        {state === 'part2' && <BookForOthersPart2 onSubmit={() => action()} />}
+        {state === 'part2' && (
+          <BookForOthersPart2
+            isLoading={isLoading}
+            userData={userData}
+            onSubmit={handleSubmit}
+          />
+        )}
       </div>
 
-      <Button
-        type="submit"
-        variant="primary"
-        className="w-full mt-2 text-blue-11 border-primary"
-        onClick={goBack}
-      >
-        Book for yourself
-      </Button>
+      {state === 'part2' && (
+        <Button
+          type="submit"
+          variant="primary"
+          className="w-full mt-2 text-blue-11 border-primary"
+          disabled={isLoading}
+          onClick={goBack}
+        >
+          Book for yourself
+        </Button>
+      )}
     </div>
   );
 };

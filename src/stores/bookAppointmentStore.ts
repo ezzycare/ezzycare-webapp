@@ -3,6 +3,7 @@ import { type DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import { CreateAppointmentInterface } from '@/apiQuery/healthcareAppointments/post/createAppointment';
 import { ConsultationType } from '@/apiQuery/hospital/types';
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 export type AppointmentTimes = {
   appointmentDate: string;
@@ -62,40 +63,48 @@ export interface BookAppointmentStore {
   updatePaymentReference: (paymentReference: PaymentReference | null) => void;
 }
 
-export const useBookAppointmentStore = create<BookAppointmentStore>((set) => ({
-  patientName: '',
-  patientEmail: '',
-  bookingType: null,
-  consultationType: null,
-  urgent: 0,
-  specialty: '',
-  location: '',
-  doctorId: '',
-  appointmentDate: '',
-  consultationFee: '',
-  doctors: {},
+export const useBookAppointmentStore = create<BookAppointmentStore>()(
+  devtools(
+    (set) => ({
+      patientName: '',
+      patientEmail: '',
+      bookingType: null,
+      consultationType: null,
+      urgent: 0,
+      specialty: '',
+      location: '',
+      doctorId: '',
+      appointmentDate: '',
+      consultationFee: '',
+      doctors: {},
 
-  selectedSpecialty: '',
-  selectedCareType: 0,
-  selectedCareMode: '',
-  reason: '',
-  promoCode: '',
-  clickedDoctor: null,
-  selectedAppointmentType: 1,
-  selectedConsultationType: 'VIDEO' as ConsultationType,
-  selectedTimes: null,
-  activeFilters: {},
-  state: 'select-specialty',
-  createdAppointment: null,
-  paymentReference: null,
+      selectedSpecialty: '',
+      selectedCareType: 0,
+      selectedCareMode: '',
+      reason: '',
+      promoCode: '',
+      clickedDoctor: null,
+      selectedAppointmentType: 1,
+      selectedConsultationType: 'VIDEO' as ConsultationType,
+      selectedTimes: null,
+      activeFilters: {},
+      state: 'select-specialty',
+      createdAppointment: null,
+      paymentReference: null,
 
-  updateBooking: (payload) =>
-    set((state) => ({
-      ...state,
-      ...payload,
-    })),
-  setDoctors: (doctors) => set({ doctors }),
-  setCreatedAppointment: (appointment) =>
-    set({ createdAppointment: appointment }),
-  updatePaymentReference: (paymentReference) => set({ paymentReference }),
-}));
+      updateBooking: (payload) =>
+        set((state) => ({
+          ...state,
+          ...payload,
+        })),
+      setDoctors: (doctors) => set({ doctors }),
+      setCreatedAppointment: (appointment) =>
+        set({ createdAppointment: appointment }),
+      updatePaymentReference: (payload) => set({ paymentReference: payload }),
+    }),
+    {
+      name: 'bookAppointmentStore',
+      enabled: process.env.NODE_ENV === 'development',
+    }
+  )
+);

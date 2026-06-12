@@ -25,7 +25,7 @@ const DashNav = ({
   const isMobile = useIsMobile(1023);
 
   const user = useAuthStore((state: AuthStore) => state.user);
-  const email = user.email;
+  const email = user?.email ?? '';
 
   const { accountType, accountNavItems } = useGetAccountType();
 

@@ -8,11 +8,11 @@ export const useGetAccountType = (): {
   accountNavItems: string[];
 } => {
   const authStore = useAuthStore((state: AuthStore) => state);
-  const accountType =
+  const accountType: ACCOUNT_TYPE =
     getCookie()?.user?.accountType || authStore?.user?.accountType;
 
   return {
     accountType,
-    accountNavItems: getAccountNavItems(accountType),
+    accountNavItems: accountType ? getAccountNavItems(accountType) : [],
   };
 };

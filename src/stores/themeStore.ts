@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -20,37 +20,46 @@ const getSystemTheme = (): 'light' | 'dark' => {
 };
 
 export const useThemeStore = create<ThemeState>()(
-  persist(
-    (set, get) => ({
-      theme: 'system',
-      resolvedTheme: 'light',
+  devtools(
+    persist(
+      (set, get) => ({
+        theme: 'system',
+        resolvedTheme: 'light',
 
-      setTheme: (theme) => {
-        set({ theme });
+        setTheme: (theme) => {
+          set({ theme });
 
-        const resolved = theme === 'system' ? getSystemTheme() : theme;
+          const resolved = theme === 'system' ? getSystemTheme() : theme;
 
-        set({ resolvedTheme: resolved });
+          set({ resolvedTheme: resolved });
 
-        document.documentElement.classList.toggle('dark', resolved === 'dark');
-      },
+          document.documentElement.classList.toggle(
+            'dark',
+            resolved === 'dark'
+          );
+        },
 
-      resolveTheme: () => {
-        const theme = get().theme;
+        resolveTheme: () => {
+          const theme = get().theme;
 
-        const resolved = theme === 'system' ? getSystemTheme() : theme;
+          const resolved = theme === 'system' ? getSystemTheme() : theme;
 
-        set({ resolvedTheme: resolved });
+          set({ resolvedTheme: resolved });
 
-        document.documentElement.classList.toggle('dark', resolved === 'dark');
-      },
-    }),
-    {
-      name: 'theme-preference',
-      onRehydrateStorage: () => (state) => {
-        // re-apply theme after hydration
-        state?.resolveTheme();
-      },
-    }
+          document.documentElement.classList.toggle(
+            'dark',
+            resolved === 'dark'
+          );
+        },
+      }),
+      {
+        name: 'theme-preference',
+        onRehydrateStorage: () => (state) => {
+          // re-apply theme after hydration
+          state?.resolveTheme();
+        },
+      }
+    ),
+    { name: 'themeStore', enabled: process.env.NODE_ENV === 'development' }
   )
 );

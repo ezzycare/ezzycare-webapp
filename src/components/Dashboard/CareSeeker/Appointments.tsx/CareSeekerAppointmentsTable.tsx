@@ -2,6 +2,7 @@
 'use client';
 
 import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
+import { useCancelAppointmentMutation } from '@/apiQuery/healthcareAppointments/patch/cancelAppointment';
 import BaseTable from '@/components/Base/Table';
 import { ChatIconLocal } from '@/icons/DashboardIcons';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
@@ -12,6 +13,7 @@ import { EyeOpenIcon } from '@radix-ui/react-icons';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import CancelBookingModal from './CancelBookingModal';
 
 const CareSeekerAppointmentsTable = ({
   data,
@@ -29,8 +31,26 @@ const CareSeekerAppointmentsTable = ({
   );
   const [currentRow, setCurrentRow] =
     useState<CareSeekerAppointmentType | null>(null);
+  const [openCancelBookingModal, setOpenCancelBookingModal] =
+    useState<boolean>(false);
 
-  console.log({ data });
+  const { mutate: cancelAppointment, isPending } =
+    useCancelAppointmentMutation();
+
+  const handleCancelAppointment = (reason: string) => {
+    if (!currentRow?.id) return;
+    cancelAppointment(
+      {
+        id: currentRow.id!,
+        reason,
+      },
+      {
+        onSuccess: () => {
+          setOpenCancelBookingModal(false);
+        },
+      }
+    );
+  };
 
   const localColumns = [
     {
@@ -110,6 +130,7 @@ const CareSeekerAppointmentsTable = ({
                 text-xs font-medium border border-text-alt cursor-pointer`}
               onClick={() => {
                 setCurrentRow(row);
+                setOpenCancelBookingModal(true);
               }}
             >
               Cancel
@@ -140,6 +161,14 @@ const CareSeekerAppointmentsTable = ({
       >
         {props?.children}
       </BaseTable>
+      {currentRow?.id && (
+        <CancelBookingModal
+          openModal={openCancelBookingModal}
+          setOpenModal={setOpenCancelBookingModal}
+          isLoading={isPending}
+          action={handleCancelAppointment}
+        />
+      )}
     </div>
   );
 };

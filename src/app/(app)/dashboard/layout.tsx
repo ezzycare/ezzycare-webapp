@@ -26,6 +26,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (user) {
       updateUser(user);
+    } else {
     }
   }, [user]);
 

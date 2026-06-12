@@ -1,12 +1,13 @@
 'use client';
 
 import Button from '@/components/Ui/Button';
-import { PhoneInput, TextInput } from '@/components/Ui/TextInput';
+import { TextInput } from '@/components/Ui/TextInput';
 
 import TextArea from '@/components/Ui/TextArea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { OtherUserData } from '.';
 
 const bookForOthersSchema = z.object({
   city: z.string().min(2, 'City must be at least 2 characters'),
@@ -17,27 +18,32 @@ const bookForOthersSchema = z.object({
 type BookForOthersFormValues = z.infer<typeof bookForOthersSchema>;
 
 interface BookForOthersProps {
+  userData: OtherUserData;
+  isLoading?: boolean;
   onSubmit?: (data: BookForOthersFormValues) => void;
 }
 
-export const BookForOthersPart2 = ({ onSubmit }: BookForOthersProps) => {
+export const BookForOthersPart2 = ({
+  userData,
+  isLoading,
+  onSubmit,
+}: BookForOthersProps) => {
   const {
     register,
     handleSubmit,
-    watch,
-    setValue,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isValid },
   } = useForm<BookForOthersFormValues>({
     resolver: zodResolver(bookForOthersSchema),
     defaultValues: {
-      city: '',
-      reason: '',
-      promoCode: '',
+      city: userData.city ?? '',
+      reason: userData.reason ?? '',
+      promoCode: userData.promoCode ?? '',
     },
     mode: 'onBlur',
   });
 
   const handleFormSubmit = (data: BookForOthersFormValues) => {
+    if (!isValid) return;
     onSubmit?.(data);
   };
 
@@ -51,6 +57,7 @@ export const BookForOthersPart2 = ({ onSubmit }: BookForOthersProps) => {
       <TextInput
         placeholder="Enter city"
         label="City"
+        className="h-10!"
         error={errors.city?.message}
         {...register('city')}
       />
@@ -61,9 +68,10 @@ export const BookForOthersPart2 = ({ onSubmit }: BookForOthersProps) => {
         {...register('reason')}
       />
 
-      <PhoneInput
+      <TextInput
         placeholder="Enter promo code"
         label="Promocode (optional)"
+        className="h-10!"
         error={errors.promoCode?.message}
         {...register('promoCode')}
       />
@@ -72,8 +80,8 @@ export const BookForOthersPart2 = ({ onSubmit }: BookForOthersProps) => {
         type="submit"
         variant="primary"
         className="w-full mt-2"
-        disabled={!isValid || isSubmitting}
-        loading={isSubmitting}
+        disabled={!isValid || isLoading}
+        loading={isLoading}
       >
         Book Appointment
       </Button>

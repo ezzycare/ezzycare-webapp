@@ -50,14 +50,16 @@ type CustomToastProps = CustomToastOwnProps & Partial<ToastContentProps>;
 
 const variantStyles = {
   success: {
-    wrapper: 'bg-green-5 text-green-12',
+    // wrapper: 'bg-green-5 text-green-12',
+    wrapper: 'bg-surface-card border border-green-400 text-green-12',
     icon: 'bg-green-6a text-green-11',
     progress: 'bg-green-9',
     Icon: InfoInvertedIconLocal,
   },
 
   error: {
-    wrapper: 'bg-red-3a border border-red-400 text-error',
+    // wrapper: 'bg-red-3a border border-red-400 text-error',
+    wrapper: 'bg-red-500 border border-red-400 text-surface-card',
     icon: 'bg-red-6a text-red-11',
     progress: 'bg-red-9',
     Icon: AlertCircle,
@@ -128,7 +130,7 @@ function CustomToast({
           duration: 5,
           ease: 'linear',
         }}
-        className={`absolute bottom-0 left-0 h-[3px] ${styles.progress}`}
+        className={`absolute bottom-0 left-0 h-0.75 ${styles.progress}`}
       />
     </motion.div>
   );

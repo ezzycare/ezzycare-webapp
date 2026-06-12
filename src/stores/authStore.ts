@@ -2,6 +2,7 @@ import { ACCOUNT_TYPE, User } from '@/apiQuery/auth/types';
 import { general } from '@/enums';
 import { getAuthToken } from '@/services/getAuthToken';
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 export interface Docs {
   cac: File | null;
@@ -39,36 +40,41 @@ export interface AuthStore {
 
 const isBrowser = typeof window !== 'undefined';
 
-export const useAuthStore = create<AuthStore>((set) => ({
-  forgotPasswordEmail: null,
-  user: {} as User,
-  authToken: getAuthToken(),
-  signupDetails: {} as SignupDetails,
+export const useAuthStore = create<AuthStore>()(
+  devtools(
+    (set) => ({
+      forgotPasswordEmail: null,
+      user: {} as User,
+      authToken: getAuthToken(),
+      signupDetails: {} as SignupDetails,
 
-  isAuthenticated: () => !!getAuthToken(),
+      isAuthenticated: () => !!getAuthToken(),
 
-  setForgotPasswordEmail: (email) => set({ forgotPasswordEmail: email }),
+      setForgotPasswordEmail: (email) => set({ forgotPasswordEmail: email }),
 
-  updateUser: (user) => {
-    set({ user });
-    if (isBrowser) localStorage.setItem(general.USER, JSON.stringify(user));
-  },
+      updateUser: (user) => {
+        set({ user });
+        if (isBrowser) localStorage.setItem(general.USER, JSON.stringify(user));
+      },
 
-  setToken: (token) => {
-    set({ authToken: token });
-    if (isBrowser) sessionStorage.setItem(general.TOKEN, token);
-  },
+      setToken: (token) => {
+        set({ authToken: token });
+        if (isBrowser) sessionStorage.setItem(general.TOKEN, token);
+      },
 
-  removeAuth: () => {
-    set({ user: {} as User, authToken: null });
-    if (isBrowser) {
-      sessionStorage.removeItem(general.TOKEN);
-      localStorage.removeItem(general.USER);
-    }
-  },
+      removeAuth: () => {
+        set({ user: {} as User, authToken: null });
+        if (isBrowser) {
+          sessionStorage.removeItem(general.TOKEN);
+          localStorage.removeItem(general.USER);
+        }
+      },
 
-  updateSignupDetails: (details) =>
-    set((state) => ({
-      signupDetails: { ...state.signupDetails, ...details },
-    })),
-}));
+      updateSignupDetails: (details) =>
+        set((state) => ({
+          signupDetails: { ...state.signupDetails, ...details },
+        })),
+    }),
+    { name: 'authStore', enabled: process.env.NODE_ENV === 'development' }
+  )
+);

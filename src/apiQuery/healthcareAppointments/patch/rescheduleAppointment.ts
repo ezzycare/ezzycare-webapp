@@ -9,17 +9,16 @@ export interface RescheduleAppointmentParams {
   appointmentEndTime: string;
 }
 
-export interface RescheduleAppointmentResponse {
-  success: boolean;
-  message: string;
-}
+import { CreateAppointmentInterface } from '../post/createAppointment';
+
+export type RescheduleAppointmentResponse = CreateAppointmentInterface;
 
 export const rescheduleAppointment = async (
   params: RescheduleAppointmentParams
 ): Promise<ApiResponse<RescheduleAppointmentResponse>> => {
   const response = await axiosClient.patch<
     ApiResponse<RescheduleAppointmentResponse>
-  >(`/api/healthcare/appointments/${params.id}/reschedule`, {
+  >(`/healthcare/appointments/${params.id}/reschedule`, {
     appointmentDate: params.appointmentDate,
     appointmentTime: params.appointmentTime,
     appointmentEndTime: params.appointmentEndTime,

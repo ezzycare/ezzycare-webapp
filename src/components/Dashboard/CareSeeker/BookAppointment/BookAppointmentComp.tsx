@@ -130,8 +130,8 @@ const BookAppointmentComp = ({
       buildBlockedTimesByDate(
         doctor.availability ?? [],
         timeSlots,
-        30,
-        selectedConsultationType
+        selectedConsultationType,
+        30
       ),
     [doctor.availability, timeSlots, selectedConsultationType]
   );
@@ -205,7 +205,10 @@ const BookAppointmentComp = ({
 
           <div className="flex items-center gap-5.75 mt-2">
             {consultationTypes.map((type) => (
-              <div key={type} className="flex items-center gap-2">
+              <div
+                key={type}
+                className={`flex items-center gap-2 ${isReschedule ? 'pointer-events-none opacity-70' : ''}`}
+              >
                 <RadioItem
                   name="consultationTypes"
                   checked={selectedConsultationType === type}
@@ -235,7 +238,7 @@ const BookAppointmentComp = ({
           </div>
         ) : (
           <>
-            {!canProceedToPayment && (
+            {(!canProceedToPayment || !createdAppointment) && (
               <Button
                 variant="outline"
                 className="text-base py-2.5! w-full border-primary text-blue-11!"
@@ -268,20 +271,19 @@ const BookAppointmentComp = ({
                 <p>{getConsultationFee}</p>
               </div>
             )}
-            {!canProceedToPayment ||
-              (!createdAppointment && (
-                <div className="w-full">
-                  <p className="text-base text-text font-semibold">Reason</p>
-                  <TextArea
-                    value={reason}
-                    placeholder="Please state reason including any symptoms"
-                    className="mt-2 min-h-38.25!"
-                    onChange={(e) => {
-                      setReason(e.target.value);
-                    }}
-                  />
-                </div>
-              ))}
+            {(!canProceedToPayment || !createdAppointment) && (
+              <div className="w-full">
+                <p className="text-base text-text font-semibold">Reason</p>
+                <TextArea
+                  value={reason ?? createdAppointment?.reason ?? ''}
+                  placeholder="Please state reason including any symptoms"
+                  className="mt-2 min-h-38.25!"
+                  onChange={(e) => {
+                    setReason(e.target.value);
+                  }}
+                />
+              </div>
+            )}
 
             {canProceedToPayment && (
               <div>
@@ -289,7 +291,9 @@ const BookAppointmentComp = ({
                   Appointment Type
                 </p>
 
-                <div className="flex items-center gap-5.75 mt-2">
+                <div
+                  className={`flex items-center gap-5.75 mt-2 ${isReschedule ? 'pointer-events-none opacity-70' : ''}`}
+                >
                   {appointmentTypes.map((type) => (
                     <div key={type.id} className="flex items-center gap-2">
                       <RadioItem
@@ -309,39 +313,39 @@ const BookAppointmentComp = ({
           </>
         )}
 
-        {!canProceedToPayment ||
-          (!createdAppointment && (
-            <>
-              {!isReschedule && (
-                <div className="w-full">
-                  <p className="text-base text-text font-semibold">
-                    Promocode (optional)
-                  </p>
-                  <TextInput
-                    value={promoCode}
-                    placeholder="Enter promo code"
-                    className="mt-2"
-                    onChange={(e) => setPromoCode(e.target.value)}
-                  />
-                </div>
-              )}
+        {(!canProceedToPayment || !createdAppointment) && (
+          <>
+            {!isReschedule && (
+              <div className="w-full">
+                <p className="text-base text-text font-semibold">
+                  Promocode (optional)
+                </p>
+                <TextInput
+                  value={promoCode}
+                  placeholder="Enter promo code"
+                  className="mt-2"
+                  disabled={isReschedule}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                />
+              </div>
+            )}
 
-              {!isReschedule && !isSelectingTime && (
-                <Button
-                  variant="primary"
-                  className="py-2.5! w-full"
-                  disabled={!isValid || isLoading}
-                  loading={isLoading}
-                  onClick={() => {
-                    action();
-                    setCanProceedToPayment(true);
-                  }}
-                >
-                  {isReschedule ? 'Reschedule' : 'Book'} Appointment
-                </Button>
-              )}
-            </>
-          ))}
+            {(isReschedule || !isSelectingTime) && (
+              <Button
+                variant="primary"
+                className="py-2.5! w-full"
+                disabled={!isValid || isLoading}
+                loading={isLoading}
+                onClick={() => {
+                  action();
+                  setCanProceedToPayment(true);
+                }}
+              >
+                {isReschedule ? 'Reschedule' : 'Book'} Appointment
+              </Button>
+            )}
+          </>
+        )}
         {canProceedToPayment && !!createdAppointment && (
           <div className="space-y-2">
             <Button
@@ -420,8 +424,8 @@ export const buildBlockedDates = (
 export const buildBlockedTimesByDate = (
   availability: Availability[],
   timeSlots: TimeSlot[],
-  numberOfDays = 90,
-  consultationType: ConsultationType
+  consultationType: ConsultationType,
+  numberOfDays = 90
 ) => {
   const result: Record<string, string[]> = {};
 

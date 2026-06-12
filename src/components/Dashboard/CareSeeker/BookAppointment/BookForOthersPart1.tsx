@@ -9,6 +9,7 @@ import { EnvelopeClosedIcon } from '@radix-ui/react-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { OtherUserData } from '.';
 
 const bookForOthersSchema = z.object({
   fullName: z.string().min(2, 'Full name must be at least 2 characters'),
@@ -30,10 +31,14 @@ const bookForOthersSchema = z.object({
 type BookForOthersFormValues = z.infer<typeof bookForOthersSchema>;
 
 interface BookForOthersProps {
+  userData: OtherUserData;
   onSubmit?: (data: BookForOthersFormValues) => void;
 }
 
-export const BookForOthersPart1 = ({ onSubmit }: BookForOthersProps) => {
+export const BookForOthersPart1 = ({
+  userData,
+  onSubmit,
+}: BookForOthersProps) => {
   const {
     register,
     handleSubmit,
@@ -43,12 +48,12 @@ export const BookForOthersPart1 = ({ onSubmit }: BookForOthersProps) => {
   } = useForm<BookForOthersFormValues>({
     resolver: zodResolver(bookForOthersSchema),
     defaultValues: {
-      fullName: '',
-      email: '',
-      phone: '',
-      gender: '',
-      age: '',
-      address: '',
+      fullName: userData.fullName ?? '',
+      email: userData.email ?? '',
+      phone: userData.phone ?? '',
+      gender: userData.gender ?? '',
+      age: userData.age ?? '',
+      address: userData.address ?? '',
     },
     mode: 'onBlur',
   });
@@ -56,6 +61,7 @@ export const BookForOthersPart1 = ({ onSubmit }: BookForOthersProps) => {
   const gender = watch('gender');
 
   const handleFormSubmit = (data: BookForOthersFormValues) => {
+    if (!isValid) return;
     onSubmit?.(data);
   };
 
@@ -69,6 +75,7 @@ export const BookForOthersPart1 = ({ onSubmit }: BookForOthersProps) => {
       <TextInput
         placeholder="enter full name"
         label="Full Name"
+        className="h-10!"
         leftIcon={<UserIconLocal className="text-text-muted" />}
         error={errors.fullName?.message}
         {...register('fullName')}
@@ -76,6 +83,7 @@ export const BookForOthersPart1 = ({ onSubmit }: BookForOthersProps) => {
       <TextInput
         placeholder="email@domain.com"
         label="Email"
+        className="h-10!"
         leftIcon={<EnvelopeClosedIcon className="text-text-muted" />}
         error={errors.email?.message}
         {...register('email')}
@@ -84,28 +92,32 @@ export const BookForOthersPart1 = ({ onSubmit }: BookForOthersProps) => {
       <PhoneInput
         placeholder=""
         label="Phone"
+        className="h-10!"
         error={errors.phone?.message}
         {...register('phone')}
       />
       <Dropdown
         label="Gender"
         value={gender}
+        containerClassName="h-10!"
         onChange={(val) => setValue('gender', val as string)}
         error={errors.gender?.message}
         options={[
-          { label: 'Male', value: 'male' },
-          { label: 'Female', value: 'female' },
+          { label: 'Male', value: 'MALE' },
+          { label: 'Female', value: 'FEMALE' },
         ]}
       />
       <TextInput
         placeholder="E.g 20"
         label="Age (years)"
+        className="h-10!"
         error={errors.age?.message}
         {...register('age')}
       />
       <TextInput
         placeholder="Enter address"
         label="Address"
+        className="h-10!"
         error={errors.address?.message}
         {...register('address')}
       />

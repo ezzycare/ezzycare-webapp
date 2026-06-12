@@ -67,6 +67,7 @@ const AppointmentDetails = ({
       selectedCareMode: appointment?.appointmentType,
       reason: appointment?.reason,
       clickedDoctor: doctor,
+      createdAppointment: appointment,
       selectedAppointmentType: appointment?.myAppointment as 0 | 1,
       selectedConsultationType: appointment?.appointmentType,
       selectedTimes: {
@@ -124,13 +125,15 @@ const AppointmentDetails = ({
           </div>
         </div>
         <div className="flex items-center ml-auto gap-2">
-          <Button
-            variant="outline"
-            className="text-text! hover:text-surface-card! py-2! px-4!"
-            onClick={() => {}}
-          >
-            Cancel booking
-          </Button>
+          {appointment.status !== 'CANCELLED' && (
+            <Button
+              variant="outline"
+              className="text-text! hover:text-surface-card! py-2! px-4!"
+              onClick={() => {}}
+            >
+              Cancel booking
+            </Button>
+          )}
           <Button
             variant="outline"
             className="text-text! hover:text-surface-card! py-2! px-4!"
@@ -247,6 +250,7 @@ const AppointmentDetails = ({
         </div>
       </div>
       <RescheduleAppointment
+        appointment={appointment}
         doctor={doctor}
         openModal={openRescheduleModal}
         setOpenModal={handleOpenRescheduleModal}

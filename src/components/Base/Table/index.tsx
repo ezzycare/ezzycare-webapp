@@ -205,8 +205,8 @@ export default function BaseTable<T extends Record<string, any>>({
 
       <div className="hidden lg:block overflow-x-auto w-full">
         <table
-          className="w-full border-collapse table-fixed min-w-md"
-          style={{ tableLayout: 'fixed' }}
+          className="w-full border-collapse min-w-max"
+          style={{ tableLayout: 'auto' }}
         >
           {/* COLUMN WIDTHS (replaces gridTemplateColumns) */}
           <colgroup>
@@ -294,7 +294,7 @@ export default function BaseTable<T extends Record<string, any>>({
                       <td
                         key={String(column.field)}
                         className={cn(
-                          `first:pl-4 last:pr-4 py-3 text-sm text-text-muted`,
+                          `pr-3 first:pl-4 last:pr-4  py-3 text-sm text-text-muted`,
                           column.className || ''
                         )}
                       >

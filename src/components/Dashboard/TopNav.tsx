@@ -23,8 +23,13 @@ const TopNav = ({
 
   const user = useAuthStore((state: AuthStore) => state.user);
 
-  const initials = getInitials(`${user.firstName} ${user.lastName}`);
-  const email = user.email;
+  const initials = user
+    ? getInitials(`${user.firstName} ${user.lastName}`)
+    : '';
+  const email = user?.email ?? '';
+  const displayName = user?.firstName
+    ? `${user.firstName} ${user?.lastName ?? ''}`
+    : '';
 
   const { accountType } = useGetAccountType();
 
@@ -52,7 +57,7 @@ const TopNav = ({
           {initials}
         </p>
         <div className="hidden sm:block">
-          <h2 className="text-sm font-semibold">{accountType}</h2>
+          <h2 className="text-sm font-semibold">{accountType ?? ''}</h2>
           <p className="text-xs text-text-muted">{email}</p>
         </div>
       </div>

@@ -20,11 +20,13 @@ const CancelBookingModal = ({
       <Modal
         open={openModal}
         onClose={() => setOpenModal(false)}
+        title="Cancel Appointment"
+        description="Please state reason including any symptoms"
         size="md"
         persistent
       >
-        <div>
-          <div className="w-full">
+        <div className="space-y-3">
+          <div className="w-full mt-5">
             <p className="text-base text-text font-semibold">Reason</p>
             <TextArea
               value={reason}
@@ -39,7 +41,7 @@ const CancelBookingModal = ({
           <Button
             variant="primary"
             className="py-2.5! w-full"
-            disabled={!reason.length}
+            disabled={!reason.length || isLoading}
             loading={isLoading}
             onClick={() => {
               action(reason);
@@ -50,7 +52,7 @@ const CancelBookingModal = ({
           <Button
             variant="outline"
             className="py-2.5! w-full"
-            disabled={!reason.length}
+            disabled={isLoading}
             onClick={() => {
               setOpenModal(false);
             }}

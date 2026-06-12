@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { appUrl } from '@/apiQuery/baseUrl';
 import {
   Doctor,
   useGetDoctorsDiscoveryQuery,
@@ -14,11 +13,6 @@ import {
   useCreateAppointmentMutation,
 } from '@/apiQuery/healthcareAppointments/post/createAppointment';
 import { ConsultationType } from '@/apiQuery/hospital/types';
-import {
-  PaymentParams,
-  useInitializePaymentMutation,
-} from '@/apiQuery/payment/initiatePayment';
-import { usePayWithWalletMutation } from '@/apiQuery/payment/payWithWallet';
 import { ApiResponse } from '@/apiQuery/types';
 import Modal from '@/components/Ui/Modal';
 import { BoldWalletIcon, PaypalIconLocal } from '@/icons/DashboardIcons';
@@ -27,6 +21,10 @@ import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
 import React, { JSX, useEffect, useMemo } from 'react';
+import {
+  useModalNavigation,
+  usePaymentHandlers,
+} from '../hooks/useAppointmentActions';
 import AllDoctorsComp from './AllDoctorsComp';
 import BookAppointmentComp from './BookAppointmentComp';
 import BookOthers from './BookOthers';
@@ -71,18 +69,17 @@ const BookPatientAppointment = ({
     createdAppointment,
     updateBooking,
     setCreatedAppointment,
-    paymentReference,
     updatePaymentReference,
   } = useBookAppointmentStore();
   const user = useAuthStore((state: AuthStore) => state.user);
 
+  const { handlePayment, isPendingPayment, isPendingWalletPayment } =
+    usePaymentHandlers();
+  const { goBack, modalClassName } = useModalNavigation(allStates);
+
   const consultationTypes = careModes.map((item) => item.name);
 
   const { mutate: initiateBooking, isPending } = useCreateAppointmentMutation();
-  const { mutate: initiatePayment, isPending: isPendingPayment } =
-    useInitializePaymentMutation();
-  const { mutate: initiateWalletPayment, isPending: isPendingWalletPayment } =
-    usePayWithWalletMutation();
   const { mutate: cancelAppointment, isPending: isPendingCancel } =
     useCancelAppointmentMutation();
 
@@ -109,12 +106,6 @@ const BookPatientAppointment = ({
       ].includes(state),
     [state]
   );
-
-  const modalClassName = useMemo(() => {
-    return ['select-payment'].includes(state)
-      ? 'min-h-auto'
-      : 'min-h-[60vh] max-h-[90vh] overflow-y-auto';
-  }, [state]);
 
   const categories = useCategoryStore(
     (state: CategoryStore) => state.categories?.doctors?.children
@@ -156,8 +147,9 @@ const BookPatientAppointment = ({
       clickedDoctor: null,
       activeFilters: {},
     });
-    setCreatedAppointment(null);
     setOpenModal(false);
+    setCreatedAppointment(null);
+    updatePaymentReference(null);
   };
 
   const handleCloseModal = () => {
@@ -168,94 +160,51 @@ const BookPatientAppointment = ({
     }
   };
 
-  const goBack = () => {
-    const index = allStates.findIndex((item) => item === state);
-    if (index > 0) {
-      if (['set-filter'].includes(allStates[index - 1])) {
-        updateBooking({ state: allStates[index - 2] });
-        return;
-      }
-      updateBooking({ state: allStates[index - 1] });
-    }
-  };
+  const handleCreateAppointment = (
+    otherUserData?: OtherUserData
+  ): Promise<CreateAppointmentInterface> => {
+    return new Promise((resolve, reject) => {
+      const payload = {
+        userId: Number(doctor.id),
+        myAppointment: selectedAppointmentType,
+        appointmentType: selectedConsultationType,
+        urgent: careTypes[selectedCareType].id,
+        name:
+          otherUserData?.fullName ??
+          `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim(),
+        email: otherUserData?.email ?? user?.email ?? '',
+        mobileNo: otherUserData?.phone ?? user?.mobileNo ?? '',
+        age: otherUserData?.age ?? '',
+        gender: otherUserData?.gender ?? user?.gender ?? '',
+        reason: otherUserData?.reason ?? reason ?? '',
+        appointmentDate: selectedTimes?.appointmentDate ?? '',
+        appointmentTime: selectedTimes?.appointmentTime ?? '',
+        appointmentEndTime: selectedTimes?.appointmentEndTime ?? '',
+        address: otherUserData?.address ?? user?.userDetails?.address ?? '',
+        city: otherUserData?.city ?? user?.userDetails?.city ?? '',
+        country: user?.userDetails?.country ?? '',
+        duration: 30,
+      };
 
-  const handleCreateAppointment = async () => {
-    const payload = {
-      userId: Number(doctor.id),
-      // hospitalId: null,
-      myAppointment: selectedAppointmentType,
-      appointmentType: selectedConsultationType,
-      urgent: careTypes[selectedCareType].id,
-      name: `${user?.firstName} ${user?.lastName}`,
-      email: user?.email,
-      mobileNo: user?.mobileNo,
-      age: '',
-      gender: user.gender,
-      reason,
-      appointmentDate: selectedTimes?.appointmentDate ?? '',
-      appointmentTime: selectedTimes?.appointmentTime ?? '',
-      appointmentEndTime: selectedTimes?.appointmentEndTime ?? '',
-      // userServiceId: Number(user.id),
-      address: user?.userDetails?.address ?? '',
-      city: user?.userDetails?.city ?? '',
-      country: user?.userDetails?.country ?? '',
-      duration: 30,
-    };
-    console.log({ payload, user });
-    initiateBooking(payload, {
-      onSuccess: (res: ApiResponse<CreateAppointmentInterface>) => {
-        console.log({ res: res.data });
-        if (!res.data) return;
-        setCreatedAppointment(res.data);
-        toaster.success(res.message || 'Appointment created successfully');
-      },
-      onError: (error: Error | any) => {
-        toaster.error(error?.message || 'Failed to create appointment');
-      },
-    });
-  };
+      initiateBooking(payload, {
+        onSuccess: (res: ApiResponse<CreateAppointmentInterface>) => {
+          if (!res.data) {
+            reject(new Error('No appointment data returned'));
+            return;
+          }
 
-  const handlePayment = (paymentMethod: string) => {
-    if (!createdAppointment) return;
+          setCreatedAppointment(res.data);
+          toaster.success(res.message || 'Appointment created successfully');
 
-    const payload = {
-      amount: createdAppointment.totalCharge,
-      email: createdAppointment.email,
-      appointmentId: Number(createdAppointment.id),
-      callbackUrl: `${appUrl}/dashboard?paymentCallback=true`,
-    };
-
-    if (paymentMethod === 'wallet') {
-      handleWalletPayment(payload);
-    } else {
-      handleOnlinePayment(payload);
-    }
-  };
-
-  const handleWalletPayment = (payload: PaymentParams) => {
-    initiateWalletPayment(payload, {
-      onSuccess: (res) => {
-        console.log({ paymentWithWalletRes: res });
-        updateBooking({ state: 'appointment-pending' });
-      },
-      onError: (error: Error | any) => {
-        toaster.error(error?.message || 'Failed to initialize payment');
-      },
-    });
-  };
-  const handleOnlinePayment = (payload: PaymentParams) => {
-    initiatePayment(payload, {
-      onSuccess: (res) => {
-        console.log({ paymentWithWalletRes: res });
-        if (res.data?.data?.authorization_url) {
-          updatePaymentReference(res.data?.data);
-          window.location.href = res.data?.data?.authorization_url;
-        }
-        // updateBooking({ state: 'appointment-pending' });
-      },
-      onError: (error: Error | any) => {
-        toaster.error(error?.message || 'Failed to initialize payment');
-      },
+          resolve(res.data);
+        },
+        onError: (error: any) => {
+          const message = error?.message || 'Failed to create appointment';
+          setCreatedAppointment(null);
+          toaster.error(message);
+          reject(error);
+        },
+      });
     });
   };
 
@@ -435,17 +384,11 @@ const BookPatientAppointment = ({
 
           {state === 'book-others' && (
             <BookOthers
-              goBack={() => updateBooking({ state: 'book-appointment' })}
-              action={handleCreateAppointment}
-            />
-          )}
-
-          {state === 'select-payment' && (
-            <SelectPaymentMethod
-              goBack={() => updateBooking({ state: 'book-appointment' })}
-              action={(paymentMethod: string) => handlePayment(paymentMethod)}
               isLoading={isCreatingBooking}
-              paymentMethods={paymentMethods}
+              goBack={() => updateBooking({ state: 'book-appointment' })}
+              action={(othersData: OtherUserData) =>
+                handleCreateAppointment(othersData)
+              }
             />
           )}
 
@@ -454,6 +397,14 @@ const BookPatientAppointment = ({
               action={() => {
                 handleCloseModal();
               }}
+            />
+          )}
+          {state === 'select-payment' && (
+            <SelectPaymentMethod
+              goBack={() => updateBooking({ state: 'book-appointment' })}
+              action={(paymentMethod: string) => handlePayment(paymentMethod)}
+              isLoading={isCreatingBooking}
+              paymentMethods={paymentMethods}
             />
           )}
         </div>
@@ -499,3 +450,15 @@ export const paymentMethods: PaymentMethodType[] = [
     icon: <PaypalIconLocal />,
   },
 ];
+
+export interface OtherUserData {
+  fullName: string | null;
+  email: string | null;
+  phone: string | null;
+  gender: 'MALE' | 'FEMALE' | null;
+  age: string | null;
+  address: string | null;
+  city: string | null;
+  reason: string | null;
+  promoCode: string | null;
+}

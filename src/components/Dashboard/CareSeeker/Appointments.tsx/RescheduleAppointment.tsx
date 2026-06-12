@@ -1,7 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
-import { GetSingleAppointmentType } from '@/apiQuery/healthcareAppointments/get/getSingleAppointment';
-import { useCreateAppointmentMutation } from '@/apiQuery/healthcareAppointments/post/createAppointment';
-import { useInitializePaymentMutation } from '@/apiQuery/payment/initiatePayment';
+import { useRescheduleAppointmentMutation } from '@/apiQuery/healthcareAppointments/patch/rescheduleAppointment';
 import Modal from '@/components/Ui/Modal';
 import { toaster } from '@/lib/toaster';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
@@ -10,13 +9,16 @@ import React, { useEffect, useMemo } from 'react';
 import {
   appointmentTypes,
   careModes,
-  careTypes,
   paymentMethods,
 } from '../BookAppointment';
 import BookAppointmentComp from '../BookAppointment/BookAppointmentComp';
 import BookOthers from '../BookAppointment/BookOthers';
 import SeekerAppointmentPending from '../BookAppointment/SeekerAppointmentPending';
 import SelectPaymentMethod from '../BookAppointment/SelectPaymentMethod';
+import {
+  useModalNavigation,
+  usePaymentHandlers,
+} from '../hooks/useAppointmentActions';
 
 const allStates = [
   'book-appointment',
@@ -26,47 +28,47 @@ const allStates = [
 ];
 
 const ReschedulePatientAppointment = ({
+  appointment,
   doctor,
   openModal,
   setOpenModal,
 }: {
+  appointment: any;
   doctor: DoctorProfile;
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const {
     state,
-    selectedCareType,
     reason,
     promoCode,
     selectedAppointmentType,
     selectedConsultationType,
     selectedTimes,
+    createdAppointment,
+    setCreatedAppointment,
+    updatePaymentReference,
     updateBooking,
   } = useBookAppointmentStore();
   const user = useAuthStore((state: AuthStore) => state.user);
+  console.log({ createdAppointment, appointment });
+
+  const { handlePayment, isPendingPayment, isPendingWalletPayment } =
+    usePaymentHandlers();
+  const { goBack, modalClassName } = useModalNavigation(allStates);
 
   const consultationTypes = careModes.map((item) => item.name);
 
-  const { mutate: initiateBooking, isPending } = useCreateAppointmentMutation();
-  const { mutate: initiatePayment, isPending: isPendingPayment } =
-    useInitializePaymentMutation();
+  const { mutate: rescheduleBooking, isPending } =
+    useRescheduleAppointmentMutation();
 
   const isCreatingBooking = useMemo(() => {
-    return isPending || isPendingPayment;
-  }, [isPending, isPendingPayment]);
+    return isPending || isPendingPayment || isPendingWalletPayment;
+  }, [isPending, isPendingPayment, isPendingWalletPayment]);
 
   useEffect(() => {
-    if (openModal) {
-      updateBooking({ state: 'select-specialty' });
-    }
+    updateBooking({ state: 'book-appointment' });
   }, []);
-
-  const modalClassName = useMemo(() => {
-    return ['select-payment'].includes(state)
-      ? 'min-h-auto'
-      : 'min-h-[60vh] max-h-[90vh] overflow-y-auto';
-  }, [state]);
 
   const handleCloseModal = () => {
     updateBooking({
@@ -78,69 +80,30 @@ const ReschedulePatientAppointment = ({
     setOpenModal(false);
   };
 
-  const goBack = () => {
-    const index = allStates.findIndex((item) => item === state);
-    if (index > 0) {
-      if (allStates[index - 1] === 'set-filter') {
-        updateBooking({ state: allStates[index - 2] });
-        return;
-      }
-      updateBooking({ state: allStates[index - 1] });
-    }
-  };
-
   const handleCreateAppointment = async () => {
     const payload = {
-      userId: Number(doctor.id),
-      // hospitalId: null,
-      myAppointment: selectedAppointmentType,
-      appointmentType: selectedConsultationType,
-      urgent: careTypes[selectedCareType].id,
-      name: `${user?.firstName} ${user?.lastName}`,
-      email: user?.email,
-      mobileNo: user?.mobileNo,
-      age: '',
-      gender: user.gender,
-      reason,
+      id: Number(appointment?.id),
       appointmentDate: selectedTimes?.appointmentDate ?? '',
       appointmentTime: selectedTimes?.appointmentTime ?? '',
       appointmentEndTime: selectedTimes?.appointmentEndTime ?? '',
-      userServiceId: Number(user.id),
-      address: user?.userDetails?.address ?? '',
-      city: user?.userDetails?.city ?? '',
-      country: user?.userDetails?.country ?? '',
-      duration: 30,
     };
     console.log({ payload, user });
-    initiateBooking(payload, {
+    rescheduleBooking(payload, {
       onSuccess: (res) => {
         console.log({ res });
-        toaster.success('Appointment created successfully');
+        if (res?.data) {
+          setCreatedAppointment(res.data);
+        }
+        toaster.success(res.message || 'Appointment rescheduled successfully');
       },
-      onError: () => {
-        toaster.error('Failed to create appointment');
+      onError: (error: Error | any) => {
+        console.log({ error });
+        toaster.error(
+          (error?.response?.data?.message ?? error?.message) ||
+            'Failed to create appointment'
+        );
       },
     });
-  };
-
-  const handlePay = (appointment: GetSingleAppointmentType) => {
-    initiatePayment(
-      {
-        amount: 0,
-        email: user.email,
-        appointmentId: appointment.id,
-        callbackUrl: `${window.location.origin}/payment/callback`,
-      },
-      {
-        onSuccess: (res) => {
-          if (res.data?.authorizationUrl) {
-            window.location.href = res.data?.authorizationUrl;
-            // setState('appointment-pending')
-          }
-        },
-        onError: () => toaster.error('Failed to initialize payment'),
-      }
-    );
   };
 
   return (
@@ -198,7 +161,12 @@ const ReschedulePatientAppointment = ({
               action={handleCreateAppointment}
               isLoading={isCreatingBooking}
               isReschedule={true}
-              proceedToPayment={() => handleCloseModal()}
+              proceedToPayment={() => {
+                if (!createdAppointment) {
+                  return;
+                }
+                updateBooking({ state: 'select-payment' });
+              }}
               cancelAppointment={() =>
                 updateBooking({ state: 'book-appointment' })
               }
@@ -224,9 +192,9 @@ const ReschedulePatientAppointment = ({
           {state === 'select-payment' && (
             <SelectPaymentMethod
               goBack={() => updateBooking({ state: 'book-appointment' })}
-              action={() => updateBooking({ state: 'appointment-pending' })}
-              paymentMethods={paymentMethods}
+              action={(paymentMethod: string) => handlePayment(paymentMethod)}
               isLoading={isCreatingBooking}
+              paymentMethods={paymentMethods}
             />
           )}
         </div>
