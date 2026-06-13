@@ -22,7 +22,6 @@ export const getAppointment = async (
   const response = await axiosClient.get<ApiResponse<GetSingleAppointmentType>>(
     `/healthcare/appointments/${params.id}`
   );
-  console.log({ response });
   return response.data;
 };
 
@@ -42,7 +41,6 @@ export const useGetAppointmentQuery = (
 
   const appointment = result.data?.data;
 
-  console.log({ result });
   return {
     ...result,
     appointment,

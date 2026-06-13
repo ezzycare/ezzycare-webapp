@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "message": "Appointments fetched successfully",
+  "data": {
+    "items": [],
+    "meta": {
+      "page": 1,
+      "limit": 10,
+      "totalItems": 0,
+      "totalPages": 0,
+      "hasNextPage": false,
+      "hasPreviousPage": false
+    }
+  }
+}

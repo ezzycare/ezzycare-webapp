@@ -15,9 +15,7 @@ const CallbackContent = () => {
     useBookAppointmentStore();
 
   useEffect(() => {
-    if (isPaymentCallback) {
-      console.log({ isPaymentCallback, paymentReference });
-    }
+    console.log({ paymentReference });
   }, [isPaymentCallback]);
 
   if (!isPaymentCallback) {

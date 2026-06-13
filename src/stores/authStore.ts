@@ -40,11 +40,21 @@ export interface AuthStore {
 
 const isBrowser = typeof window !== 'undefined';
 
+const getInitialUser = (): User => {
+  if (!isBrowser) return {} as User;
+  try {
+    const stored = localStorage.getItem(general.USER);
+    return stored ? JSON.parse(stored) : ({} as User);
+  } catch {
+    return {} as User;
+  }
+};
+
 export const useAuthStore = create<AuthStore>()(
   devtools(
     (set) => ({
       forgotPasswordEmail: null,
-      user: {} as User,
+      user: getInitialUser(),
       authToken: getAuthToken(),
       signupDetails: {} as SignupDetails,
 

@@ -7,6 +7,7 @@ import {
 import { useGetProfile } from '@/apiQuery/users/getProfile';
 import SideNav from '@/components/Dashboard/SideNav';
 import TopNav from '@/components/Dashboard/TopNav';
+import { useGetAccountType } from '@/hooks/useGetAccountType';
 import { useTrackPreviousRoute } from '@/hooks/useTrackPreviousRoute';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
@@ -22,6 +23,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const { categories } = useGetCategoriesQuery({
     type: 'HOSPITAL' as CategoryType,
   });
+  const { loading } = useGetAccountType();
+
+  console.log({ loading });
 
   useEffect(() => {
     if (user) {

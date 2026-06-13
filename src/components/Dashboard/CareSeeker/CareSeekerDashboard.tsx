@@ -45,8 +45,6 @@ const CareSeekerDashboard = () => {
       limit: 10,
     });
 
-  console.log({ appointments });
-
   useEffect(() => {
     const storedShowBalance = localStorage.getItem('showCareSeekerBalance');
     // eslint-disable-next-line react-hooks/set-state-in-effect

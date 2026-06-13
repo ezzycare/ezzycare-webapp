@@ -3,7 +3,6 @@ import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import { useRescheduleAppointmentMutation } from '@/apiQuery/healthcareAppointments/patch/rescheduleAppointment';
 import Modal from '@/components/Ui/Modal';
 import { toaster } from '@/lib/toaster';
-import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
 import React, { useEffect, useMemo } from 'react';
 import {
@@ -47,12 +46,8 @@ const ReschedulePatientAppointment = ({
     selectedTimes,
     createdAppointment,
     setCreatedAppointment,
-    updatePaymentReference,
     updateBooking,
   } = useBookAppointmentStore();
-  const user = useAuthStore((state: AuthStore) => state.user);
-  console.log({ createdAppointment, appointment });
-
   const { handlePayment, isPendingPayment, isPendingWalletPayment } =
     usePaymentHandlers();
   const { goBack, modalClassName } = useModalNavigation(allStates);
@@ -87,17 +82,14 @@ const ReschedulePatientAppointment = ({
       appointmentTime: selectedTimes?.appointmentTime ?? '',
       appointmentEndTime: selectedTimes?.appointmentEndTime ?? '',
     };
-    console.log({ payload, user });
     rescheduleBooking(payload, {
       onSuccess: (res) => {
-        console.log({ res });
         if (res?.data) {
           setCreatedAppointment(res.data);
         }
         toaster.success(res.message || 'Appointment rescheduled successfully');
       },
       onError: (error: Error | any) => {
-        console.log({ error });
         toaster.error(
           (error?.response?.data?.message ?? error?.message) ||
             'Failed to create appointment'

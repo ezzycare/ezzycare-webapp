@@ -56,8 +56,6 @@ const CreatePatientModal = ({
   });
 
   const onSubmit = async (data: CreatePatientFormValues) => {
-    // console.log(data);
-
     // API call here
 
     setState('account-exists');

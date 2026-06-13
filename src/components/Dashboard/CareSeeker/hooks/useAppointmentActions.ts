@@ -59,11 +59,7 @@ export const usePaymentHandlers = () => {
           updatePaymentReference(res.data?.data);
           updateBooking({ state: 'select-payment' });
           setCreatedAppointment(null);
-          window.open(
-            res.data?.data?.authorization_url,
-            '_blank',
-            'noopener,noreferrer'
-          );
+          window.location.href = res.data?.data?.authorization_url;
         }
       },
       onError: (error: Error | unknown) => {

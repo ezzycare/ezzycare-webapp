@@ -12,7 +12,6 @@ export const login = async (credentials: LoginType): Promise<LoginResponse> => {
     const response = await axios.post(`${baseURL}/auth/login`, credentials);
     return response.data;
   } catch (error: any) {
-    // console.log({ error: error?.response?.data?.message });
     throw error;
   }
 };

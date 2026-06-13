@@ -4,7 +4,6 @@ import matter from 'gray-matter';
 import path from 'path';
 
 export function getPost(id: number) {
-  // console.log({ id });
   const postMeta = allPosts.find((p) => p.id === id);
 
   if (!postMeta) {

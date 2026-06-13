@@ -50,8 +50,6 @@ const SignInForm = () => {
         return;
       }
 
-      console.log({ response });
-
       if (response.data) {
         setLoading(true);
         if (!response.data.email_verified) {

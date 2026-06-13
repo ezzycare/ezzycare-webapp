@@ -6,12 +6,14 @@ import { getAccountNavItems } from '@/utils/route';
 export const useGetAccountType = (): {
   accountType: ACCOUNT_TYPE;
   accountNavItems: string[];
+  loading: boolean;
 } => {
   const authStore = useAuthStore((state: AuthStore) => state);
   const accountType: ACCOUNT_TYPE =
-    getCookie()?.user?.accountType || authStore?.user?.accountType;
+    authStore?.user?.accountType || getCookie()?.user?.accountType;
 
   return {
+    loading: !accountType,
     accountType,
     accountNavItems: accountType ? getAccountNavItems(accountType) : [],
   };

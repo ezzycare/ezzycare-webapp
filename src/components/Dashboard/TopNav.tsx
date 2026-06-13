@@ -27,9 +27,6 @@ const TopNav = ({
     ? getInitials(`${user.firstName} ${user.lastName}`)
     : '';
   const email = user?.email ?? '';
-  const displayName = user?.firstName
-    ? `${user.firstName} ${user?.lastName ?? ''}`
-    : '';
 
   const { accountType } = useGetAccountType();
 

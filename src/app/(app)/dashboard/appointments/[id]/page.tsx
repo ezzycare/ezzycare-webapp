@@ -17,8 +17,6 @@ const BookingDetail = () => {
     id,
   });
 
-  console.log({ appointment });
-
   return (
     <div className="m-0 sm:m-6 py-8.5 pl-11 pr-6 bg-surface-card rounded-2xl min-h-[70vh]">
       {/* <BookingDetails booking={booking} /> */}

@@ -38,7 +38,6 @@ const DashNav = ({
   };
 
   const accessibleNavItems = useMemo(() => {
-    console.log({ accountNavItems });
     return dashNavItems.filter(
       (item) =>
         !item.name?.includes('settings') && accountNavItems?.includes(item.href)
@@ -95,16 +94,17 @@ const DashNav = ({
               </Link>
             );
           })}
-          <div
-            className={cn(`
-              flex items-center gap-3 text-text-alt font-medium text-sm hover:text-text
-              transition-colors duration-200 pl-7 py-2.5 rounded-lg cursor-pointer
-            `)}
+          <button
+            type="button"
             onClick={handleLogoutUser}
+            className={cn(
+              'flex items-center gap-3 text-text-alt font-medium text-sm hover:text-text',
+              'transition-colors duration-200 pl-7 py-2.5 rounded-lg cursor-pointer w-full text-left'
+            )}
           >
             <LogoutIconLocal />
             Logout
-          </div>
+          </button>
         </nav>
         <div className="w-full flex items-center gap-2 px-4 py-2.5 mt-auto">
           <SideBarBaseIcon />

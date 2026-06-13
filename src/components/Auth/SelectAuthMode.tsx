@@ -45,7 +45,6 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
         },
         {
           onSuccess: (data) => {
-            console.log({ data });
             completeLogin(data?.data);
             action();
           },

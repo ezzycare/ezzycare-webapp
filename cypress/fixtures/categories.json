@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "message": "Categories fetched successfully",
+  "data": [
+    {
+      "id": "1",
+      "parentId": null,
+      "name": "Heathcare Provider",
+      "status": "ACTIVE",
+      "createdAt": "2025-01-01T00:00:00.000Z",
+      "updatedAt": "2025-01-01T00:00:00.000Z",
+      "children": [
+        {
+          "id": "2",
+          "parentId": "1",
+          "name": "Doctor",
+          "status": "ACTIVE",
+          "createdAt": "2025-01-01T00:00:00.000Z",
+          "updatedAt": "2025-01-01T00:00:00.000Z",
+          "children": [
+            { "id": "10", "parentId": "2", "name": "Cardiologist", "status": "ACTIVE", "createdAt": "2025-01-01T00:00:00.000Z", "updatedAt": "2025-01-01T00:00:00.000Z", "children": [] },
+            { "id": "11", "parentId": "2", "name": "Dermatologist", "status": "ACTIVE", "createdAt": "2025-01-01T00:00:00.000Z", "updatedAt": "2025-01-01T00:00:00.000Z", "children": [] },
+            { "id": "12", "parentId": "2", "name": "Pediatrician", "status": "ACTIVE", "createdAt": "2025-01-01T00:00:00.000Z", "updatedAt": "2025-01-01T00:00:00.000Z", "children": [] }
+          ]
+        }
+      ]
+    }
+  ]
+}

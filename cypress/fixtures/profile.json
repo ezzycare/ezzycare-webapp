@@ -1,0 +1,40 @@
+{
+  "success": true,
+  "message": "Profile fetched successfully",
+  "data": {
+    "id": "user-cs-1",
+    "firstName": "Jane",
+    "lastName": "Seeker",
+    "email": "seeker@test.com",
+    "emailVerifiedAt": "2025-01-01T00:00:00.000Z",
+    "countryCode": "+1",
+    "mobileNo": "+1234567890",
+    "gender": "FEMALE",
+    "profileImage": null,
+    "walletBalance": 50000,
+    "lockWalletBalance": 0,
+    "status": "ACTIVE",
+    "notificationStatus": 1,
+    "accountType": "SEEKER",
+    "account_type": "SEEKER",
+    "account_type_label": "Care Seeker",
+    "profileCompleted": true,
+    "completedPercentage": 100,
+    "welcomeBonus": 0,
+    "tokenVersion": 1,
+    "registerType": "email",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z",
+    "deletedAt": null,
+    "hospitalRoleId": null,
+    "categoryId": null,
+    "subcategoryId": null,
+    "latitude": 40.7128,
+    "longitude": -74.006,
+    "userDetails": {
+      "address": "123 Main St",
+      "city": "New York",
+      "country": "US"
+    }
+  }
+}
