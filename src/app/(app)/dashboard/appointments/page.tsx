@@ -1,41 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
+import { useGetAppointmentsInfiniteQuery } from '@/apiQuery/healthcareAppointments/get/getAppointments';
 import Pagination from '@/components/Base/Pagination';
+import SpiralLoader from '@/components/Base/SpiralLoader';
 import AppointmentsTable from '@/components/Dashboard/Agent/AppointmentsTable';
+import CareSeekerAppointmentsTable from '@/components/Dashboard/CareSeeker/Appointments.tsx/CareSeekerAppointmentsTable';
+import { useGetAccountType } from '@/hooks/useGetAccountType';
+import { CareSeekerAppointmentType } from '@/types/appointments';
 import { BookingType } from '@/types/bookings';
-import React from 'react';
+import React, { JSX } from 'react';
 
 const Appointments = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
+  const {
+    appointments,
+    isFetching: isLoadingAppointments,
+    ...restSeekerQuery
+  } = useGetAppointmentsInfiniteQuery({
+    limit: 10,
+  });
 
-  const totals = [
-    {
-      title: 'Total Bookings',
-      value: '166',
-      titleColor: 'text-text',
-    },
-    {
-      title: 'Upcoming Bookings',
-      value: '46',
-      titleColor: 'text-primary',
-    },
-    {
-      title: 'Completed Bookings',
-      value: '100',
-      titleColor: 'text-text',
-    },
-    {
-      title: 'Active Booking',
-      value: '10',
-      titleColor: 'text-success',
-    },
-    {
-      title: 'Suspended Bookings',
-      value: '10',
-      titleColor: 'text-error',
-    },
-  ];
+  const { accountType } = useGetAccountType();
 
   const getStatus = (): string => {
     // eslint-disable-next-line react-hooks/purity
@@ -118,9 +105,40 @@ const Appointments = () => {
     },
   ];
 
-  return (
-    <div className="p-7.5">
-      <div className="mt-4 rounded-xl bg-surface-card pb-5">
+  const seekerFilters = [
+    {
+      label: 'Status',
+      key: 'status',
+      options: [
+        {
+          label: 'Active',
+          value: 'active',
+        },
+        {
+          label: 'Pending',
+          value: 'pending',
+        },
+        {
+          label: 'Upcoming',
+          value: 'upcoming',
+        },
+        {
+          label: 'Cancelled',
+          value: 'cancelled',
+        },
+        {
+          label: 'Completed',
+          value: 'completed',
+        },
+      ],
+      fn: (row: CareSeekerAppointmentType, value: any) => row.status === value,
+    },
+  ];
+
+  const dashboards: Record<ACCOUNT_TYPE, JSX.Element> = {
+    ADMIN: <div>Admin</div>,
+    HOSPITAL: (
+      <>
         <AppointmentsTable
           data={paginatedData()}
           titleComponent={
@@ -142,6 +160,58 @@ const Appointments = () => {
               setPage={setCurrentPage}
             />
           </div>
+        )}
+      </>
+    ),
+    AGENT: <div>Admin</div>,
+    DOCTOR: <div>Doctor Dashboard</div>,
+    SEEKER: (
+      <>
+        {!!appointments?.length && (
+          <CareSeekerAppointmentsTable
+            data={appointments}
+            titleComponent={
+              <h3 className="text-text text-2xl font-medium ml-3">
+                Appointments
+              </h3>
+            }
+            filters={seekerFilters}
+            searchable={true}
+            searchPlaceholder="Search"
+            searchContainerClassName="max-w-[404px]!"
+          />
+        )}
+
+        {restSeekerQuery.hasNextPage && (
+          <div className="mt-auto pt-10">
+            <Pagination
+              pages={restSeekerQuery.data?.pages.length || 1}
+              page={currentPage}
+              setPage={setCurrentPage}
+            />
+          </div>
+        )}
+      </>
+    ),
+  };
+
+  if (!accountType) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <SpiralLoader />
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-7.5">
+      <div className="mt-4 rounded-xl bg-surface-card pb-5">
+        {isLoadingAppointments ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <SpiralLoader />
+          </div>
+        ) : (
+          dashboards[accountType]
         )}
       </div>
     </div>

@@ -1,7 +1,6 @@
 'use client';
 
-import { useGetAccountType } from '@/hooks/useGetAccountType';
-import { AuthStore, useAuthStore } from '@/stores/authStore';
+import { ACCOUNT_TYPE, User } from '@/apiQuery/auth/types';
 import { getInitials } from '@/utils/helper';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
@@ -13,22 +12,22 @@ import Noti from './Notification/Noti';
 const TopNav = ({
   sidebarOpen,
   setSideBarOpen,
+  accountType,
+  user,
 }: {
   sidebarOpen: boolean;
   setSideBarOpen: (sidebarOpen: boolean) => void;
+  accountType: ACCOUNT_TYPE;
+  user: User | null;
 }) => {
   const [selectedDate, setSelectedDate] = useState<string>(
     dayjs().format('YYYY-MM-DD')
   );
 
-  const user = useAuthStore((state: AuthStore) => state.user);
-
   const initials = user
     ? getInitials(`${user.firstName} ${user.lastName}`)
     : '';
   const email = user?.email ?? '';
-
-  const { accountType } = useGetAccountType();
 
   return (
     <div className="w-full h-20 bg-surface-card px-5 flex items-center justify-end fixed z-10! top-0 left-0">

@@ -1,13 +1,13 @@
 'use client';
 
 import { handleLogout } from '@/apiQuery/auth/logout';
-import { useGetAccountType } from '@/hooks/useGetAccountType';
+import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { LogoutIconLocal, SideBarBaseIcon } from '@/icons/DashboardNavIcons';
 import FullLogo from '@/icons/FullLogo';
 import { cn } from '@/lib/utils';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
-import { dashNavItems } from '@/utils/route';
+import { dashNavItems, getAccountNavItems } from '@/utils/route';
 import clsx from 'clsx';
 import { ChevronsUpDown } from 'lucide-react';
 import Link from 'next/link';
@@ -17,9 +17,11 @@ import { useEffect, useMemo } from 'react';
 const DashNav = ({
   sidebarOpen,
   setSideBarOpen,
+  accountType,
 }: {
   sidebarOpen: boolean;
   setSideBarOpen: (sidebarOpen: boolean) => void;
+  accountType: ACCOUNT_TYPE;
 }) => {
   const pathname = usePathname();
   const isMobile = useIsMobile(1023);
@@ -27,7 +29,10 @@ const DashNav = ({
   const user = useAuthStore((state: AuthStore) => state.user);
   const email = user?.email ?? '';
 
-  const { accountType, accountNavItems } = useGetAccountType();
+  const accountNavItems = useMemo(
+    () => (accountType ? getAccountNavItems(accountType) : []),
+    [accountType]
+  );
 
   const handleLogoutUser = async () => {
     try {
