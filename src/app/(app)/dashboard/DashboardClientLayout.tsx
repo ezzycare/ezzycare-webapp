@@ -1,16 +1,22 @@
 'use client';
 
+import { ACCOUNT_TYPE, User } from '@/apiQuery/auth/types';
 import {
   CategoryType,
   useGetCategoriesQuery,
 } from '@/apiQuery/categories/getCategories';
-import { ACCOUNT_TYPE, User } from '@/apiQuery/auth/types';
+import { useGetHospitalServices } from '@/apiQuery/hospital/get/getServices';
 import { useGetProfile } from '@/apiQuery/users/getProfile';
 import SideNav from '@/components/layout/SideNav';
 import TopNav from '@/components/layout/TopNav';
 import { useTrackPreviousRoute } from '@/hooks/useTrackPreviousRoute';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
+import {
+  ServicesStore,
+  ServicesType,
+  useServicesStore,
+} from '@/stores/servicesStore';
 import React, { useEffect, useState } from 'react';
 
 const DashboardClientLayout = ({
@@ -27,10 +33,15 @@ const DashboardClientLayout = ({
   const setCategories = useCategoryStore(
     (state: CategoryStore) => state.setCategories
   );
+  const setServices = useServicesStore(
+    (state: ServicesStore) => state.setServices
+  );
+
   const { user } = useGetProfile();
   const { categories } = useGetCategoriesQuery({
     type: 'HOSPITAL' as CategoryType,
   });
+  const { services } = useGetHospitalServices();
 
   useEffect(() => {
     if (user) {
@@ -42,7 +53,11 @@ const DashboardClientLayout = ({
     if (categories) {
       setCategories(categories);
     }
-  }, [categories]);
+
+    if (services) {
+      setServices(services as ServicesType[]);
+    }
+  }, [categories, services]);
 
   useTrackPreviousRoute();
 

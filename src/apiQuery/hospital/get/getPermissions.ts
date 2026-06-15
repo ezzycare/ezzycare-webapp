@@ -3,11 +3,16 @@ import { axiosClient } from '@/services/axiosClient';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
+export interface Permission {
+  key: string;
+  label: string;
+}
+
 export const getHospitalPermissions = async (): Promise<
-  ApiResponse<unknown>
+  ApiResponse<Permission[]>
 > => {
   try {
-    const response = await axiosClient.get<ApiResponse<unknown>>(
+    const response = await axiosClient.get<ApiResponse<Permission[]>>(
       '/hospitals/permissions'
     );
     return response.data;
@@ -29,6 +34,6 @@ export const useGetHospitalPermissions = () => {
 
   return {
     ...result,
-    user: result.data?.data,
+    permissions: result.data?.data,
   };
 };

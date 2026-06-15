@@ -5,9 +5,9 @@ import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
 import { useGetAppointmentsInfiniteQuery } from '@/apiQuery/healthcareAppointments/get/getAppointments';
 import Pagination from '@/components/Base/Pagination';
 import SpiralLoader from '@/components/Base/SpiralLoader';
-import AppointmentsTable from '@/modules/hospital/components/Agent/AppointmentsTable';
-import CareSeekerAppointmentsTable from '@/modules/careseeker/components/Appointments.tsx/CareSeekerAppointmentsTable';
 import { useGetAccountType } from '@/hooks/useGetAccountType';
+import CareSeekerAppointmentsTable from '@/modules/careseeker/components/Appointments.tsx/CareSeekerAppointmentsTable';
+import AppointmentsTable from '@/modules/hospital/components/Agent/AppointmentsTable';
 import { CareSeekerAppointmentType } from '@/types/appointments';
 import { BookingType } from '@/types/bookings';
 import React, { JSX } from 'react';
@@ -24,55 +24,6 @@ const Appointments = () => {
 
   const { accountType } = useGetAccountType();
 
-  const getStatus = (): string => {
-    // eslint-disable-next-line react-hooks/purity
-    const rand = Math.random();
-
-    if (rand < 0.5) return 'cancelled';
-    if (rand < 0.8) return 'upcoming';
-    if (rand < 0.6) return 'active';
-    return 'completed';
-  };
-
-  const bookings: BookingType[] = Array.from({ length: 30 }, (_, i) => ({
-    id: i + 1,
-    bookingId: 'B001',
-    patientName: 'John Smith',
-    doctor: {
-      id: i + 1,
-      name: 'Dr. Sarah Johnson',
-      email: 'sarah.johnson@medical.com',
-      phoneNumber: '+1 (555) 123-4567',
-      assignedHospital: 'Emory',
-      experience: (i + 1) * 2 - i + ' years',
-      specialty: 'Cardiology',
-      createdAt: 'May 08, 2026 10:00 AM',
-      status: 'active',
-      address: 'Highlevel, Makurdi, Benue State',
-      medicalCertificate: 'MD',
-      practiceLicense: '12345',
-      specialtyCertificate: '12345',
-      licenseExpiryDate: '12 May 2035',
-      qualifications: ['MD', 'FAAP'],
-      university: 'University of California, San Francisco',
-      dateGraduated: '12 May 2015',
-      about: `Dr. Rodriguez is passionate about child health and development.`,
-    },
-    hospital: {
-      name: 'Emory hospital',
-    },
-    appointmentDate: '08069192646',
-    createdAt: '2023-01-01',
-    address: 'Highlevel, Makurdi, Benue State',
-    status: getStatus(),
-  }));
-
-  const meta = {
-    page: 1,
-    pageSize: 10,
-    pageCount: Math.round(bookings.length / 10),
-    total: bookings.length,
-  };
   const paginatedData = (): BookingType[] => {
     const startIndex = (currentPage - 1) * meta.pageSize;
     const endIndex = startIndex + meta.pageSize;
@@ -197,7 +148,7 @@ const Appointments = () => {
 
   if (!accountType) {
     return (
-      <div className="w-full h-full flex items-center justify-center">
+      <div className="w-full min-h-[60vh] h-full flex items-center justify-center">
         <SpiralLoader />
       </div>
     );
@@ -207,7 +158,7 @@ const Appointments = () => {
     <div className="p-7.5">
       <div className="mt-4 rounded-xl bg-surface-card pb-5">
         {isLoadingAppointments ? (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full min-h-[60vh] h-full flex items-center justify-center">
             <SpiralLoader />
           </div>
         ) : (
@@ -219,3 +170,52 @@ const Appointments = () => {
 };
 
 export default Appointments;
+
+const getStatus = (): string => {
+  const rand = Math.random();
+
+  if (rand < 0.5) return 'cancelled';
+  if (rand < 0.8) return 'upcoming';
+  if (rand < 0.6) return 'active';
+  return 'completed';
+};
+
+const bookings: BookingType[] = Array.from({ length: 30 }, (_, i) => ({
+  id: i + 1,
+  bookingId: 'B001',
+  patientName: 'John Smith',
+  doctor: {
+    id: i + 1,
+    name: 'Dr. Sarah Johnson',
+    email: 'sarah.johnson@medical.com',
+    phoneNumber: '+1 (555) 123-4567',
+    assignedHospital: 'Emory',
+    experience: (i + 1) * 2 - i + ' years',
+    specialty: 'Cardiology',
+    createdAt: 'May 08, 2026 10:00 AM',
+    status: 'active',
+    address: 'Highlevel, Makurdi, Benue State',
+    medicalCertificate: 'MD',
+    practiceLicense: '12345',
+    specialtyCertificate: '12345',
+    licenseExpiryDate: '12 May 2035',
+    qualifications: ['MD', 'FAAP'],
+    university: 'University of California, San Francisco',
+    dateGraduated: '12 May 2015',
+    about: `Dr. Rodriguez is passionate about child health and development.`,
+  },
+  hospital: {
+    name: 'Emory hospital',
+  },
+  appointmentDate: '08069192646',
+  createdAt: '2023-01-01',
+  address: 'Highlevel, Makurdi, Benue State',
+  status: getStatus(),
+}));
+
+const meta = {
+  page: 1,
+  pageSize: 10,
+  pageCount: Math.round(bookings.length / 10),
+  total: bookings.length,
+};

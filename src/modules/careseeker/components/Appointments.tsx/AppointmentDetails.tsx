@@ -129,7 +129,9 @@ const AppointmentDetails = ({
             <Button
               variant="outline"
               className="text-text! hover:text-surface-card! py-2! px-4!"
-              onClick={() => {}}
+              onClick={() => {
+                setOpenCancelBookingModal(true);
+              }}
             >
               Cancel booking
             </Button>

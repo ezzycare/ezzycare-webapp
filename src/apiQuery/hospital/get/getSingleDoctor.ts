@@ -7,11 +7,22 @@ interface GetSingleDoctorPayload {
   doctorId: string;
 }
 
+export interface DoctorSummary {
+  totalDoctors: number;
+  totalAssigned: number;
+  totalUnassigned: number;
+}
+
+export interface HospitalDoctorData {
+  summary: DoctorSummary;
+  doctors: unknown[];
+}
+
 export const getSingleDoctor = async ({
   doctorId,
-}: GetSingleDoctorPayload): Promise<ApiResponse<unknown>> => {
+}: GetSingleDoctorPayload): Promise<ApiResponse<HospitalDoctorData>> => {
   try {
-    const response = await axiosClient.get<ApiResponse<unknown>>(
+    const response = await axiosClient.get<ApiResponse<HospitalDoctorData>>(
       `/hospitals/doctors/${doctorId}`
     );
 
@@ -26,7 +37,7 @@ export const getSingleDoctor = async ({
 };
 
 export const useGetSingleDoctor = (doctorId: string) => {
-  const result = useQuery<ApiResponse<unknown>, Error>({
+  const result = useQuery<ApiResponse<HospitalDoctorData>, Error>({
     queryKey: ['hospitals', 'doctors', doctorId],
     queryFn: () => getSingleDoctor({ doctorId }),
     enabled: !!doctorId,

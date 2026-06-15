@@ -30,7 +30,11 @@ const DoctorCard = ({
       className={`p-3.5 bg-surface-card flex items-center gap-3 ${className}`}
     >
       <Image
-        src={'https://i.pravatar.cc/150?u=1'}
+        src={
+          doctor.profileImage?.includes('https')
+            ? doctor.profileImage
+            : 'https://cdn-icons-png.flaticon.com/512/387/387561.png'
+        }
         alt={doctorName}
         width={90}
         height={73}

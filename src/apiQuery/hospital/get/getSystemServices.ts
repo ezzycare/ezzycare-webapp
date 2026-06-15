@@ -3,11 +3,18 @@ import { axiosClient } from '@/services/axiosClient';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
+export interface SystemService {
+  id: string;
+  serviceName: string;
+  serviceType: number;
+  status: string;
+}
+
 export const getHospitalSystemServices = async (): Promise<
-  ApiResponse<unknown>
+  ApiResponse<SystemService[]>
 > => {
   try {
-    const response = await axiosClient.get<ApiResponse<unknown>>(
+    const response = await axiosClient.get<ApiResponse<SystemService[]>>(
       '/hospitals/system-services'
     );
     return response.data;
@@ -28,6 +35,6 @@ export const useGetHospitalSystemServices = () => {
 
   return {
     ...result,
-    user: result.data?.data,
+    services: result.data?.data,
   };
 };

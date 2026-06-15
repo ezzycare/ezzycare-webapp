@@ -3,10 +3,21 @@ import { axiosClient } from '@/services/axiosClient';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-export const getHospitalTeam = async (): Promise<ApiResponse<unknown>> => {
+export interface TeamSummary {
+  totalMembers: number;
+  activeMembers: number;
+  customRoles: number;
+}
+
+export interface TeamData {
+  summary: TeamSummary;
+  members: unknown[];
+}
+
+export const getHospitalTeam = async (): Promise<ApiResponse<TeamData>> => {
   try {
     const response =
-      await axiosClient.get<ApiResponse<unknown>>('/hospitals/team');
+      await axiosClient.get<ApiResponse<TeamData>>('/hospitals/team');
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -26,6 +37,6 @@ export const useGetHospitalTeam = () => {
 
   return {
     ...result,
-    user: result.data?.data,
+    team: result.data?.data,
   };
 };

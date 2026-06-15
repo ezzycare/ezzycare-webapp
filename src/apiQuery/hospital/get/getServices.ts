@@ -27,6 +27,6 @@ export const useGetHospitalServices = () => {
 
   return {
     ...result,
-    user: result.data?.data,
+    services: result.data?.data,
   };
 };

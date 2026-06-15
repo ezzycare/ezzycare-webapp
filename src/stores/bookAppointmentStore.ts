@@ -1,6 +1,7 @@
 import { type Doctor } from '@/apiQuery/doctor/getDoctorDiscovery';
 import { type DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import { CreateAppointmentInterface } from '@/apiQuery/healthcareAppointments/post/createAppointment';
+import { HospitalDiscoveryItem } from '@/apiQuery/hospital/discovery/getHospitalDiscovery';
 import { ConsultationType } from '@/apiQuery/hospital/types';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
@@ -20,6 +21,11 @@ export type DoctorFiltersType = {
   latitude?: number | undefined;
   longitude?: number | undefined;
   distance?: number | undefined;
+};
+
+export type HospitalFiltersType = {
+  services?: string | undefined;
+  search?: string | undefined;
 };
 
 export type PaymentReference = {
@@ -55,52 +61,92 @@ export interface BookAppointmentStore {
   createdAppointment: CreateAppointmentInterface | null;
   paymentReference: PaymentReference | null;
 
+  hospitalId: number | null;
+  hospitalState: string;
+  isHospitalAppointment: boolean;
+  clickedHospital: HospitalDiscoveryItem | null;
+  activeHospitalFilters: HospitalFiltersType;
+
+  updateHospitalState: (state: string) => void;
   updateBooking: (payload: Partial<BookAppointmentStore>) => void;
   setDoctors: (doctors: Record<number, DoctorProfile>) => void;
   setCreatedAppointment: (
     appointment: CreateAppointmentInterface | null
   ) => void;
   updatePaymentReference: (paymentReference: PaymentReference | null) => void;
+  setIsHospitalAppointment: (isHospital: boolean) => void;
+  resetBookingFlow: () => void;
+  resetHospitalFlow: () => void;
+  resetPaymentState: () => void;
 }
+
+const bookingInitialState = {
+  patientName: '',
+  patientEmail: '',
+  bookingType: null,
+  consultationType: null,
+  urgent: 0 as 0 | 1,
+  specialty: '',
+  location: '',
+  doctorId: '',
+  appointmentDate: '',
+  consultationFee: '',
+  selectedSpecialty: '',
+  selectedCareType: 0 as 0 | 1,
+  selectedCareMode: '',
+  reason: '',
+  promoCode: '',
+  clickedDoctor: null,
+  selectedAppointmentType: 1 as 0 | 1,
+  selectedConsultationType: 'VIDEO' as ConsultationType,
+  selectedTimes: null,
+  activeFilters: {},
+};
+
+const hospitalInitialState = {
+  hospitalId: null,
+  hospitalState: 'select-hospital',
+  isHospitalAppointment: false,
+  clickedHospital: null,
+  activeHospitalFilters: {},
+};
+
+const paymentInitialState = {
+  createdAppointment: null,
+  paymentReference: null,
+};
 
 export const useBookAppointmentStore = create<BookAppointmentStore>()(
   devtools(
     (set) => ({
-      patientName: '',
-      patientEmail: '',
-      bookingType: null,
-      consultationType: null,
-      urgent: 0,
-      specialty: '',
-      location: '',
-      doctorId: '',
-      appointmentDate: '',
-      consultationFee: '',
-      doctors: {},
-
-      selectedSpecialty: '',
-      selectedCareType: 0,
-      selectedCareMode: '',
-      reason: '',
-      promoCode: '',
-      clickedDoctor: null,
-      selectedAppointmentType: 1,
-      selectedConsultationType: 'VIDEO' as ConsultationType,
-      selectedTimes: null,
-      activeFilters: {},
       state: 'select-specialty',
-      createdAppointment: null,
-      paymentReference: null,
+      ...bookingInitialState,
+      ...hospitalInitialState,
+      ...paymentInitialState,
 
       updateBooking: (payload) =>
         set((state) => ({
           ...state,
           ...payload,
         })),
+      updateHospitalState: (state) => set({ hospitalState: state }),
       setDoctors: (doctors) => set({ doctors }),
       setCreatedAppointment: (appointment) =>
         set({ createdAppointment: appointment }),
       updatePaymentReference: (payload) => set({ paymentReference: payload }),
+      setIsHospitalAppointment: (isHospital) =>
+        set({ isHospitalAppointment: isHospital }),
+      resetBookingFlow: () => set({ ...bookingInitialState }),
+
+      resetHospitalFlow: () =>
+        set({
+          ...hospitalInitialState,
+        }),
+
+      resetPaymentState: () =>
+        set({
+          ...paymentInitialState,
+        }),
     }),
     {
       name: 'bookAppointmentStore',

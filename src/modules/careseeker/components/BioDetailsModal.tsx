@@ -1,13 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/set-state-in-effect */
+import { User } from '@/apiQuery/auth/types';
+import { Gender } from '@/apiQuery/users/updateProfile';
 import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { RadioItem } from '@/components/Ui/RadioGroup';
 import { PhoneInput, TextInput } from '@/components/Ui/TextInput';
 import { UserIconLocal } from '@/icons/DashboardNavIcons';
 import { toaster } from '@/lib/toaster';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-const genders = ['male', 'female'];
+const genders: Gender[] = ['MALE', 'FEMALE'];
 const BioDetailsModal = ({
   openModal,
   setOpenModal,
@@ -15,9 +17,13 @@ const BioDetailsModal = ({
 }: {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  data: any;
+  data: User;
 }) => {
-  const [selectedGender, setSelectedGender] = useState('');
+  const [selectedGender, setSelectedGender] = useState<Gender>('MALE');
+
+  useEffect(() => {
+    setSelectedGender(data?.gender || '');
+  }, []);
   return (
     <div>
       <Modal
@@ -30,11 +36,16 @@ const BioDetailsModal = ({
         <div className="space-y-4 flex w-full flex-col">
           <div className="space-y-2 mt-5 flex flex-col">
             <TextInput
+              defaultValue={`${data?.firstName} ${data?.lastName}`}
               placeholder="E.g Emmanuel Smith"
               label="Full Name"
               leftIcon={<UserIconLocal className="text-text-muted" />}
             />
-            <PhoneInput placeholder="" label="Phone" />
+            <PhoneInput
+              defaultValue={data?.mobileNo}
+              placeholder=""
+              label="Phone"
+            />
             <div>
               <p className="text-sm text-text font-medium mb-1">Gender</p>
               <div>

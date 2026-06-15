@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { Category } from '@/apiQuery/categories/getCategories';
 import { ConsultationType } from '@/apiQuery/hospital/types';
 import Tabs from '@/components/Base/Tabs';
@@ -5,10 +6,10 @@ import Button from '@/components/Ui/Button';
 import { RadioItem } from '@/components/Ui/RadioGroup';
 import { Slider } from '@/components/Ui/Slider';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
+import { DoctorFiltersType } from '@/stores/bookAppointmentStore';
 import { cn } from '@heroui/styles';
 import { StarIcon } from '@radix-ui/react-icons';
-import { useMemo, useState } from 'react';
-import { DoctorFiltersType } from '@/stores/bookAppointmentStore';
+import { useEffect, useMemo, useState } from 'react';
 
 const DoctorFilter = ({
   specialties,
@@ -35,6 +36,14 @@ const DoctorFilter = ({
   const allSpecialties = useMemo(() => {
     return [{ id: 0, name: 'All' }, ...specialties];
   }, [specialties]);
+
+  useEffect(() => {
+    setCurrentFilters((prev) => ({
+      ...prev,
+      search: undefined,
+    }));
+    setFilters({});
+  }, []);
 
   const handleSetFilters = <K extends keyof DoctorFiltersType>(
     key: K,

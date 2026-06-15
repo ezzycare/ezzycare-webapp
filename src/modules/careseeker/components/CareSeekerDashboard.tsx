@@ -12,33 +12,28 @@ import {
   HospitalIconLocal,
   StethoscopeIconLocal,
 } from '@/icons/DashboardNavIcons';
+import EmptyAppointment from '@/modules/hospital/components/EmptyAppointment';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
-import { HospitalType } from '@/types/hospitals';
+import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
 import { formatCurrency } from '@/utils/helper';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import EmptyAppointment from '@/modules/hospital/components/EmptyAppointment';
 import CareSeekerAppointmentsTable from './Appointments.tsx/CareSeekerAppointmentsTable';
 import BioDetailsModal from './BioDetailsModal';
-import BookPatientAppointment from './BookAppointment';
-
-const hospital: HospitalType = {
-  id: 1,
-  name: 'Metropolitan Health Institute',
-  email: 'Mhi@gmail.com',
-  phoneNumber: '08169192646',
-  address: 'Highlevel, Makurdi, Benue State',
-  status: 'active',
-};
+import BookDoctorAppointment from './BookAppointment';
+import BookHospitalAppointment from './BookHospitalAppointment';
 
 const CareSeekerDashboard = () => {
-  // const { dashboard: dashboardData } = useGetAppointments();
   const user = useAuthStore((state: AuthStore) => state.user);
   const [showProfileModal, setShowProfileModal] = React.useState(false);
   const [showBookDoctorModal, setShowBookDoctorModal] = React.useState(false);
+  const [showBookHospitalModal, setShowBookHospitalModal] =
+    React.useState(false);
   const [showBalance, setShowBalance] = useState(true);
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
+  const { isHospitalAppointment, updateBooking, setIsHospitalAppointment } =
+    useBookAppointmentStore();
 
   const { appointments, isFetching: isLoadingAppointments } =
     useGetAppointmentsInfiniteQuery({
@@ -84,7 +79,14 @@ const CareSeekerDashboard = () => {
             <Button
               variant="primary"
               className="gap-2 h-10! text-sm"
-              onClick={() => setShowBookDoctorModal(true)}
+              onClick={() => {
+                updateBooking({
+                  state: isHospitalAppointment
+                    ? 'book-appointment'
+                    : 'select-specialty',
+                });
+                setShowBookDoctorModal(true);
+              }}
             >
               <StethoscopeIconLocal />
               Doctors
@@ -92,6 +94,10 @@ const CareSeekerDashboard = () => {
             <Button
               variant="primary"
               className="bg-pink-10! hover:bg-pink-10/80! gap-2 h-10! text-sm"
+              onClick={() => {
+                updateBooking({ state: 'book-appointment' });
+                setShowBookHospitalModal(true);
+              }}
             >
               <HospitalIconLocal />
               Hospitals
@@ -168,11 +174,20 @@ const CareSeekerDashboard = () => {
       <BioDetailsModal
         openModal={showProfileModal}
         setOpenModal={setShowProfileModal}
-        data={hospital}
+        data={user}
       />
-      <BookPatientAppointment
+      <BookDoctorAppointment
         openModal={showBookDoctorModal}
         setOpenModal={setShowBookDoctorModal}
+      />
+      <BookHospitalAppointment
+        openModal={showBookHospitalModal}
+        setOpenModal={setShowBookHospitalModal}
+        continueAppointment={() => {
+          setIsHospitalAppointment(true);
+          setShowBookHospitalModal(false);
+          setShowBookDoctorModal(true);
+        }}
       />
     </div>
   );

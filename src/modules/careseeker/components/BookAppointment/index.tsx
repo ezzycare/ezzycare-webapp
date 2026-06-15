@@ -17,14 +17,14 @@ import { ApiResponse } from '@/apiQuery/types';
 import Modal from '@/components/Ui/Modal';
 import { BoldWalletIcon, PaypalIconLocal } from '@/icons/DashboardIcons';
 import { toaster } from '@/lib/toaster';
-import { AuthStore, useAuthStore } from '@/stores/authStore';
-import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
-import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
-import React, { JSX, useEffect, useMemo } from 'react';
 import {
   useModalNavigation,
   usePaymentHandlers,
 } from '@/modules/careseeker/hooks/useAppointmentActions';
+import { AuthStore, useAuthStore } from '@/stores/authStore';
+import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
+import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
+import React, { JSX, useEffect, useMemo } from 'react';
 import AllDoctorsComp from './AllDoctorsComp';
 import BookAppointmentComp from './BookAppointmentComp';
 import BookOthers from './BookOthers';
@@ -47,7 +47,7 @@ const allStates = [
   'appointment-pending',
 ];
 
-const BookPatientAppointment = ({
+const BookDoctorAppointment = ({
   openModal,
   setOpenModal,
 }: {
@@ -67,9 +67,14 @@ const BookPatientAppointment = ({
     selectedTimes,
     activeFilters,
     createdAppointment,
+    hospitalId,
+    isHospitalAppointment,
     updateBooking,
     setCreatedAppointment,
     updatePaymentReference,
+    resetBookingFlow,
+    resetHospitalFlow,
+    resetPaymentState,
   } = useBookAppointmentStore();
   const user = useAuthStore((state: AuthStore) => state.user);
 
@@ -89,10 +94,12 @@ const BookPatientAppointment = ({
     );
   }, [isPending, isPendingPayment, isPendingWalletPayment, isPendingCancel]);
 
+  // useEffect(() => {
+  //   console.log({ activeFilters });
+  // }, [activeFilters]);
+
   useEffect(() => {
-    if (openModal) {
-      updateBooking({ state: 'select-specialty' });
-    }
+    console.log({ state });
   }, []);
 
   const showModalHeader = useMemo(
@@ -138,18 +145,18 @@ const BookPatientAppointment = ({
     return loadingDoctors || loadingSingleDoctor;
   }, [loadingDoctors, loadingSingleDoctor]);
 
+  const cleanUp = () => {
+    resetBookingFlow();
+    resetHospitalFlow();
+  };
+
   const handleResetModal = () => {
     updateBooking({
       state: 'select-specialty',
-      selectedSpecialty: '',
-      selectedCareType: 0,
-      selectedCareMode: '',
-      clickedDoctor: null,
-      activeFilters: {},
     });
+    cleanUp();
+    resetPaymentState();
     setOpenModal(false);
-    setCreatedAppointment(null);
-    updatePaymentReference(null);
   };
 
   const handleCloseModal = () => {
@@ -164,8 +171,11 @@ const BookPatientAppointment = ({
     otherUserData?: OtherUserData
   ): Promise<CreateAppointmentInterface> => {
     return new Promise((resolve, reject) => {
+      const hospitalDetail =
+        isHospitalAppointment && hospitalId ? { hospitalId } : {};
       const payload = {
         userId: Number(doctor.id),
+        ...hospitalDetail,
         myAppointment: selectedAppointmentType,
         appointmentType: selectedConsultationType,
         urgent: careTypes[selectedCareType].id,
@@ -194,6 +204,7 @@ const BookPatientAppointment = ({
           }
 
           setCreatedAppointment(res.data);
+          cleanUp();
           toaster.success(res.message || 'Appointment created successfully');
 
           resolve(res.data);
@@ -231,10 +242,9 @@ const BookPatientAppointment = ({
         title={showModalHeader ? 'Book Appointment' : ''}
         description={showModalHeader ? 'Book an appointment with ease' : ''}
         size="md"
-        className={modalClassName}
         persistent
       >
-        <div>
+        <div className={modalClassName}>
           {state === 'select-specialty' && (
             <SelectDoctorSpecialty
               specialties={specialties}
@@ -413,7 +423,7 @@ const BookPatientAppointment = ({
   );
 };
 
-export default BookPatientAppointment;
+export default BookDoctorAppointment;
 
 export const careTypes: { id: 0 | 1; name: string }[] = [
   { id: 0, name: 'Non-Urgent Care' },

@@ -125,16 +125,18 @@ const CareSeekerAppointmentsTable = ({
               Chat
             </button>
           ) : (
-            <button
-              className={`inline-flex gap-2 rounded-md px-1.5 py-1 hover:bg-gray-3a/50
+            row.status?.toLowerCase() !== 'cancelled' && (
+              <button
+                className={`inline-flex gap-2 rounded-md px-1.5 py-1 hover:bg-gray-3a/50
                 text-xs font-medium border border-text-alt cursor-pointer`}
-              onClick={() => {
-                setCurrentRow(row);
-                setOpenCancelBookingModal(true);
-              }}
-            >
-              Cancel
-            </button>
+                onClick={() => {
+                  setCurrentRow(row);
+                  setOpenCancelBookingModal(true);
+                }}
+              >
+                Cancel
+              </button>
+            )
           )}
           <button
             className={`inline-flex gap-2 rounded-md px-1.5 py-1 hover:opacity-80
