@@ -2,8 +2,8 @@
 'use client';
 
 import Pagination from '@/components/Base/Pagination';
-import AgentsTable from '@/components/Dashboard/Agent/AgentsTable';
-import CreateAgentModal from '@/components/Dashboard/Agent/CreateAgentModal';
+import AgentsTable from '@/modules/hospital/components/Agent/AgentsTable';
+import CreateAgentModal from '@/modules/hospital/components/Agent/CreateAgentModal';
 import Button from '@/components/Ui/Button';
 import { useGetAccountType } from '@/hooks/useGetAccountType';
 import { cn } from '@/lib/utils';

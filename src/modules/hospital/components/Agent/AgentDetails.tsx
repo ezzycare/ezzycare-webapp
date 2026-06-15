@@ -9,7 +9,7 @@ import { AgentType } from '@/types/agents';
 import { ArrowLeft, CircleCheck, Clock4, Edit } from 'lucide-react';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
-import IconBase from '../IconBase';
+import IconBase from '@/components/layout/IconBase';
 import AssignAgentToDoctor from './AssignAgentToDoctor';
 import AssignAgentToSpecialty from './AssignAgentToSpecialty';
 import EditAgentModal from './EditAgentModal';

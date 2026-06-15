@@ -1,4 +1,4 @@
-import MessagesPage from '@/components/Dashboard/CareSeeker/Messages';
+import MessagesPage from '@/modules/chat/components';
 
 export type Conversation = {
   id: string;

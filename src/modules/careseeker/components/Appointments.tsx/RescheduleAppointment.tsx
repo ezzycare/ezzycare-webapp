@@ -17,7 +17,7 @@ import SelectPaymentMethod from '../BookAppointment/SelectPaymentMethod';
 import {
   useModalNavigation,
   usePaymentHandlers,
-} from '../hooks/useAppointmentActions';
+} from '@/modules/careseeker/hooks/useAppointmentActions';
 
 const allStates = [
   'book-appointment',

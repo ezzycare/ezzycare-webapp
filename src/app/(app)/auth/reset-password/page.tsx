@@ -1,11 +1,11 @@
 'use client';
 
-import NewPasswordForm from '@/components/Auth/NewPasswordForm';
+import NewPasswordForm from '@/modules/auth/components/NewPasswordForm';
 import {
   CheckEmailInfo,
   PasswordUpdatedInfo,
-} from '@/components/Auth/RegistrationState';
-import ResetPasswordEmail from '@/components/Auth/ResetPasswordEmail';
+} from '@/modules/auth/components/RegistrationState';
+import ResetPasswordEmail from '@/modules/auth/components/ResetPasswordEmail';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

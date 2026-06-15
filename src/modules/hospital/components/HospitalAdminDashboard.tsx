@@ -14,8 +14,8 @@ import { HospitalType } from '@/types/hospitals';
 import { Banknote } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import BookingTable from '../Booking/BookingTable';
-import IconBase from '../IconBase';
+import BookingTable from './Booking/BookingTable';
+import IconBase from '@/components/layout/IconBase';
 import EmptyAppointment from './EmptyAppointment';
 import HospitalDetailsModal from './HospitalDetailsModal';
 

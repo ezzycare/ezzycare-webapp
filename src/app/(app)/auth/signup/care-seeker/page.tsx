@@ -1,8 +1,8 @@
 'use client';
 
-import CareSeekerSignup from '@/components/Auth/CareSeekerSignup';
-import { CheckEmailInfo } from '@/components/Auth/RegistrationState';
-import SelectAuthMode from '@/components/Auth/SelectAuthMode';
+import CareSeekerSignup from '@/modules/auth/components/CareSeekerSignup';
+import { CheckEmailInfo } from '@/modules/auth/components/RegistrationState';
+import SelectAuthMode from '@/modules/auth/components/SelectAuthMode';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

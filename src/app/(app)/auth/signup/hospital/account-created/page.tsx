@@ -1,4 +1,4 @@
-import { AccountCreatedInfo } from '@/components/Auth/RegistrationState';
+import { AccountCreatedInfo } from '@/modules/auth/components/RegistrationState';
 
 const page = () => {
   return (

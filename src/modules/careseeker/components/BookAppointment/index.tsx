@@ -24,7 +24,7 @@ import React, { JSX, useEffect, useMemo } from 'react';
 import {
   useModalNavigation,
   usePaymentHandlers,
-} from '../hooks/useAppointmentActions';
+} from '@/modules/careseeker/hooks/useAppointmentActions';
 import AllDoctorsComp from './AllDoctorsComp';
 import BookAppointmentComp from './BookAppointmentComp';
 import BookOthers from './BookOthers';

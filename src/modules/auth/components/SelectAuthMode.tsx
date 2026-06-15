@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useRouter } from 'next/navigation';
-import Card from '../Ui/Card';
+import Card from '@/components/Ui/Card';
 
 export default function SelectAuthMode({ action }: { action: () => void }) {
   const router = useRouter();

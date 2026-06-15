@@ -8,7 +8,7 @@ import { UserIconLocal } from '@/icons/DashboardNavIcons';
 import { formatCurrency } from '@/utils/helper';
 import { ArrowLeft, MapPin } from 'lucide-react';
 import { useState } from 'react';
-import DoctorCard from '../../Agent/BookAppointment/DoctorCard';
+import DoctorCard from '@/modules/hospital/components/Agent/BookAppointment/DoctorCard';
 
 const DoctorProfileComp = ({
   doctor,

@@ -1,7 +1,7 @@
 'use client';
 
 // import { redirect } from 'next/navigation';
-import IconBase from '@/components/Dashboard/IconBase';
+import IconBase from '@/components/layout/IconBase';
 import Button from '@/components/Ui/Button';
 import { NotificationDarkIconLocal } from '@/icons/DashboardNavIcons';
 import PeopleIconLocal from '@/icons/PeopleIcon';

@@ -1,4 +1,4 @@
-import DoctorDetails from '@/components/Dashboard/Doctor/DoctorDetails';
+import DoctorDetails from '@/modules/doctor/components/DoctorDetails';
 
 interface DoctorDetailPageProps {
   params: {

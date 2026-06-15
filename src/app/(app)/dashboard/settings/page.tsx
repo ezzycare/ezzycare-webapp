@@ -1,5 +1,5 @@
-import IconBase from '@/components/Dashboard/IconBase';
-import Payout from '@/components/Dashboard/Settings/Payout';
+import IconBase from '@/components/layout/IconBase';
+import Payout from '@/modules/hospital/components/Settings/Payout';
 import { ChevronRight, Settings } from 'lucide-react';
 
 const page = () => {

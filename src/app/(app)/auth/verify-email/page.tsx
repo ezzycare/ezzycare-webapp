@@ -1,6 +1,6 @@
 'use client';
 
-import VerifyEmailContent from '@/components/Auth/VerifyEmailContent';
+import VerifyEmailContent from '@/modules/auth/components/VerifyEmailContent';
 import { Suspense } from 'react';
 
 export default function VerifyEmailPage() {

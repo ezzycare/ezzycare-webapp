@@ -6,8 +6,8 @@ import {
 } from '@/apiQuery/categories/getCategories';
 import { ACCOUNT_TYPE, User } from '@/apiQuery/auth/types';
 import { useGetProfile } from '@/apiQuery/users/getProfile';
-import SideNav from '@/components/Dashboard/SideNav';
-import TopNav from '@/components/Dashboard/TopNav';
+import SideNav from '@/components/layout/SideNav';
+import TopNav from '@/components/layout/TopNav';
 import { useTrackPreviousRoute } from '@/hooks/useTrackPreviousRoute';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';

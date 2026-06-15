@@ -1,4 +1,4 @@
-import PatientDetails from '@/components/Dashboard/Patient/PatientDetails';
+import PatientDetails from '@/modules/hospital/components/Patient/PatientDetails';
 
 interface PatientDetailPageProps {
   params: {

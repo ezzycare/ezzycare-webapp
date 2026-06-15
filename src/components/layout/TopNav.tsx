@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import { Menu } from 'lucide-react';
 import { useState } from 'react';
 import DatePicker from '../Ui/DatePicker';
-import Noti from './Notification/Noti';
+import Noti from '@/modules/notifications/components/Noti';
 
 const TopNav = ({
   sidebarOpen,

@@ -1,6 +1,6 @@
 'use client';
 
-import AppointmentPending from '@/components/Dashboard/Agent/BookAppointment/AppointmentPending';
+import AppointmentPending from '@/modules/hospital/components/Agent/BookAppointment/AppointmentPending';
 import { useAuthStore } from '@/stores/authStore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';

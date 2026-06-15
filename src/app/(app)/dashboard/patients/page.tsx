@@ -2,8 +2,8 @@
 'use client';
 
 import Pagination from '@/components/Base/Pagination';
-import IconBase from '@/components/Dashboard/IconBase';
-import PatientsTable from '@/components/Dashboard/Patient/PatientsTable';
+import IconBase from '@/components/layout/IconBase';
+import PatientsTable from '@/modules/hospital/components/Patient/PatientsTable';
 import { UserIconLocal } from '@/icons/DashboardNavIcons';
 import { cn } from '@/lib/utils';
 import { PatientType } from '@/types/patients';

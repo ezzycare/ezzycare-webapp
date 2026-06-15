@@ -1,6 +1,6 @@
 'use client';
 
-import SelectSignUpType from '@/components/Auth/SelectSignUpType';
+import SelectSignUpType from '@/modules/auth/components/SelectSignUpType';
 
 const Page = () => {
   return (

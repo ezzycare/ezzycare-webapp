@@ -1,4 +1,4 @@
-import BookingDetails from '@/components/Dashboard/Booking/BookingDetails';
+import BookingDetails from '@/modules/hospital/components/Booking/BookingDetails';
 
 interface BookingDetailPageProps {
   params: {

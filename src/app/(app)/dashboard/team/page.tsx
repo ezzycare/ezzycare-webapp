@@ -4,12 +4,12 @@
 // import { redirect } from 'next/navigation';
 import Pagination from '@/components/Base/Pagination';
 import SlidingTabs from '@/components/Base/SlidingTabs';
-import IconBase from '@/components/Dashboard/IconBase';
-import CreateRoleModal from '@/components/Dashboard/Team/CreateRoleModal';
-import EmptyTeamsTable from '@/components/Dashboard/Team/EmptyTeamsTable';
-import InviteMemberModal from '@/components/Dashboard/Team/InviteMemberModal';
-import RolesTable from '@/components/Dashboard/Team/RolesTable';
-import TeamMembersTable from '@/components/Dashboard/Team/TeamMembersTable';
+import IconBase from '@/components/layout/IconBase';
+import CreateRoleModal from '@/modules/hospital/components/Team/CreateRoleModal';
+import EmptyTeamsTable from '@/modules/hospital/components/Team/EmptyTeamsTable';
+import InviteMemberModal from '@/modules/hospital/components/Team/InviteMemberModal';
+import RolesTable from '@/modules/hospital/components/Team/RolesTable';
+import TeamMembersTable from '@/modules/hospital/components/Team/TeamMembersTable';
 import Button from '@/components/Ui/Button';
 import { UserIconLocal, UsersIconLocal } from '@/icons/DashboardNavIcons';
 import { RoleType, TeamMemberType } from '@/types/team';

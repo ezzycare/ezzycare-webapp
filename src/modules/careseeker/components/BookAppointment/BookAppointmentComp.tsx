@@ -17,8 +17,8 @@ import { CircleDollarSign } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import DateTimePicker, {
   SelectedSlotDisplay,
-} from '../../Agent/BookAppointment/DateTimePicker';
-import DoctorCard from '../../Agent/BookAppointment/DoctorCard';
+} from '@/modules/hospital/components/Agent/BookAppointment/DateTimePicker';
+import DoctorCard from '@/modules/hospital/components/Agent/BookAppointment/DoctorCard';
 
 const TIME_INTERVAL = 30; // minutes
 

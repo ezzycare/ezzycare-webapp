@@ -1,10 +1,10 @@
 'use client';
 import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
-import AdminDashboard from '@/components/Dashboard/Admin/AdminDashboard';
-import AgentAdminDashboard from '@/components/Dashboard/Agent/AgentAdminDashboard';
-import PaymentCallback from '@/components/Dashboard/Agent/BookAppointment/PaymentCallback';
-import CareSeekerDashboard from '@/components/Dashboard/CareSeeker/CareSeekerDashboard';
-import HospitalAdminDashboard from '@/components/Dashboard/Hospital/HospitalAdminDashboard';
+import AdminDashboard from '@/modules/admin/components/AdminDashboard';
+import AgentAdminDashboard from '@/modules/hospital/components/Agent/AgentAdminDashboard';
+import PaymentCallback from '@/modules/hospital/components/Agent/BookAppointment/PaymentCallback';
+import CareSeekerDashboard from '@/modules/careseeker/components/CareSeekerDashboard';
+import HospitalAdminDashboard from '@/modules/hospital/components/HospitalAdminDashboard';
 import { useGetAccountType } from '@/hooks/useGetAccountType';
 import { JSX } from 'react';
 

@@ -5,7 +5,7 @@ import {
   useGetAppointmentQuery,
 } from '@/apiQuery/healthcareAppointments/get/getSingleAppointment';
 import SpiralLoader from '@/components/Base/SpiralLoader';
-import AppointmentDetails from '@/components/Dashboard/CareSeeker/Appointments.tsx/AppointmentDetails';
+import AppointmentDetails from '@/modules/careseeker/components/Appointments.tsx/AppointmentDetails';
 import { useParams } from 'next/navigation';
 
 const BookingDetail = () => {

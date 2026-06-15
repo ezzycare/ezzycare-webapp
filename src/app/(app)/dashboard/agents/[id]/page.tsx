@@ -1,4 +1,4 @@
-import AgentDetails from '@/components/Dashboard/Agent/AgentDetails';
+import AgentDetails from '@/modules/hospital/components/Agent/AgentDetails';
 
 interface AgentDetailPageProps {
   params: {

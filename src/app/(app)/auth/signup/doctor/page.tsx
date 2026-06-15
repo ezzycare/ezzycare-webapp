@@ -1,6 +1,6 @@
 'use client';
 
-import SelectAuthMode from '@/components/Auth/SelectAuthMode';
+import SelectAuthMode from '@/modules/auth/components/SelectAuthMode';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

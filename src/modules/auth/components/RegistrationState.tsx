@@ -3,8 +3,8 @@
 import { CheckEmailIcon, InfoInvertedIconLocal } from '@/icons/DashboardIcons';
 import { CircleCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import Button from '../Ui/Button';
-import Card from '../Ui/Card';
+import Button from '@/components/Ui/Button';
+import Card from '@/components/Ui/Card';
 
 export const AccountCreatedInfo = () => {
   const { push } = useRouter();

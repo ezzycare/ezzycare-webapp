@@ -9,7 +9,7 @@ import {
 } from '@/icons/DashboardNavIcons';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import Card from '../Ui/Card';
+import Card from '@/components/Ui/Card';
 
 const SelectSignUpType = () => {
   const router = useRouter();

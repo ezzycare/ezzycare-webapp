@@ -7,7 +7,7 @@ import type { DoctorFiltersType } from '@/stores/bookAppointmentStore';
 import { debounce } from '@/utils/helper';
 import { ArrowLeft, Star } from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import DoctorCard from '../../Agent/BookAppointment/DoctorCard';
+import DoctorCard from '@/modules/hospital/components/Agent/BookAppointment/DoctorCard';
 import DoctorProfileComp from './DoctorProfileComp';
 
 interface AllDoctorsCompParams {

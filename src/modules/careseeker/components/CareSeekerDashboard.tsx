@@ -18,7 +18,7 @@ import { formatCurrency } from '@/utils/helper';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import EmptyAppointment from '../Hospital/EmptyAppointment';
+import EmptyAppointment from '@/modules/hospital/components/EmptyAppointment';
 import CareSeekerAppointmentsTable from './Appointments.tsx/CareSeekerAppointmentsTable';
 import BioDetailsModal from './BioDetailsModal';
 import BookPatientAppointment from './BookAppointment';

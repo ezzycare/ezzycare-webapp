@@ -2,8 +2,8 @@
 'use client';
 
 import Pagination from '@/components/Base/Pagination';
-import CreateHospitalModal from '@/components/Dashboard/Hospital/CreateHospitalModal';
-import HospitalsTable from '@/components/Dashboard/Hospital/HospitalsTable';
+import CreateHospitalModal from '@/modules/hospital/components/CreateHospitalModal';
+import HospitalsTable from '@/modules/hospital/components/HospitalsTable';
 import Button from '@/components/Ui/Button';
 import { HospitalType } from '@/types/hospitals';
 import { useState } from 'react';

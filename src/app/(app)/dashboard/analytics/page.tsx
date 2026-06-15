@@ -2,7 +2,7 @@
 'use client';
 
 import Pagination from '@/components/Base/Pagination';
-import BookingTable from '@/components/Dashboard/Booking/BookingTable';
+import BookingTable from '@/modules/hospital/components/Booking/BookingTable';
 import { cn } from '@/lib/utils';
 import { BookingType } from '@/types/bookings';
 import React from 'react';

@@ -2,8 +2,8 @@
 
 // import { redirect } from 'next/navigation';
 import Tabs from '@/components/Base/Tabs';
-import DoctorRegistrationsTable from '@/components/Dashboard/DoctorRegistrationsTable';
-import HospitalsTable from '@/components/Dashboard/Hospital/HospitalsTable';
+import DoctorRegistrationsTable from '@/modules/hospital/components/DoctorRegistrationsTable';
+import HospitalsTable from '@/modules/hospital/components/HospitalsTable';
 import {
   CreditCardIconLocal,
   HospitalIconLocal,
@@ -12,7 +12,7 @@ import PeopleIconLocal from '@/icons/PeopleIcon';
 import { DoctorRegistrationType } from '@/types/doctors';
 import { HospitalType } from '@/types/hospitals';
 import React from 'react';
-import IconBase from '../IconBase';
+import IconBase from '@/components/layout/IconBase';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = React.useState(0);
