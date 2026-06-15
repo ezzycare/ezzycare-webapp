@@ -8,7 +8,7 @@ import { GetSingleAppointmentType } from '@/apiQuery/healthcareAppointments/get/
 import { useCancelAppointmentMutation } from '@/apiQuery/healthcareAppointments/patch/cancelAppointment';
 import Button from '@/components/Ui/Button';
 import StatusText from '@/components/Ui/StatusText';
-import { ClockIconLocal } from '@/icons/DashboardIcons';
+import { ChatIconLocal, ClockIconLocal } from '@/icons/DashboardIcons';
 import {
   CalendarIconLocal,
   HospitalIconLocal,
@@ -17,7 +17,14 @@ import {
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
 import dayjs from 'dayjs';
-import { ArrowLeft, Briefcase, Edit, NotepadText, Star } from 'lucide-react';
+import {
+  ArrowLeft,
+  Briefcase,
+  Edit,
+  NotepadText,
+  SquarePlay,
+  Star,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useMemo } from 'react';
 import CancelBookingModal from './CancelBookingModal';
@@ -124,26 +131,37 @@ const AppointmentDetails = ({
             </div>
           </div>
         </div>
-        <div className="flex items-center ml-auto gap-2">
-          {appointment.status !== 'CANCELLED' && (
+        {appointment.status !== 'UPCOMING' && (
+          <EditDetailsBtn
+            appointment={appointment}
+            setOpenCancelBookingModal={setOpenCancelBookingModal}
+            setOpenRescheduleModal={setOpenRescheduleModal}
+          />
+        )}
+        {appointment.status !== 'UPCOMING' && (
+          <div className="flex items-center ml-auto gap-2">
             <Button
               variant="outline"
-              className="text-text! hover:text-surface-card! py-2! px-4!"
+              className="min-w-38 text-sm text-text-alt! bg-gray-3a py-2! px-4! gap-2 border-none"
               onClick={() => {
-                setOpenCancelBookingModal(true);
+                router.push('/dashboard/messages');
               }}
             >
-              Cancel booking
+              <ChatIconLocal />
+              Chat
             </Button>
-          )}
-          <Button
-            variant="outline"
-            className="text-text! hover:text-surface-card! py-2! px-4!"
-            onClick={() => setOpenRescheduleModal(true)}
-          >
-            Reschedule booking
-          </Button>
-        </div>
+            <Button
+              variant="outline"
+              className="text-error! bg-error-3a py-2! px-4! gap-2 border-none"
+              onClick={() => {
+                router.push('/dashboard/video-call');
+              }}
+            >
+              <SquarePlay size={16} />
+              Join video call
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5 items-start">
@@ -251,6 +269,13 @@ const AppointmentDetails = ({
           </div>
         </div>
       </div>
+      {appointment.status === 'UPCOMING' && (
+        <EditDetailsBtn
+          appointment={appointment}
+          setOpenCancelBookingModal={setOpenCancelBookingModal}
+          setOpenRescheduleModal={setOpenRescheduleModal}
+        />
+      )}
       <RescheduleAppointment
         appointment={appointment}
         doctor={doctor}
@@ -268,3 +293,36 @@ const AppointmentDetails = ({
 };
 
 export default AppointmentDetails;
+
+const EditDetailsBtn = ({
+  setOpenCancelBookingModal,
+  setOpenRescheduleModal,
+  appointment,
+}: {
+  setOpenCancelBookingModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenRescheduleModal: React.Dispatch<React.SetStateAction<boolean>>;
+  appointment: GetSingleAppointmentType;
+}) => {
+  return (
+    <div className="flex items-center ml-auto gap-2">
+      {appointment.status !== 'CANCELLED' && (
+        <Button
+          variant="outline"
+          className="text-text! hover:text-surface-card! py-2! px-4!"
+          onClick={() => {
+            setOpenCancelBookingModal(true);
+          }}
+        >
+          Cancel booking
+        </Button>
+      )}
+      <Button
+        variant="outline"
+        className="text-text! hover:text-surface-card! py-2! px-4!"
+        onClick={() => setOpenRescheduleModal(true)}
+      >
+        Reschedule booking
+      </Button>
+    </div>
+  );
+};

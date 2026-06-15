@@ -39,6 +39,7 @@
     "remark-gfm": "^4.0.1",
     "styled-components": "^6.4.1",
     "tailwind-merge": "^3.6.0",
+    "twilio-video": "^2.35.0",
     "zod": "^4.4.3",
     "zustand": "^5.0.13"
   },
