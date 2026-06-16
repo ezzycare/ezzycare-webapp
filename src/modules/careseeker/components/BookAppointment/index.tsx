@@ -122,11 +122,13 @@ const BookDoctorAppointment = ({
     return categories?.length ? categories : [];
   }, [categories]);
 
+  const doctorFilters = useMemo(() => ({ ...activeFilters }), [activeFilters]);
+
   const {
     doctors: doctorsData,
     isFetching: loadingDoctors,
     ...restDoctorQueries
-  } = useGetDoctorsDiscoveryQuery({ ...activeFilters });
+  } = useGetDoctorsDiscoveryQuery(doctorFilters);
 
   const doctors: Doctor[] = useMemo(() => {
     return doctorsData?.filter((doctor): doctor is Doctor => !!doctor) ?? [];

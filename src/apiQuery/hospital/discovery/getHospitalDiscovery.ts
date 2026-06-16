@@ -26,9 +26,18 @@ export interface HospitalDiscoveryItem {
   totalDoctors: number;
 }
 
+export interface HospitalDiscoveryMeta {
+  page: number;
+  limit: number;
+  totalItems: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
 export interface HospitalDiscoveryData {
   items: HospitalDiscoveryItem[];
-  hasNextPage?: boolean;
+  meta: HospitalDiscoveryMeta;
 }
 
 interface DiscoveryFilters {
@@ -69,8 +78,8 @@ export const useGetHospitalDiscovery = ({
       getHospitalDiscovery({ page: pageParam, limit, ...params }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, _allPages, lastPageParam) => {
-      const data = lastPage?.data;
-      return data?.hasNextPage ? (lastPageParam as number) + 1 : undefined;
+      const meta = lastPage?.data?.meta;
+      return meta?.hasNextPage ? (lastPageParam as number) + 1 : undefined;
     },
   });
 

@@ -173,7 +173,6 @@ const AllHospitalsComp = ({
                 >
                   {hospitals
                     ?.filter((hospital) => hospital.id !== topHospital?.id)
-                    ?.slice(0, 10)
                     ?.map((hospital) => (
                       <div
                         key={hospital.id}
@@ -193,7 +192,7 @@ const AllHospitalsComp = ({
               {hasNextPage && (
                 <div className="flex items-center justify-center mt-4">
                   <button
-                    className="text-primary text-sm"
+                    className="text-primary text-sm cursor-pointer"
                     onClick={() => fetchNextPage()}
                   >
                     Load more

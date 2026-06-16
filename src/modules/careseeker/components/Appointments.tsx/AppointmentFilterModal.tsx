@@ -58,7 +58,7 @@ const AppointmentFilterModal = ({
 
   return (
     <Modal open={open} onClose={onClose} size="sm" title="Filter Appointments">
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-5 mt-5">
         <Dropdown
           label="Appointment Type"
           placeholder="Select type"

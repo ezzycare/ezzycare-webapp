@@ -3,6 +3,7 @@
 
 import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
 import { useGetAppointmentsInfiniteQuery } from '@/apiQuery/healthcareAppointments/get/getAppointments';
+import BounceLoader from '@/components/Base/BounceLoader';
 import Pagination from '@/components/Base/Pagination';
 import SpiralLoader from '@/components/Base/SpiralLoader';
 import { useGetAccountType } from '@/hooks/useGetAccountType';
@@ -10,7 +11,7 @@ import CareSeekerAppointmentsTable from '@/modules/careseeker/components/Appoint
 import AppointmentsTable from '@/modules/hospital/components/Agent/AppointmentsTable';
 import { CareSeekerAppointmentType } from '@/types/appointments';
 import { BookingType } from '@/types/bookings';
-import React, { JSX } from 'react';
+import React, { JSX, useMemo } from 'react';
 
 const Appointments = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -18,12 +19,17 @@ const Appointments = () => {
     status: undefined,
   });
   const {
-    appointments,
+    appointments: appointmentsData,
     isFetching: isLoadingAppointments,
     ...restSeekerQuery
   } = useGetAppointmentsInfiniteQuery({
     ...activeSeekerFilters,
   });
+
+  const appointments = useMemo(
+    () => (appointmentsData?.length ? appointmentsData : []),
+    [appointmentsData]
+  );
 
   const { accountType } = useGetAccountType();
 
@@ -132,20 +138,18 @@ const Appointments = () => {
     DOCTOR: <div>Doctor Dashboard</div>,
     SEEKER: (
       <>
-        {!!appointments?.length && (
-          <CareSeekerAppointmentsTable
-            data={appointments}
-            titleComponent={
-              <h3 className="text-text text-2xl font-medium ml-3">
-                Appointments
-              </h3>
-            }
-            filters={seekerFilters}
-            searchable={true}
-            searchPlaceholder="Search"
-            searchContainerClassName="max-w-[404px]!"
-          />
-        )}
+        <CareSeekerAppointmentsTable
+          data={appointments}
+          titleComponent={
+            <h3 className="text-text text-2xl font-medium ml-3">
+              Appointments
+            </h3>
+          }
+          filters={seekerFilters}
+          searchable={true}
+          searchPlaceholder="Search"
+          searchContainerClassName="max-w-[404px]!"
+        />
 
         {restSeekerQuery.hasNextPage && (
           <div className="mt-auto pt-10">
@@ -169,15 +173,10 @@ const Appointments = () => {
   }
 
   return (
-    <div className="p-7.5">
-      <div className="mt-4 rounded-xl bg-surface-card pb-5">
-        {isLoadingAppointments ? (
-          <div className="w-full min-h-[60vh] h-full flex items-center justify-center">
-            <SpiralLoader />
-          </div>
-        ) : (
-          dashboards[accountType]
-        )}
+    <div className="p-7.5 relative">
+      <div className="mt-4 rounded-xl bg-surface-card pb-5 min-h-[60vh] h-full ">
+        {isLoadingAppointments && <BounceLoader />}
+        {dashboards[accountType]}
       </div>
     </div>
   );

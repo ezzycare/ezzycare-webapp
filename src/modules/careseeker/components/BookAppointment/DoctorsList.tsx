@@ -16,7 +16,6 @@ const DoctorsList = ({
   fetchNextPage,
   setClickedDoctor,
 }: DoctorsListProps) => {
-  console.log({ doctors });
   const topDoctor = useMemo(() => {
     if (!doctors?.length) return null;
 
@@ -50,22 +49,18 @@ const DoctorsList = ({
           </div>
 
           <div>
-            {topDoctor && (
-              <div
-                key={topDoctor?.id}
-                className="cursor-pointer w-full mt-2.25"
-                onClick={() => {
-                  setClickedDoctor(topDoctor);
-                }}
-              >
-                <DoctorCard
-                  key={topDoctor.id}
-                  doctor={topDoctor}
-                  showArrow
-                  className="shadow-sm rounded-xl"
-                />
-              </div>
-            )}
+            <div
+              key={topDoctor?.id}
+              className="cursor-pointer w-full mt-2.25"
+              onClick={() => setClickedDoctor(topDoctor)}
+            >
+              <DoctorCard
+                key={topDoctor.id}
+                doctor={topDoctor}
+                showArrow
+                className="shadow-sm rounded-xl"
+              />
+            </div>
           </div>
         </div>
       )}
@@ -85,7 +80,6 @@ const DoctorsList = ({
         >
           {doctors
             ?.filter((doctor) => doctor.id !== topDoctor?.id)
-            ?.slice(0, 10)
             ?.map((doctor) => (
               <div
                 key={doctor.id}
@@ -105,7 +99,7 @@ const DoctorsList = ({
       {hasNextPage && (
         <div className="flex items-center justify-center mt-4">
           <button
-            className="text-primary text-sm"
+            className="text-primary text-sm cursor-pointer"
             onClick={() => fetchNextPage()}
           >
             Load more
