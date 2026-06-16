@@ -18,12 +18,14 @@ import {
   NotepadText,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import RescheduleBookingModal from './RescheduleBookingModal';
 
 const BookingDetails = ({ booking }: { booking: BookingType }) => {
   const [openEditModal, setOpenEditModal] = React.useState(false);
   const [previousRoute, setPreviousRoute] = React.useState<string | null>(null);
+  const router = useRouter();
 
   React.useEffect(() => {
     const prev = sessionStorage.getItem('previousRoute');
@@ -175,7 +177,14 @@ const BookingDetails = ({ booking }: { booking: BookingType }) => {
               {!isAnalytics && (
                 <div>
                   {isAppointments ? (
-                    <button className="flex items-center gap-1.5 bg-gray-3a py-1.5 px-3 rounded-lg w-fit cursor-pointer">
+                    <button
+                      className="flex items-center gap-1.5 bg-gray-3a py-1.5 px-3 rounded-lg w-fit cursor-pointer"
+                      onClick={() =>
+                        router.push(
+                          `/dashboard/messages?peerId=${booking.doctor.id}`
+                        )
+                      }
+                    >
                       <MessageCircleMore size={16} className="text-text-alt" />
                       <p className="text-text-alt text-sm">
                         Follow-up with Doctor

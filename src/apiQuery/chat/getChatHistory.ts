@@ -1,16 +1,10 @@
 import { axiosClient } from '@/services/axiosClient';
-import {
-  useInfiniteQuery,
-  type InfiniteData,
-  type UseInfiniteQueryOptions,
-} from '@tanstack/react-query';
+import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 import axios from 'axios';
-import { useMemo } from 'react';
-import { ChatHistoryData, ChatHistoryResponse, ChatMessage } from './types';
+import { ChatHistoryResponse } from './types';
 
 interface GetChatHistoryParams {
   peerId: string;
-  lastId?: string;
 }
 
 export const getChatHistory = async (
@@ -22,8 +16,7 @@ export const getChatHistory = async (
 
   try {
     const response = await axiosClient.get<ChatHistoryResponse>(
-      `/chat/history/${params.peerId}`,
-      { params: { lastId: params.lastId } }
+      `/chat/history/${params.peerId}`
     );
     return response.data;
   } catch (error) {
@@ -34,39 +27,22 @@ export const getChatHistory = async (
   }
 };
 
-export const useGetChatHistoryInfiniteQuery = (
+export const useGetChatHistoryQuery = (
   params: GetChatHistoryParams,
   options?: Omit<
-    UseInfiniteQueryOptions<
-      ChatHistoryResponse,
-      Error,
-      InfiniteData<ChatHistoryResponse>,
-      readonly unknown[],
-      string | undefined
-    >,
-    'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam'
+    UseQueryOptions<ChatHistoryResponse, Error>,
+    'queryKey' | 'queryFn'
   >
 ) => {
-  const result = useInfiniteQuery({
+  const result = useQuery({
     queryKey: ['chat', 'history', params.peerId],
-    queryFn: ({ pageParam }) =>
-      getChatHistory({ ...params, lastId: pageParam }),
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage) => {
-      const meta = lastPage.data?.meta;
-      return meta?.hasMore ? meta.lastId : undefined;
-    },
+    queryFn: () => getChatHistory(params),
     enabled: !!params.peerId,
     ...options,
   });
 
-  const messages = useMemo<ChatMessage[]>(
-    () => result.data?.pages.flatMap((page) => page.data?.items ?? []) ?? [],
-    [result.data]
-  );
-
   return {
     ...result,
-    messages,
+    messages: result.data?.data ?? [],
   };
 };

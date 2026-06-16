@@ -849,7 +849,7 @@ const executeApi = async (callKey: string, params: Record<string, string>) => {
         code: params.code,
       });
     case 'auth_Reset Password':
-      return resetPassword({ newPassword: params.newPassword });
+      return resetPassword({ newPassword: params.newPassword, token: '' });
     case 'auth_Verify Email':
       return verifyEmail({ email: params.email, code: params.code });
     case 'auth_Resend OTP':
@@ -1105,7 +1105,6 @@ const executeApi = async (callKey: string, params: Record<string, string>) => {
     case 'chat_Chat History':
       return getChatHistory({
         peerId: params.peerId,
-        lastId: params.lastId || undefined,
       });
     case 'chat_Send Message':
       return sendMessage({

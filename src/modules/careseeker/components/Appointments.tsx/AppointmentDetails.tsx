@@ -138,14 +138,14 @@ const AppointmentDetails = ({
             setOpenRescheduleModal={setOpenRescheduleModal}
           />
         )}
-        {appointment.status !== 'UPCOMING' && (
+        {appointment.status === 'UPCOMING' && (
           <div className="flex items-center ml-auto gap-2">
             <Button
               variant="outline"
               className="min-w-38 text-sm text-text-alt! bg-gray-3a py-2! px-4! gap-2 border-none"
-              onClick={() => {
-                router.push('/dashboard/messages');
-              }}
+              onClick={() =>
+                router.push(`/dashboard/messages?peerId=${appointment.userId}`)
+              }
             >
               <ChatIconLocal />
               Chat
@@ -153,9 +153,15 @@ const AppointmentDetails = ({
             <Button
               variant="outline"
               className="text-error! bg-error-3a py-2! px-4! gap-2 border-none"
-              onClick={() => {
-                router.push('/dashboard/video-call');
-              }}
+              onClick={() =>
+                router.push(
+                  `/dashboard/video-call?peerId=${appointment.userId}&peerName=${encodeURIComponent(
+                    appointment.user?.firstName
+                      ? `${appointment.user.firstName} ${appointment.user.lastName}`
+                      : ''
+                  )}`
+                )
+              }
             >
               <SquarePlay size={16} />
               Join video call

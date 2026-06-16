@@ -4,14 +4,19 @@ import { getTwilioToken } from '@/apiQuery/communication/getToken';
 import SpiralLoader from '@/components/Base/SpiralLoader';
 import VideoCall from '@/modules/video';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-
-const DEFAULT_ROOM = `room_${Date.now()}`;
+import { useEffect, useRef, useState } from 'react';
 
 const VideoCallPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const roomName = searchParams.get('room') || DEFAULT_ROOM;
+  const peerId = searchParams.get('peerId');
+  const peerName = searchParams.get('peerName');
+  const fallbackRoom = useRef(
+    // eslint-disable-next-line react-hooks/purity
+    `room_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+  );
+  const roomName =
+    searchParams.get('room') || `video_${peerId ?? fallbackRoom.current}`;
 
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -65,6 +70,7 @@ const VideoCallPage = () => {
       <VideoCall
         token={token}
         roomName={roomName}
+        remoteName={peerName ?? undefined}
         onEndCall={() => router.back()}
       />
     </div>

@@ -1,12 +1,25 @@
 import { ApiResponse } from '@/apiQuery/types';
 
-export interface Conversation {
+export interface ConversationPeer {
   id: string;
-  name: string;
-  preview: string;
-  date: string;
-  unread?: number;
-  avatar?: string;
+  firstName: string;
+  lastName: string;
+  profileImage: string | null;
+}
+
+export interface LastMessage {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+}
+
+export interface Conversation {
+  peer: ConversationPeer;
+  lastMessage: LastMessage | null;
+  unreadCount: number;
 }
 
 export interface ConversationMeta {
@@ -25,31 +38,28 @@ export interface ConversationsData {
 
 export type ConversationsResponse = ApiResponse<ConversationsData>;
 
+export interface ChatMessageSender {
+  firstName: string;
+  lastName: string;
+  profileImage: string | null;
+}
+
 export interface ChatMessage {
   id: string;
-  text: string;
-  time: string;
-  fromMe: boolean;
+  message: string;
   senderId: string;
   receiverId: string;
+  isRead: boolean;
   createdAt: string;
+  sender: ChatMessageSender;
 }
 
-export interface ChatHistoryMeta {
-  hasMore: boolean;
-  lastId: string | null;
-}
-
-export interface ChatHistoryData {
-  items: ChatMessage[];
-  meta: ChatHistoryMeta;
-}
-
-export type ChatHistoryResponse = ApiResponse<ChatHistoryData>;
+export type ChatHistoryResponse = ApiResponse<ChatMessage[]>;
 
 export interface SendMessageParams {
   receiverId: number;
   message: string;
+  sender?: ChatMessageSender;
 }
 
 export interface SendMessageData {

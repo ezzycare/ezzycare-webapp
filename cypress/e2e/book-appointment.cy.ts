@@ -2,29 +2,36 @@
 
 describe('Care Seeker - Book Appointment', () => {
   beforeEach(() => {
+    // ── API intercepts ──
     cy.intercept('GET', '**/categories**', { fixture: 'categories.json' }).as(
       'getCategories'
     );
     cy.intercept('GET', '**/auth/profile', { fixture: 'profile.json' }).as(
       'getProfile'
     );
-    cy.intercept('GET', '**/healthcare/appointments**', {
+    cy.intercept('GET', '**/healthcare/appointments?*', {
       fixture: 'appointments-empty.json',
     }).as('getAppointments');
-    cy.intercept('GET', '**/doctors-discovery*', (req) => {
-      if (req.url.includes('/doctors-discovery/')) {
+
+    // Doctor discovery: list endpoint vs detail endpoint
+    cy.intercept('GET', '**/doctors-discovery', (req) => {
+      // Detail endpoint matches /doctors-discovery/<id>
+      if (/\/doctors-discovery\/\d+$/.test(req.url)) {
         req.reply({ fixture: 'doctor-detail.json' });
       } else {
         req.reply({ fixture: 'doctors-discovery.json' });
       }
     }).as('doctorsDiscovery');
+
     cy.intercept('POST', '**/healthcare/appointments', {
       fixture: 'create-appointment-response.json',
     }).as('createAppointment');
 
+    // ── Log in & load the dashboard ──
     cy.login();
     cy.visit('/dashboard');
-    cy.wait(5000);
+
+    // Wait for the dashboard to finish loading its data
     cy.wait('@getCategories');
     cy.wait('@getProfile');
     cy.wait('@getAppointments');
@@ -32,7 +39,7 @@ describe('Care Seeker - Book Appointment', () => {
   });
 
   it('completes the full booking wizard', () => {
-    // Open the booking modal from the dashboard
+    // ── Open the booking modal ──
     cy.contains('button', 'Doctors').click();
     cy.contains('Book Appointment').should('be.visible');
 
@@ -52,35 +59,35 @@ describe('Care Seeker - Book Appointment', () => {
     );
     cy.contains('video consultation').click();
 
-    // ── Step 4: Doctor list appears ──
+    // ── Step 4: Doctor list loads ──
     cy.contains('Top Doctors', { timeout: 5000 }).should('be.visible');
     cy.contains('John Doe').click();
 
-    // ── Step 5: Doctor profile → Book Appointment button ──
+    // ── Step 5: Doctor detail loads → Book Appointment ──
     cy.contains('Doctor details').should('be.visible');
     cy.contains('button', 'Book Appointment').click();
 
-    // ── Step 6: Booking form ──
+    // ── Step 6: Booking form appears ──
     cy.contains('Book Appointment', { timeout: 3000 }).should('be.visible');
 
     // Open the date/time picker
     cy.contains('button', 'Select appointment time').click();
 
-    // Navigate to a future date (July 15, 2026 is a Wednesday = available)
+    // Navigate to a valid future date (Wednesday = available per fixture)
     cy.get('#month').select('July');
     cy.get('#year').select('2026');
     cy.get('button:not([disabled])').contains('15').click();
 
-    // Pick a time slot (auto-submits — applyImmediately is true for new bookings)
+    // Pick the 09:00 time slot
     cy.contains('button', '09:00').first().click();
 
-    // Confirm selected time is displayed
+    // Confirm the selected time is displayed
     cy.contains('Start time').should('be.visible');
 
     // Enter a reason for the appointment
     cy.get('textarea').type('Cypress E2E test appointment');
 
-    // Submit the booking
+    // ── Submit the booking ──
     cy.contains('button', 'Book Appointment').click();
     cy.wait('@createAppointment');
 
