@@ -97,7 +97,12 @@ const SignInForm = () => {
           name="password"
           error={errors.password?.message}
         />
-        <p className="text-sm text-blue-11a ml-auto">Forgot password?</p>
+        <p
+          className="text-sm text-blue-11a ml-auto cursor-pointer"
+          onClick={() => push('/auth/reset-password')}
+        >
+          Forgot password?
+        </p>
         <Button
           type="submit"
           className="w-full mt-5 h-12 flex justify-center"

@@ -1,6 +1,7 @@
 'use client';
 
 import { useSignUpMutation } from '@/apiQuery/auth/signup';
+import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
 import Button from '@/components/Ui/Button';
 import Card from '@/components/Ui/Card';
 import {
@@ -30,7 +31,13 @@ const SignUpSchema = z.object({
 });
 type Registration = z.infer<typeof SignUpSchema>;
 
-const CareSeekerSignup = ({ action }: { action: () => void }) => {
+const SignUp = ({
+  action,
+  type,
+}: {
+  action: () => void;
+  type: ACCOUNT_TYPE;
+}) => {
   const router = useRouter();
 
   const { updateSignupDetails } = useAuthStore((state: AuthStore) => state);
@@ -53,7 +60,7 @@ const CareSeekerSignup = ({ action }: { action: () => void }) => {
       email: data.email,
       mobileNo: data.mobileNo,
       password: data.password,
-      accountType: 'SEEKER' as const,
+      accountType: type,
     };
     try {
       const res = await mutateAsync(payload);
@@ -137,4 +144,4 @@ const CareSeekerSignup = ({ action }: { action: () => void }) => {
   );
 };
 
-export default CareSeekerSignup;
+export default SignUp;

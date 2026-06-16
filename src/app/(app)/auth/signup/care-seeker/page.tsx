@@ -1,8 +1,8 @@
 'use client';
 
-import CareSeekerSignup from '@/modules/auth/components/CareSeekerSignup';
 import { CheckEmailInfo } from '@/modules/auth/components/RegistrationState';
 import SelectAuthMode from '@/modules/auth/components/SelectAuthMode';
+import Signup from '@/modules/auth/components/Signup';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -21,7 +21,10 @@ const Page = () => {
         <SelectAuthMode action={() => setState('signup-details')} />
       )}
       {state === 'signup-details' && (
-        <CareSeekerSignup action={() => setState('check-email')} />
+        <Signup
+          type={'SEEKER' as const}
+          action={() => setState('check-email')}
+        />
       )}
       {state === 'check-email' && (
         <CheckEmailInfo

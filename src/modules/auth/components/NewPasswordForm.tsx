@@ -5,6 +5,7 @@ import Button from '@/components/Ui/Button';
 import Card from '@/components/Ui/Card';
 import { PasswordInput } from '@/components/Ui/TextInput';
 import { toaster } from '@/lib/toaster';
+import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
@@ -41,6 +42,10 @@ const PASSWORD_RULES = [
 
 const NewPasswordForm = ({ action }: { action: () => void }) => {
   const router = useRouter();
+  const passwordResetToken = useAuthStore(
+    (state: AuthStore) => state.passwordResetToken
+  );
+
   const { mutateAsync, isPending } = useResetPasswordMutation();
 
   const {
@@ -66,9 +71,11 @@ const NewPasswordForm = ({ action }: { action: () => void }) => {
   );
 
   const onSubmit = async (data: ResetPasswordType) => {
+    console.log({ passwordResetToken });
     try {
       const res = await mutateAsync({
         newPassword: data.password,
+        token: passwordResetToken ?? '',
       });
       toaster.success(res.message || 'Password reset successful');
       action();

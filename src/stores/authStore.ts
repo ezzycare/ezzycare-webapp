@@ -32,10 +32,12 @@ export interface AuthStore {
   user: User;
   authToken: string | null;
   signupDetails: SignupDetails;
+  passwordResetToken: string | null;
   updateUser: (user: User) => void;
   setToken: (token: string) => void;
   removeAuth: () => void;
   updateSignupDetails: (details: Partial<SignupDetails>) => void;
+  setPasswordResetToken: (token: string) => void;
 }
 
 const isBrowser = typeof window !== 'undefined';
@@ -57,6 +59,7 @@ export const useAuthStore = create<AuthStore>()(
       user: getInitialUser(),
       authToken: getAuthToken(),
       signupDetails: {} as SignupDetails,
+      passwordResetToken: null,
 
       isAuthenticated: () => !!getAuthToken(),
 
@@ -84,6 +87,8 @@ export const useAuthStore = create<AuthStore>()(
         set((state) => ({
           signupDetails: { ...state.signupDetails, ...details },
         })),
+
+      setPasswordResetToken: (token) => set({ passwordResetToken: token }),
     }),
     { name: 'authStore', enabled: process.env.NODE_ENV === 'development' }
   )

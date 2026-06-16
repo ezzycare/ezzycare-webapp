@@ -5,6 +5,7 @@ import Button from '@/components/Ui/Button';
 import Card from '@/components/Ui/Card';
 import { TextInput } from '@/components/Ui/TextInput';
 import { toaster } from '@/lib/toaster';
+import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Cross2Icon, EnvelopeClosedIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
@@ -18,6 +19,9 @@ type ResetPasswordType = z.infer<typeof ResetPasswordSchema>;
 
 const ResetPasswordEmail = ({ action }: { action: () => void }) => {
   const router = useRouter();
+  const updateSignupDetails = useAuthStore(
+    (state: AuthStore) => state.updateSignupDetails
+  );
 
   const { mutateAsync, isPending } = useForgotPasswordMutation();
 
@@ -32,6 +36,7 @@ const ResetPasswordEmail = ({ action }: { action: () => void }) => {
   });
 
   const onSubmit = async (data: ResetPasswordType) => {
+    updateSignupDetails({ email: data.email });
     const payload = {
       email: data.email,
     };

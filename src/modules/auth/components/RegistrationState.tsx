@@ -1,10 +1,10 @@
 'use client';
 
+import Button from '@/components/Ui/Button';
+import Card from '@/components/Ui/Card';
 import { CheckEmailIcon, InfoInvertedIconLocal } from '@/icons/DashboardIcons';
 import { CircleCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/Ui/Button';
-import Card from '@/components/Ui/Card';
 
 export const AccountCreatedInfo = () => {
   const { push } = useRouter();
@@ -135,7 +135,7 @@ export const PasswordUpdatedInfo = () => {
           <Button
             className="w-full"
             variant="primary"
-            onClick={() => push('/auth/sigin')}
+            onClick={() => push('/auth/signin')}
           >
             Login
           </Button>

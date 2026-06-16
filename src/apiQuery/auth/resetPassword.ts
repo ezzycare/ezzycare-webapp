@@ -10,6 +10,7 @@ import { baseURL } from '../baseUrl';
 
 export interface ResetPasswordPayload {
   newPassword: string;
+  token: string;
 }
 
 export interface ResetPasswordResponse {
@@ -22,7 +23,13 @@ export const resetPassword = async (
   try {
     const response = await axios.post<ApiResponse<ResetPasswordResponse>>(
       `${baseURL}/auth/reset-password`,
-      payload
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${payload.token}`,
+        },
+      }
     );
 
     return response.data;
