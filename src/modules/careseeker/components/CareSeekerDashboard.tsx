@@ -1,7 +1,12 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 // import { redirect } from 'next/navigation';
-import { useGetAppointmentsInfiniteQuery } from '@/apiQuery/healthcareAppointments/get/getAppointments';
+import {
+  type AppointmentListType,
+  type AppointmentStatus,
+  useGetAppointmentsInfiniteQuery,
+} from '@/apiQuery/healthcareAppointments/get/getAppointments';
 import AlertBanner from '@/components/Base/AlertBanner';
 import SpiralLoader from '@/components/Base/SpiralLoader';
 import Button from '@/components/Ui/Button';
@@ -15,10 +20,11 @@ import {
 import EmptyAppointment from '@/modules/hospital/components/EmptyAppointment';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
-import { formatCurrency } from '@/utils/helper';
+import { debounce, formatCurrency } from '@/utils/helper';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import AppointmentFilterModal from './Appointments.tsx/AppointmentFilterModal';
 import CareSeekerAppointmentsTable from './Appointments.tsx/CareSeekerAppointmentsTable';
 import BioDetailsModal from './BioDetailsModal';
 import BookDoctorAppointment from './BookAppointment';
@@ -31,6 +37,29 @@ const CareSeekerDashboard = () => {
   const [showBookHospitalModal, setShowBookHospitalModal] =
     React.useState(false);
   const [showBalance, setShowBalance] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [filters, setFilters] = useState<{
+    search?: string;
+    type?: AppointmentListType;
+    status?: AppointmentStatus;
+  }>({
+    search: '',
+  });
+
+  const debouncedSetFilters = useRef(
+    debounce((value: string) => {
+      setFilters((prev) => ({
+        ...prev,
+        search: value,
+      }));
+    }, 500)
+  ).current;
+
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+    debouncedSetFilters(value);
+  };
 
   const { isHospitalAppointment, updateBooking, setIsHospitalAppointment } =
     useBookAppointmentStore();
@@ -38,11 +67,12 @@ const CareSeekerDashboard = () => {
   const { appointments, isFetching: isLoadingAppointments } =
     useGetAppointmentsInfiniteQuery({
       limit: 10,
+      ...filters,
     });
 
   useEffect(() => {
     const storedShowBalance = localStorage.getItem('showCareSeekerBalance');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
     setShowBalance(storedShowBalance === 'true');
   }, []);
 
@@ -67,12 +97,13 @@ const CareSeekerDashboard = () => {
 
         <div className="flex flex-col md:flex-row gap-3 mt-4 md:mt-0">
           <SearchInput
-            value=""
-            onChange={() => {}}
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
             placeholder="Search for doctors or hospitals"
             className="max-w-90! rounded-xl! h-10!"
             inputClassName="text-xs!"
-            onOpenFilter={() => {}}
+            onClear={() => handleSearch('')}
+            onOpenFilter={() => setShowFilterModal(true)}
           />
 
           <div className="flex gap-3">
@@ -171,6 +202,13 @@ const CareSeekerDashboard = () => {
           </div>
         )}
       </div>
+      <AppointmentFilterModal
+        open={showFilterModal}
+        onClose={() => setShowFilterModal(false)}
+        onApply={(applied) => setFilters((prev) => ({ ...prev, ...applied }))}
+        initialType={filters.type}
+        initialStatus={filters.status}
+      />
       <BioDetailsModal
         openModal={showProfileModal}
         setOpenModal={setShowProfileModal}

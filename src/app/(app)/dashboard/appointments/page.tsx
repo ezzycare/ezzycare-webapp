@@ -14,12 +14,15 @@ import React, { JSX } from 'react';
 
 const Appointments = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [activeSeekerFilters, setActiveSeekerFilters] = React.useState({
+    status: undefined,
+  });
   const {
     appointments,
     isFetching: isLoadingAppointments,
     ...restSeekerQuery
   } = useGetAppointmentsInfiniteQuery({
-    limit: 10,
+    ...activeSeekerFilters,
   });
 
   const { accountType } = useGetAccountType();
@@ -62,27 +65,38 @@ const Appointments = () => {
       key: 'status',
       options: [
         {
-          label: 'Active',
-          value: 'active',
-        },
-        {
           label: 'Pending',
-          value: 'pending',
+          value: 'PENDING',
         },
         {
           label: 'Upcoming',
-          value: 'upcoming',
+          value: 'UPCOMING',
         },
         {
-          label: 'Cancelled',
-          value: 'cancelled',
+          label: 'In Progress',
+          value: 'IN_PROGRESS',
+        },
+        {
+          label: 'Paid',
+          value: 'PAID',
+        },
+        {
+          label: 'UnPaid',
+          value: 'UNPAID',
         },
         {
           label: 'Completed',
-          value: 'completed',
+          value: 'COMPLETED',
+        },
+        {
+          label: 'Cancelled',
+          value: 'CANCELLED',
         },
       ],
-      fn: (row: CareSeekerAppointmentType, value: any) => row.status === value,
+      fn: (row: CareSeekerAppointmentType, value: any) => {
+        setActiveSeekerFilters((prev) => ({ ...prev, status: value }));
+        return true;
+      },
     },
   ];
 

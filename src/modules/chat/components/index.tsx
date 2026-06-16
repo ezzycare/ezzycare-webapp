@@ -1,31 +1,19 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
+import { useGetConversationsInfiniteQuery } from '@/apiQuery/chat/getConversations';
+import { useGetChatHistoryInfiniteQuery } from '@/apiQuery/chat/getChatHistory';
+import { useMarkChatReadMutation } from '@/apiQuery/chat/markRead';
+import { useSendMessageMutation } from '@/apiQuery/chat/sendMessage';
+import type { ChatMessage, Conversation } from '@/apiQuery/chat/types';
 import SearchInput from '@/components/Ui/SearchInput';
+import SpiralLoader from '@/components/Base/SpiralLoader';
 import { ChatTailIconLocal } from '@/icons/DashboardIcons';
-import { cn } from '@/lib/utils'; // or wherever your cn helper lives
+import { cn } from '@/lib/utils';
 import { BadgeCheck, ChevronLeft, Mic, Send } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-type Conversation = {
-  id: string;
-  name: string;
-  preview: string;
-  date: string;
-  unread?: number;
-};
-
-type Message = {
-  id: string;
-  text: string;
-  time: string;
-  fromMe: boolean;
-};
-
-// ... your conversations and messages arrays ...
-
-// Small hook to detect mobile viewport
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -40,25 +28,64 @@ function useIsMobile(breakpoint = 768) {
   return isMobile;
 }
 
-export default function MessagesPage({
-  conversations,
-  messages,
-}: {
-  conversations: Conversation[];
-  messages: Message[];
-}) {
+export default function MessagesPage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const isMobile = useIsMobile();
 
-  // On desktop, default to first conversation. On mobile, start at list.
-  useEffect(() => {
-    if (!isMobile && !activeId) setActiveId(conversations[0]?.id ?? null);
-  }, [isMobile, activeId]);
+  const { conversations, fetchNextPage, hasNextPage, isFetching } =
+    useGetConversationsInfiniteQuery();
+  const { mutate: sendMessage } = useSendMessageMutation();
+  const { mutate: markRead } = useMarkChatReadMutation();
 
   const activeConversation = conversations.find((c) => c.id === activeId);
 
-  // On mobile: when no conversation selected → show list. When selected → show chat.
+  const { messages, fetchNextPage: fetchMoreMessages, hasNextPage: hasMoreMessages, isFetching: isLoadingMessages } =
+    useGetChatHistoryInfiniteQuery(
+      { peerId: activeId ?? '' },
+      { enabled: !!activeId }
+    );
+
+  // Mark conversation as read when selected
+  useEffect(() => {
+    if (activeId) {
+      markRead({ peerId: activeId });
+    }
+  }, [activeId, markRead]);
+
+  // On desktop, default to first conversation
+  useEffect(() => {
+    if (!isMobile && !activeId && conversations.length > 0) {
+      setActiveId(conversations[0].id);
+    }
+  }, [isMobile, activeId, conversations]);
+
+  // Infinite scroll for conversations list
+  const listRef = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el || !hasNextPage || isFetching) return;
+
+    const handleScroll = () => {
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 100) {
+        fetchNextPage();
+      }
+    };
+
+    el.addEventListener('scroll', handleScroll);
+    return () => el.removeEventListener('scroll', handleScroll);
+  }, [hasNextPage, isFetching, fetchNextPage]);
+
+  const handleSend = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || !activeId) return;
+
+    sendMessage(
+      { receiverId: Number(activeId), message: input.trim() },
+      { onSuccess: () => setInput('') }
+    );
+  };
+
   const showList = isMobile ? !activeId : true;
   const showChat = isMobile ? !!activeId : true;
 
@@ -75,7 +102,7 @@ export default function MessagesPage({
         />
       </div>
 
-      <ul className="flex flex-col gap-2">
+      <ul ref={listRef} className="flex flex-col gap-2 overflow-y-auto max-h-[70vh]">
         {conversations.map((c) => (
           <li key={c.id}>
             <button
@@ -89,7 +116,7 @@ export default function MessagesPage({
             >
               <div className="relative w-10 h-10 shrink-0">
                 <Image
-                  src={`https://unsplash.it/300/300?random=${c.id}`}
+                  src={c.avatar ?? `https://unsplash.it/300/300?random=${c.id}`}
                   alt={c.name}
                   fill
                   className="rounded-full object-cover"
@@ -118,15 +145,18 @@ export default function MessagesPage({
             </button>
           </li>
         ))}
+        {isFetching && (
+          <li className="flex justify-center py-4">
+            <SpiralLoader />
+          </li>
+        )}
       </ul>
     </aside>
   );
 
   const ChatView = (
     <section className="bg-blue-2 md:rounded-2xl flex flex-col overflow-hidden h-full">
-      {/* Header */}
       <header className="bg-surface-card md:mx-5 md:mt-5 md:rounded-2xl px-4 md:px-5 py-3.5 flex items-center gap-3">
-        {/* Mobile back button */}
         {isMobile && (
           <button
             type="button"
@@ -140,7 +170,10 @@ export default function MessagesPage({
 
         <div className="relative w-10 h-10 shrink-0">
           <Image
-            src={`https://unsplash.it/300/300?random=${activeId}`}
+            src={
+              activeConversation?.avatar ??
+              `https://unsplash.it/300/300?random=${activeId}`
+            }
             alt={activeConversation?.name ?? ''}
             fill
             className="rounded-full object-cover"
@@ -157,13 +190,18 @@ export default function MessagesPage({
         </div>
       </header>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 md:px-5 py-6 flex flex-col gap-5">
         <div className="flex justify-center">
           <span className="px-3.5 py-1 rounded-full bg-neutral-3a text-xs text-text-muted">
             Today
           </span>
         </div>
+
+        {isLoadingMessages && (
+          <div className="flex justify-center py-4">
+            <SpiralLoader />
+          </div>
+        )}
 
         {messages.map((m) => (
           <div
@@ -230,18 +268,21 @@ export default function MessagesPage({
             )}
           </div>
         ))}
+        {hasMoreMessages && (
+          <div className="flex justify-center py-2">
+            <button
+              type="button"
+              onClick={() => fetchMoreMessages()}
+              className="text-xs text-blue-10 font-medium cursor-pointer"
+            >
+              Load more
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Input */}
       <div className="px-4 md:px-5 pb-4 md:pb-5 pt-2">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!input.trim()) return;
-            setInput('');
-          }}
-          className="flex items-center gap-3"
-        >
+        <form onSubmit={handleSend} className="flex items-center gap-3">
           <div
             className={cn(
               'flex-1 md:max-w-141 md:mx-auto bg-surface-card rounded-full h-11',

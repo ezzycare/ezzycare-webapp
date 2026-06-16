@@ -6,11 +6,7 @@ import {
 } from '@tanstack/react-query';
 import axios from 'axios';
 import { useMemo } from 'react';
-import {
-  WalletTransaction,
-  WalletTransactionsData,
-  WalletTransactionsResponse,
-} from './types';
+import { WalletTransaction, WalletTransactionsResponse } from './types';
 
 interface GetWalletTransactionsParams {
   page?: number;

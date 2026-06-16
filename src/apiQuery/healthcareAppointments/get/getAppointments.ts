@@ -26,6 +26,7 @@ export interface GetAppointmentsParams {
   type?: AppointmentListType;
   status?: AppointmentStatus;
   limit?: number;
+  search?: string;
 }
 
 export interface AppointmentDoctorDetails {
