@@ -1,6 +1,9 @@
 'use client';
 
-import type { AppointmentListType, AppointmentStatus } from '@/apiQuery/healthcareAppointments/get/getAppointments';
+import type {
+  AppointmentListType,
+  AppointmentStatus,
+} from '@/apiQuery/healthcareAppointments/get/getAppointments';
 import Button from '@/components/Ui/Button';
 import Dropdown from '@/components/Ui/Dropdown';
 import Modal from '@/components/Ui/Modal';
@@ -30,7 +33,10 @@ const AppointmentFilterModal = ({
 }: {
   open: boolean;
   onClose: () => void;
-  onApply: (filters: { type?: AppointmentListType; status?: AppointmentStatus }) => void;
+  onApply: (filters: {
+    type?: AppointmentListType;
+    status?: AppointmentStatus;
+  }) => void;
   initialType?: AppointmentListType;
   initialStatus?: AppointmentStatus;
 }) => {
