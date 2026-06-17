@@ -206,7 +206,6 @@ const BookDoctorAppointment = ({
           }
 
           setCreatedAppointment(res.data);
-          cleanUp();
           toaster.success(res.message || 'Appointment created successfully');
 
           resolve(res.data);

@@ -60,6 +60,9 @@ import { createHospitalAgent } from '@/apiQuery/hospital/post/createAgent';
 import { createHospitalOperatingHours } from '@/apiQuery/hospital/post/createOperatingHours';
 import { createHospitalRole } from '@/apiQuery/hospital/post/createRoles';
 import { inviteDoctor } from '@/apiQuery/hospital/post/inviteDoctor';
+import { getNotifications } from '@/apiQuery/notifications/getNotifications';
+import { readAllNotifications } from '@/apiQuery/notifications/readAllNotifications';
+import { readNotification } from '@/apiQuery/notifications/readNotification';
 import { initializePayment } from '@/apiQuery/payment/initiatePayment';
 import { payWithWallet } from '@/apiQuery/payment/payWithWallet';
 import { getProfile } from '@/apiQuery/users/getProfile';
@@ -774,6 +777,46 @@ const modules: ModuleGroup[] = [
     ],
   },
   {
+    key: 'notifications',
+    label: 'Notifications',
+    endpoints: [
+      {
+        method: 'GET',
+        name: 'Get Notifications',
+        params: [
+          {
+            key: 'page',
+            label: 'Page',
+            type: 'number',
+            placeholder: '1',
+          },
+          {
+            key: 'limit',
+            label: 'Limit',
+            type: 'number',
+            placeholder: '20',
+          },
+        ],
+        description: 'GET /notifications',
+        module: 'notifications',
+      },
+      {
+        method: 'POST',
+        name: 'Read All',
+        params: [],
+        description: 'POST /notifications/read-all',
+        module: 'notifications',
+      },
+      {
+        method: 'PATCH',
+        name: 'Read Notification',
+        params: [{ key: 'id', label: 'Notification ID' }],
+        description: 'PATCH /notifications/{id}/read',
+        module: 'notifications',
+      },
+    ],
+  },
+  {
     key: 'communication',
     label: 'Communication',
     endpoints: [
@@ -1114,6 +1157,17 @@ const executeApi = async (callKey: string, params: Record<string, string>) => {
     case 'chat_Mark Read':
       return markChatRead({ peerId: params.peerId });
 
+    // Notifications
+    case 'notifications_Get Notifications':
+      return getNotifications({
+        page: params.page ? Number(params.page) : 1,
+        limit: params.limit ? Number(params.limit) : 20,
+      });
+    case 'notifications_Read All':
+      return readAllNotifications();
+    case 'notifications_Read Notification':
+      return readNotification({ id: params.id });
+
     // Communication
     case 'communication_Create Twilio Room':
       return createTwilioRoom();
@@ -1156,7 +1210,7 @@ const ApiPlayground = () => {
 
   if (!unlocked) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-background p-4">
         <form
           onSubmit={handlePasswordSubmit}
           className="w-full max-w-sm bg-surface-card border border-gray-3 rounded-xl p-6 space-y-4"

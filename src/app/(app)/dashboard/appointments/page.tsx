@@ -100,6 +100,7 @@ const Appointments = () => {
         },
       ],
       fn: (row: CareSeekerAppointmentType, value: any) => {
+        console.log({ value });
         setActiveSeekerFilters((prev) => ({ ...prev, status: value }));
         return true;
       },

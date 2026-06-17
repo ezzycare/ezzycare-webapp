@@ -95,21 +95,21 @@ const CareSeekerDashboard = () => {
           <p className="text-sm">How are you doing today? </p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-3 mt-4 md:mt-0">
+        <div className="w-full flex flex-col md:flex-row gap-3 mt-4 md:mt-0">
           <SearchInput
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="Search for doctors or hospitals"
-            className="max-w-90! rounded-xl! h-10!"
+            className="w-full sm:max-w-90! rounded-xl! h-10!"
             inputClassName="text-xs!"
             onClear={() => handleSearch('')}
             onOpenFilter={() => setShowFilterModal(true)}
           />
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 w-full sm:w-fit">
             <Button
               variant="primary"
-              className="gap-2 h-10! text-sm"
+              className="w-1/2 sm:w-auto gap-2 h-10! text-sm"
               onClick={() => {
                 updateBooking({
                   state: isHospitalAppointment
@@ -124,7 +124,7 @@ const CareSeekerDashboard = () => {
             </Button>
             <Button
               variant="primary"
-              className="bg-pink-10! hover:bg-pink-10/80! gap-2 h-10! text-sm"
+              className="w-1/2 sm:w-auto bg-pink-10! hover:bg-pink-10/80! gap-2 h-10! text-sm"
               onClick={() => {
                 updateBooking({ state: 'book-appointment' });
                 setShowBookHospitalModal(true);
@@ -176,7 +176,7 @@ const CareSeekerDashboard = () => {
           <h2 className="text-text font-semibold">Upcoming Appointments</h2>
           {!!appointments?.length && (
             <Link href="/dashboard/appointments" className="ml-auto">
-              <p className="text-primary text-sm font-medium cursor-pointer">
+              <p className="text-primary text-sm font-medium cursor-pointer whitespace-nowrap">
                 View all
               </p>
             </Link>

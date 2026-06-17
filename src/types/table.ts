@@ -26,7 +26,7 @@ export type FilterGroup<T> = {
     label: string;
     value: string;
   }[];
-  fn: (row: T, value: string) => boolean;
+  fn: (row: T, value: string | undefined) => boolean;
 };
 
 export type BaseTableProps<T> = {
@@ -38,6 +38,7 @@ export type BaseTableProps<T> = {
   filterLabel?: string;
   // filters?: FilterOption<T>[];
   filters?: FilterGroup<T>[];
+  onSearch?: (query: string) => void;
   rowRender?: (row: T, columns: Column<T>[], index: number) => ReactNode;
   children?: ReactNode;
   emptyState?: ReactNode;

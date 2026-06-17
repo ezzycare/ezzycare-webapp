@@ -38,7 +38,9 @@ import SeekerWallet from './SeekerWallet';
 import ShareApp from './ShareApp';
 
 const CareSeekerSettings = () => {
-  const [currentView, setCurrentView] = useState('Profile');
+  const isMobile = useIsMobile();
+
+  const [currentView, setCurrentView] = useState(isMobile ? '' : 'Profile');
   const user = useAuthStore((state: AuthStore) => state.user);
   const initials = user
     ? getInitials(`${user.firstName} ${user.lastName}`)
@@ -107,18 +109,16 @@ const CareSeekerSettings = () => {
     },
   ];
 
-  const isMobile = useIsMobile();
-
   const selectedComponent = settingsItems.find(
     (item) => item.title === currentView
   )?.component;
 
-  if (isMobile && currentView !== 'Profile') {
+  if (isMobile && currentView !== '') {
     return (
       <div className="h-full flex flex-col bg-surface-card">
         <header className="flex items-center gap-3 px-4 py-3 border-b border-gray-4 bg-surface-card sticky top-0 z-10">
           <button
-            onClick={() => setCurrentView('Profile')}
+            onClick={() => setCurrentView('')}
             className="p-1 -ml-1 cursor-pointer"
           >
             <ArrowLeft size={20} className="text-text" />
@@ -163,7 +163,7 @@ const CareSeekerSettings = () => {
         </header>
 
         <div className="flex-1 overflow-y-auto px-4 py-2">
-          {settingsItems.slice(1).map((item) => (
+          {settingsItems.slice(0).map((item) => (
             <div
               key={item.title}
               className="flex items-center gap-3 px-3 py-3.5 cursor-pointer active:bg-gray-2 transition-colors"

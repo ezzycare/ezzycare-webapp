@@ -7,16 +7,49 @@ import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import { Cross1Icon } from '@radix-ui/react-icons';
 import dayjs from 'dayjs';
 import { Dot } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+
+import { useReadAllNotificationsMutation } from '@/apiQuery/notifications/readAllNotifications';
+import { useReadNotificationMutation } from '@/apiQuery/notifications/readNotification';
+import { useNotificationsStore } from '@/stores/notificationsStore';
 
 const Noti = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const notifications = useNotificationsStore((state) => state.notifications);
+  const markAsReadLocal = useNotificationsStore((state) => state.markAsRead);
+  const markAllAsReadLocal = useNotificationsStore(
+    (state) => state.markAllAsRead
+  );
+
+  const { mutate: markRead } = useReadNotificationMutation();
+  const { mutate: markAllRead } = useReadAllNotificationsMutation();
+
+  const unreadCount = useMemo(
+    () => notifications.filter((n) => !n.isRead).length,
+    [notifications]
+  );
+
+  const handleMarkAsRead = (id: string) => {
+    markAsReadLocal(id);
+    markRead({ id });
+  };
+
+  const handleMarkAllAsRead = () => {
+    markAllAsReadLocal();
+    markAllRead();
+  };
+
   return (
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger>
-        <div className="bg-gray-2 w-10 h-10 rounded-full flex items-center justify-center ml-3 mr-2 cursor-pointer">
+        <div className="bg-gray-2 w-10 h-10 rounded-full flex items-center justify-center ml-3 mr-2 cursor-pointer relative">
           <NotificationDarkIconLocal />
+          {unreadCount > 0 && (
+            <span className="absolute -top-px -right-px w-5 h-5 bg-primary text-white text-[10px] font-semibold rounded-full flex items-center justify-center">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          )}
         </div>
       </PopoverTrigger>
 
@@ -27,7 +60,17 @@ const Noti = () => {
             onClick={() => setIsOpen(false)}
           />
 
-          <h3 className="px-8.5 text-2xl font-medium">Notifications</h3>
+          <div className="px-8.5 flex items-center justify-between">
+            <h3 className="text-2xl font-medium">Notifications</h3>
+            {unreadCount > 0 && (
+              <button
+                onClick={handleMarkAllAsRead}
+                className="text-xs text-primary font-medium hover:underline cursor-pointer"
+              >
+                Mark all as read
+              </button>
+            )}
+          </div>
 
           <div
             className="mt-3.25 max-h-[70vh] overflow-y-auto"
@@ -36,10 +79,19 @@ const Noti = () => {
               scrollbarColor: 'var(--primary) transparent',
             }}
           >
-            {notifications?.map((item) => (
+            {notifications.length === 0 && (
+              <p className="text-center text-sm text-text-muted py-8">
+                No notifications
+              </p>
+            )}
+
+            {notifications.map((item) => (
               <div
                 key={item.id}
                 className="px-7 py-4.25 border-b border-gray-3 grid grid-cols-[40px_1fr] gap-3.5 cursor-pointer"
+                onClick={() => {
+                  if (!item.isRead) handleMarkAsRead(item.id);
+                }}
               >
                 <div
                   className={cn(`
@@ -85,7 +137,7 @@ const Noti = () => {
                     </p>
                   </div>
 
-                  <p className="text-sm text-muted mt-0.5">{item.content}</p>
+                  <p className="text-sm text-muted mt-0.5">{item.message}</p>
                 </div>
               </div>
             ))}
@@ -97,101 +149,3 @@ const Noti = () => {
 };
 
 export default Noti;
-
-interface Notification {
-  id: string;
-  title: string;
-  content: string;
-  isNew: boolean;
-  isRead: boolean;
-  createdAt: string;
-}
-
-export const notifications: Notification[] = [
-  {
-    id: 'notif-001',
-    title: 'Appointment Confirmed',
-    content:
-      'Your appointment with Dr. Amina Bello has been confirmed for May 28 at 10:00 AM.',
-    isNew: true,
-    isRead: false,
-    createdAt: '2026-05-25T08:30:00Z',
-  },
-  {
-    id: 'notif-002',
-    title: 'Video Consultation Reminder',
-    content:
-      'Your video consultation starts in 30 minutes. Please join on time.',
-    isNew: true,
-    isRead: false,
-    createdAt: '2026-05-25T09:00:00Z',
-  },
-  {
-    id: 'notif-003',
-    title: 'Prescription Ready',
-    content: 'Your prescription has been uploaded by Dr. Chinedu Okafor.',
-    isNew: false,
-    isRead: true,
-    createdAt: '2026-05-24T14:20:00Z',
-  },
-  {
-    id: 'notif-004',
-    title: 'Appointment Cancelled',
-    content:
-      'Your appointment scheduled for May 26 has been cancelled. Please reschedule.',
-    isNew: false,
-    isRead: false,
-    createdAt: '2026-05-24T16:10:00Z',
-  },
-  {
-    id: 'notif-005',
-    title: 'Payment Successful',
-    content: 'Your payment of ₦15,000 for clinic consultation was successful.',
-    isNew: true,
-    isRead: false,
-    createdAt: '2026-05-25T07:15:00Z',
-  },
-  {
-    id: 'notif-006',
-    title: 'New Health Tip',
-    content:
-      'Stay hydrated and maintain at least 30 minutes of physical activity daily.',
-    isNew: false,
-    isRead: true,
-    createdAt: '2026-05-23T11:45:00Z',
-  },
-  {
-    id: 'notif-007',
-    title: 'Doctor Availability Updated',
-    content:
-      'Dr. Femi Adeyemi has updated available consultation hours for this week.',
-    isNew: true,
-    isRead: false,
-    createdAt: '2026-05-25T10:05:00Z',
-  },
-  {
-    id: 'notif-008',
-    title: 'Lab Results Available',
-    content:
-      'Your recent lab test results are now available in your medical records.',
-    isNew: false,
-    isRead: true,
-    createdAt: '2026-05-22T18:30:00Z',
-  },
-  {
-    id: 'notif-009',
-    title: 'Profile Verification Complete',
-    content: 'Your account verification has been completed successfully.',
-    isNew: false,
-    isRead: true,
-    createdAt: '2026-05-21T09:50:00Z',
-  },
-  {
-    id: 'notif-010',
-    title: 'Upcoming Home Visit',
-    content: 'Your scheduled home consultation is tomorrow at 2:00 PM.',
-    isNew: true,
-    isRead: false,
-    createdAt: '2026-05-25T06:40:00Z',
-  },
-];

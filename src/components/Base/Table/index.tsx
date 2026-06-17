@@ -22,6 +22,7 @@ export default function BaseTable<T extends Record<string, any>>({
   children,
   emptyState = 'No data available',
   onRowClick,
+  onSearch,
   className = '',
   searchContainerClassName,
 }: BaseTableProps<T>) {
@@ -71,21 +72,22 @@ export default function BaseTable<T extends Record<string, any>>({
      * FILTER
      */
     if (filters.length > 0) {
-      rows = rows.filter((row) => {
-        return filters.every((filterGroup) => {
+      rows = rows.filter((row) =>
+        filters.every((filterGroup) => {
           const value = appliedFilters[filterGroup.key];
 
-          if (!value || value === 'all') return true;
-
-          return filterGroup.fn(row, value);
-        });
-      });
+          return filterGroup.fn(
+            row,
+            !value || value === 'all' ? undefined : value
+          );
+        })
+      );
     }
 
     /**
      * SEARCH
      */
-    if (search.trim()) {
+    if (search.trim() && !onSearch) {
       const query = search.toLowerCase();
 
       rows = rows.filter((row) =>
@@ -124,7 +126,7 @@ export default function BaseTable<T extends Record<string, any>>({
     }
 
     return rows;
-  }, [data, columns, filters, search, appliedFilters, sortConfig]);
+  }, [data, columns, filters, search, appliedFilters, sortConfig, onSearch]);
 
   return (
     <div
@@ -147,7 +149,12 @@ export default function BaseTable<T extends Record<string, any>>({
               >
                 <TextInput
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => {
+                    if (onSearch) {
+                      onSearch(e.target.value);
+                    }
+                    setSearch(e.target.value);
+                  }}
                   placeholder={searchPlaceholder}
                   leftIcon={
                     <SearchIcon size={18} className="text-text-muted ml-2" />
@@ -184,7 +191,7 @@ export default function BaseTable<T extends Record<string, any>>({
                 >
                   Apply Filters
                 </Button>
-                {Object.values(appliedFilters)?.length > 0 && (
+                {Object.values(appliedFilters).some(Boolean) && (
                   <Button
                     className="h-9! bg-error-3a! text-error! text-xs font-semibold"
                     onClick={() => {

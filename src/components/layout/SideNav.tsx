@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 
-const DashNav = ({
+const SideNav = ({
   sidebarOpen,
   setSideBarOpen,
   accountType,
@@ -58,7 +58,7 @@ const DashNav = ({
   return (
     <div
       className={cn(
-        'absolute top-0 bottom-0 lg:fixed lg:w-72.5 inset-0 z-50',
+        'fixed top-0 bottom-0 lg:fixed lg:w-72.5 inset-0 z-50',
         isMobile && sidebarOpen
           ? 'bg-black/20 w-full left-0 right-0 cursor-pointer'
           : 'pointer-events-none'
@@ -124,4 +124,4 @@ const DashNav = ({
   );
 };
 
-export default DashNav;
+export default SideNav;

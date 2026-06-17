@@ -6,12 +6,14 @@ import {
   useGetCategoriesQuery,
 } from '@/apiQuery/categories/getCategories';
 import { useGetHospitalServices } from '@/apiQuery/hospital/get/getServices';
+import { useGetNotificationsInfiniteQuery } from '@/apiQuery/notifications/getNotifications';
 import { useGetProfile } from '@/apiQuery/users/getProfile';
 import SideNav from '@/components/layout/SideNav';
 import TopNav from '@/components/layout/TopNav';
 import { useTrackPreviousRoute } from '@/hooks/useTrackPreviousRoute';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
+import { useNotificationsStore } from '@/stores/notificationsStore';
 import {
   ServicesStore,
   ServicesType,
@@ -36,12 +38,16 @@ const DashboardClientLayout = ({
   const setServices = useServicesStore(
     (state: ServicesStore) => state.setServices
   );
+  const setNotifications = useNotificationsStore(
+    (state) => state.setNotifications
+  );
 
   const { user } = useGetProfile();
   const { categories } = useGetCategoriesQuery({
     type: 'HOSPITAL' as CategoryType,
   });
   const { services } = useGetHospitalServices();
+  const { notifications } = useGetNotificationsInfiniteQuery({ limit: 50 });
 
   useEffect(() => {
     if (user) {
@@ -57,7 +63,11 @@ const DashboardClientLayout = ({
     if (services) {
       setServices(services as ServicesType[]);
     }
-  }, [categories, services]);
+
+    if (notifications) {
+      setNotifications(notifications);
+    }
+  }, [categories, services, notifications]);
 
   useTrackPreviousRoute();
 

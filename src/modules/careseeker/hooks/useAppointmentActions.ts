@@ -14,12 +14,19 @@ export const usePaymentHandlers = () => {
     updateBooking,
     updatePaymentReference,
     setCreatedAppointment,
+    resetBookingFlow,
+    resetHospitalFlow,
   } = useBookAppointmentStore();
 
   const { mutate: initiatePayment, isPending: isPendingPayment } =
     useInitializePaymentMutation();
   const { mutate: initiateWalletPayment, isPending: isPendingWalletPayment } =
     usePayWithWalletMutation();
+
+  const cleanUp = () => {
+    resetBookingFlow();
+    resetHospitalFlow();
+  };
 
   const handlePayment = (paymentMethod: string) => {
     if (!createdAppointment) return;
@@ -43,6 +50,7 @@ export const usePaymentHandlers = () => {
       onSuccess: () => {
         updateBooking({ state: 'appointment-pending' });
         setCreatedAppointment(null);
+        cleanUp();
       },
       onError: (error: Error | unknown) => {
         toaster.error(
@@ -59,6 +67,7 @@ export const usePaymentHandlers = () => {
           updatePaymentReference(res.data?.data);
           updateBooking({ state: 'select-payment' });
           setCreatedAppointment(null);
+          cleanUp();
           window.location.href = res.data?.data?.authorization_url;
         }
       },
