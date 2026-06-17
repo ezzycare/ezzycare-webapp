@@ -139,6 +139,16 @@ export const getAccountNavItems = (accountType: ACCOUNT_TYPE) => {
         'settings',
       ].map((val) => (val?.length ? `/dashboard/${val}` : `/dashboard`));
 
+    case 'DOCTOR':
+      return [
+        '',
+        'appointments',
+        'messages',
+        'wallet',
+        'profile',
+        'settings',
+      ].map((val) => (val?.length ? `/dashboard/${val}` : `/dashboard`));
+
     case 'AGENT':
       return ['', 'patients', 'notifications', 'appointments', 'settings'].map(
         (val) => (val?.length ? `/dashboard/${val}` : `/dashboard`)

@@ -10,23 +10,20 @@ interface NotificationsState {
   markAllAsRead: () => void;
 }
 
-export const useNotificationsStore = create<NotificationsState>()(
-  (set) => ({
-    notifications: [],
+export const useNotificationsStore = create<NotificationsState>()((set) => ({
+  notifications: [],
 
-    setNotifications: (items) => set({ notifications: items }),
+  setNotifications: (items) => set({ notifications: items }),
 
-    markAsRead: (id) =>
-      set((state) => ({
-        notifications: state.notifications.map((n) =>
-          n.id === id ? { ...n, isRead: true } : n
-        ),
-      })),
+  markAsRead: (id) =>
+    set((state) => ({
+      notifications: state.notifications.map((n) =>
+        n.id === id ? { ...n, isRead: true } : n
+      ),
+    })),
 
-    markAllAsRead: () =>
-      set((state) => ({
-        notifications: state.notifications.map((n) => ({ ...n, isRead: true })),
-      })),
-  })
-);
-
+  markAllAsRead: () =>
+    set((state) => ({
+      notifications: state.notifications.map((n) => ({ ...n, isRead: true })),
+    })),
+}));

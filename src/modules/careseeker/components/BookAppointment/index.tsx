@@ -71,7 +71,6 @@ const BookDoctorAppointment = ({
     isHospitalAppointment,
     updateBooking,
     setCreatedAppointment,
-    updatePaymentReference,
     resetBookingFlow,
     resetHospitalFlow,
     resetPaymentState,
@@ -110,6 +109,7 @@ const BookDoctorAppointment = ({
         'book-appointment',
         'book-others',
         'select-payment',
+        'appointment-pending',
       ].includes(state),
     [state]
   );

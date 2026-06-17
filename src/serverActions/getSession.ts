@@ -32,4 +32,6 @@ export async function updateSession(token: string) {
 export async function removeSession() {
   const cookieStore = await cookies();
   cookieStore.delete(general.COOKIE_NAME);
+  cookieStore.delete(general.TOKEN);
+  cookieStore.delete(general.USER);
 }

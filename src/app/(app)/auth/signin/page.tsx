@@ -51,6 +51,7 @@ const SignInForm = () => {
       }
 
       if (response.data) {
+        console.log({ response });
         setLoading(true);
         if (!response.data.email_verified) {
           push(
@@ -58,7 +59,6 @@ const SignInForm = () => {
             // '/auth/verify-email?type=signin&resend=true&email=' + data.email
           );
         }
-
         authStore.updateUser(response.data.user);
         authStore.setToken(response.data.access_token);
 

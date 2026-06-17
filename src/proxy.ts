@@ -1,15 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { getSessionFromRequest } from './services/getSessionFromRequest';
-import { blockedNavItems, navItems } from './utils/route';
-
-// Filter landing page links
-const navPrefixes = navItems
-  ?.map((i) => i.path)
-  ?.filter((p) => p !== '#' && p !== '/');
-
-const PUBLIC_PREFIXES = [...navPrefixes, '/auth'];
-const PUBLIC_EXACT = new Set<string>(['/']);
 
 const AUTH_PATHS_FOR_AUTHENTICATED = new Set<string>([
   '/auth/verify-email',
@@ -24,22 +15,15 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const session = getSessionFromRequest(req);
+  let session: Record<string, unknown> = {};
 
-  const isPublic =
-    PUBLIC_EXACT.has(pathname) ||
-    PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'));
-
-  const isBlocked = blockedNavItems(session?.user?.accountType).includes(
-    pathname
-  );
-
-  if ((!session?.access_token && !isPublic) || isBlocked) {
-    const loginUrl = new URL('/auth/signin', origin);
-    loginUrl.searchParams.set('next', pathname);
-    return NextResponse.redirect(loginUrl);
+  try {
+    session = getSessionFromRequest(req);
+  } catch {
+    // Malformed cookie — skip auth checks
   }
 
+  // Only redirect authenticated users away from auth pages
   if (
     session?.access_token &&
     pathname?.includes('/auth') &&

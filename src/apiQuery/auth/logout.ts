@@ -7,8 +7,9 @@ export const handleLogout = async () => {
 
     await removeSession();
 
-    window.location.reload();
+    window.location.href = '/auth/signin';
   } catch (error) {
     console.error('Logout failed:', error);
+    window.location.href = '/auth/signin';
   }
 };

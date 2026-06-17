@@ -19,6 +19,7 @@ import {
   ServicesType,
   useServicesStore,
 } from '@/stores/servicesStore';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 const DashboardClientLayout = ({
@@ -30,6 +31,7 @@ const DashboardClientLayout = ({
   accountType: ACCOUNT_TYPE;
   user: User | null;
 }) => {
+  const router = useRouter();
   const [sidebarOpen, setSideBarOpen] = useState(false);
   const updateUser = useAuthStore((state: AuthStore) => state.updateUser);
   const setCategories = useCategoryStore(

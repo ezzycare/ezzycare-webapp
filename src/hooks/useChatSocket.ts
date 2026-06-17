@@ -31,7 +31,10 @@ export const useChatSocket = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<Record<string, boolean>>({});
   const [typingUsers, setTypingUsers] = useState<Record<string, boolean>>({});
-  const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
+  const socketRef = useRef<Socket<
+    ServerToClientEvents,
+    ClientToServerEvents
+  > | null>(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -79,42 +82,43 @@ export const useChatSocket = () => {
 
       // Update conversations sidebar
       queryClient.setQueryData<{
-        pages: { data?: { items: { peer: { id: string }; lastMessage?: object }[] } }[];
-      }>(
-        ['chat', 'conversations', 'infinite'],
-        (old) => {
-          if (!old) return old;
-          return {
-            ...old,
-            pages: old.pages.map((page) => ({
-              ...page,
-              data: page.data
-                ? {
-                    ...page.data,
-                    items: page.data.items.map((c) =>
-                      c.peer.id === peerId
-                        ? {
-                            ...c,
-                            lastMessage: {
-                              id: message.id,
-                              senderId: message.senderId,
-                              receiverId: message.receiverId,
-                              message: message.message,
-                              isRead: message.isRead,
-                              createdAt: message.createdAt,
-                            },
-                            unreadCount: c.peer.id === peerId
-                              ? ((c as { unreadCount?: number }).unreadCount ?? 0) + 1
+        pages: {
+          data?: { items: { peer: { id: string }; lastMessage?: object }[] };
+        }[];
+      }>(['chat', 'conversations', 'infinite'], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            data: page.data
+              ? {
+                  ...page.data,
+                  items: page.data.items.map((c) =>
+                    c.peer.id === peerId
+                      ? {
+                          ...c,
+                          lastMessage: {
+                            id: message.id,
+                            senderId: message.senderId,
+                            receiverId: message.receiverId,
+                            message: message.message,
+                            isRead: message.isRead,
+                            createdAt: message.createdAt,
+                          },
+                          unreadCount:
+                            c.peer.id === peerId
+                              ? ((c as { unreadCount?: number }).unreadCount ??
+                                  0) + 1
                               : (c as { unreadCount?: number }).unreadCount,
-                          }
-                        : c
-                    ),
-                  }
-                : page.data,
-            })),
-          };
-        }
-      );
+                        }
+                      : c
+                  ),
+                }
+              : page.data,
+          })),
+        };
+      });
 
       // Browser notification for background tabs
       if (document.hidden && Notification.permission === 'granted') {

@@ -24,8 +24,8 @@ import { debounce, formatCurrency } from '@/utils/helper';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
-import AppointmentFilterModal from './Appointments.tsx/AppointmentFilterModal';
-import CareSeekerAppointmentsTable from './Appointments.tsx/CareSeekerAppointmentsTable';
+import AppointmentFilterModal from './Appointments/AppointmentFilterModal';
+import CareSeekerAppointmentsTable from './Appointments/CareSeekerAppointmentsTable';
 import BioDetailsModal from './BioDetailsModal';
 import BookDoctorAppointment from './BookAppointment';
 import BookHospitalAppointment from './BookHospitalAppointment';
@@ -95,18 +95,18 @@ const CareSeekerDashboard = () => {
           <p className="text-sm">How are you doing today? </p>
         </div>
 
-        <div className="w-full flex flex-col md:flex-row gap-3 mt-4 md:mt-0">
+        <div className="w-full sm:w-fit flex flex-col md:flex-row gap-3 mt-4 md:mt-0">
           <SearchInput
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="Search for doctors or hospitals"
-            className="w-full sm:max-w-90! rounded-xl! h-10!"
+            className="w-full sm:max-w-80! rounded-xl! h-10!"
             inputClassName="text-xs!"
             onClear={() => handleSearch('')}
             onOpenFilter={() => setShowFilterModal(true)}
           />
 
-          <div className="flex gap-3 w-full sm:w-fit">
+          <div className="flex gap-3 w-full sm:w-auto">
             <Button
               variant="primary"
               className="w-1/2 sm:w-auto gap-2 h-10! text-sm"

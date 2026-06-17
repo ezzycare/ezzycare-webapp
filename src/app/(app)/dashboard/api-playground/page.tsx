@@ -22,6 +22,16 @@ import { getAgoraToken } from '@/apiQuery/communication/getAgoraToken';
 import { getTwilioToken } from '@/apiQuery/communication/getToken';
 import { getDoctorsDiscovery } from '@/apiQuery/doctor/getDoctorDiscovery';
 import { getSingleDoctor as getDoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
+import { acceptDoctorAppointment } from '@/apiQuery/doctor/appointments/acceptAppointment';
+import { cancelDoctorAppointment } from '@/apiQuery/doctor/appointments/cancelAppointment';
+import { completeDoctorAppointment } from '@/apiQuery/doctor/appointments/completeAppointment';
+import { declineDoctorAppointment } from '@/apiQuery/doctor/appointments/declineAppointment';
+import { getDoctorAppointment } from '@/apiQuery/doctor/appointments/getAppointment';
+import { getDoctorAppointments } from '@/apiQuery/doctor/appointments/getAppointments';
+import { getDoctorAppointmentStats } from '@/apiQuery/doctor/appointments/getAppointmentStats';
+import { rescheduleDoctorAppointment } from '@/apiQuery/doctor/appointments/rescheduleAppointment';
+import { startDoctorAppointment } from '@/apiQuery/doctor/appointments/startAppointment';
+import { submitDoctorConsultationNotes } from '@/apiQuery/doctor/appointments/submitConsultationNotes';
 import { getAppointments } from '@/apiQuery/healthcareAppointments/get/getAppointments';
 import { getAppointment } from '@/apiQuery/healthcareAppointments/get/getSingleAppointment';
 import { cancelAppointment } from '@/apiQuery/healthcareAppointments/patch/cancelAppointment';
@@ -268,6 +278,107 @@ const modules: ModuleGroup[] = [
         params: [{ key: 'doctorId', label: 'Doctor ID' }],
         description: 'GET /doctors-discovery/{id}',
         module: 'doctor',
+      },
+    ],
+  },
+  {
+    key: 'doctorAppointments',
+    label: 'Doctor Appointments',
+    endpoints: [
+      {
+        method: 'GET',
+        name: 'Appointments',
+        params: [
+          { key: 'page', label: 'Page', type: 'number', placeholder: '1' },
+          { key: 'limit', label: 'Limit', type: 'number', placeholder: '20' },
+          {
+            key: 'filter',
+            label: 'Filter',
+            placeholder: 'all | upcoming | completed | cancelled',
+          },
+          { key: 'hospitalId', label: 'Hospital ID' },
+        ],
+        description: 'GET /doctors/appointments',
+        module: 'doctorAppointments',
+      },
+      {
+        method: 'GET',
+        name: 'Stats',
+        params: [],
+        description: 'GET /doctors/appointments/stats',
+        module: 'doctorAppointments',
+      },
+      {
+        method: 'GET',
+        name: 'Single Appointment',
+        params: [{ key: 'id', label: 'Appointment ID' }],
+        description: 'GET /doctors/appointments/{id}',
+        module: 'doctorAppointments',
+      },
+      {
+        method: 'PATCH',
+        name: 'Accept',
+        params: [{ key: 'id', label: 'Appointment ID' }],
+        description: 'PATCH /doctors/appointments/{id}/accept',
+        module: 'doctorAppointments',
+      },
+      {
+        method: 'PATCH',
+        name: 'Decline',
+        params: [
+          { key: 'id', label: 'Appointment ID' },
+          { key: 'reason', label: 'Reason' },
+        ],
+        description: 'PATCH /doctors/appointments/{id}/decline',
+        module: 'doctorAppointments',
+      },
+      {
+        method: 'PATCH',
+        name: 'Cancel',
+        params: [
+          { key: 'id', label: 'Appointment ID' },
+          { key: 'reason', label: 'Reason' },
+        ],
+        description: 'PATCH /doctors/appointments/{id}/cancel',
+        module: 'doctorAppointments',
+      },
+      {
+        method: 'PATCH',
+        name: 'Start',
+        params: [{ key: 'id', label: 'Appointment ID' }],
+        description: 'PATCH /doctors/appointments/{id}/start',
+        module: 'doctorAppointments',
+      },
+      {
+        method: 'PATCH',
+        name: 'Complete',
+        params: [{ key: 'id', label: 'Appointment ID' }],
+        description: 'PATCH /doctors/appointments/{id}/complete',
+        module: 'doctorAppointments',
+      },
+      {
+        method: 'POST',
+        name: 'Consultation Notes',
+        params: [
+          { key: 'id', label: 'Appointment ID' },
+          { key: 'diagnostic', label: 'Diagnostic' },
+          { key: 'symptomsObserved', label: 'Symptoms Observed' },
+          { key: 'prescription', label: 'Prescription' },
+          { key: 'followUpInstructions', label: 'Follow Up Instructions' },
+        ],
+        description: 'POST /doctors/appointments/{id}/consultation-notes',
+        module: 'doctorAppointments',
+      },
+      {
+        method: 'PATCH',
+        name: 'Reschedule',
+        params: [
+          { key: 'id', label: 'Appointment ID' },
+          { key: 'appointmentDate', label: 'Date', placeholder: 'YYYY-MM-DD' },
+          { key: 'appointmentTime', label: 'Time', placeholder: 'hh:mm A' },
+        ],
+        description: 'PATCH /doctors/appointments/{id}/reschedule',
+        module: 'doctorAppointments',
       },
     ],
   },
@@ -930,6 +1041,51 @@ const executeApi = async (callKey: string, params: Record<string, string>) => {
       return getDoctorsDiscovery();
     case 'doctor_Single Doctor':
       return getDoctorProfile({ id: params.doctorId });
+
+    // Doctor Appointments
+    case 'doctorAppointments_Appointments':
+      return getDoctorAppointments({
+        page: params.page ? Number(params.page) : 1,
+        limit: params.limit ? Number(params.limit) : 20,
+        filter:
+          (params.filter as 'all' | 'upcoming' | 'completed' | 'cancelled') ||
+          undefined,
+        hospitalId: params.hospitalId || undefined,
+      });
+    case 'doctorAppointments_Stats':
+      return getDoctorAppointmentStats();
+    case 'doctorAppointments_Single Appointment':
+      return getDoctorAppointment({ id: params.id });
+    case 'doctorAppointments_Accept':
+      return acceptDoctorAppointment({ id: params.id });
+    case 'doctorAppointments_Decline':
+      return declineDoctorAppointment({
+        id: params.id,
+        reason: params.reason,
+      });
+    case 'doctorAppointments_Cancel':
+      return cancelDoctorAppointment({
+        id: params.id,
+        reason: params.reason,
+      });
+    case 'doctorAppointments_Start':
+      return startDoctorAppointment({ id: params.id });
+    case 'doctorAppointments_Complete':
+      return completeDoctorAppointment({ id: params.id });
+    case 'doctorAppointments_Consultation Notes':
+      return submitDoctorConsultationNotes({
+        id: params.id,
+        diagnostic: params.diagnostic,
+        symptomsObserved: params.symptomsObserved,
+        prescription: params.prescription,
+        followUpInstructions: params.followUpInstructions,
+      });
+    case 'doctorAppointments_Reschedule':
+      return rescheduleDoctorAppointment({
+        id: params.id,
+        appointmentDate: params.appointmentDate,
+        appointmentTime: params.appointmentTime,
+      });
 
     // Healthcare Appointments
     case 'healthcareAppointments_Appointments':

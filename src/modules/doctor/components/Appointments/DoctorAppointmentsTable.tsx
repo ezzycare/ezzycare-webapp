@@ -1,36 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
+import {
+  DoctorAppointment,
+  DoctorAppointmentClient,
+} from '@/apiQuery/doctor/appointments/types';
 import { useCancelAppointmentMutation } from '@/apiQuery/healthcareAppointments/patch/cancelAppointment';
 import BaseTable from '@/components/Base/Table';
 import { ChatIconLocal } from '@/icons/DashboardIcons';
+import { toaster } from '@/lib/toaster';
+import CancelBookingModal from '@/modules/careseeker/components/Appointments/CancelBookingModal';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
-import { CareSeekerAppointmentType } from '@/types/appointments';
 import { BaseTableProps, Column } from '@/types/table';
 import { statusColor, StatusType } from '@/utils/helper';
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import CancelBookingModal from './CancelBookingModal';
 
 const CareSeekerAppointmentsTable = ({
   data,
   columns,
   searchable,
   ...props
-}: Partial<BaseTableProps<CareSeekerAppointmentType>> & {
-  data: CareSeekerAppointmentType[];
+}: Partial<BaseTableProps<DoctorAppointment>> & {
+  data: DoctorAppointment[];
   searchable?: boolean;
-  columns?: Column<CareSeekerAppointmentType>[];
+  columns?: Column<DoctorAppointment>[];
 }) => {
   const { push } = useRouter();
   const categories = useCategoryStore(
     (state: CategoryStore) => state.categories.allCategories
   );
-  const [currentRow, setCurrentRow] =
-    useState<CareSeekerAppointmentType | null>(null);
+  const [currentRow, setCurrentRow] = useState<DoctorAppointment | null>(null);
   const [openCancelBookingModal, setOpenCancelBookingModal] =
     useState<boolean>(false);
 
@@ -41,12 +43,13 @@ const CareSeekerAppointmentsTable = ({
     if (!currentRow?.id) return;
     cancelAppointment(
       {
-        id: currentRow.id!,
+        id: Number(currentRow.id!),
         reason,
       },
       {
         onSuccess: () => {
           setOpenCancelBookingModal(false);
+          toaster.success('Appointment cancelled successfully');
         },
       }
     );
@@ -54,28 +57,20 @@ const CareSeekerAppointmentsTable = ({
 
   const localColumns = [
     {
-      field: 'user',
-      label: 'Doctor',
+      field: 'client',
+      label: 'Patient Name',
       sortable: false,
-      render: (value: DoctorProfile) => (
+      render: (value: DoctorAppointmentClient) => (
         <span>{`Dr. ${value.firstName} ${value.lastName}`}</span>
       ),
     },
 
     {
-      field: 'age',
-      label: 'Specialty',
+      field: 'appointmentType',
+      label: 'Consultation type',
       sortable: false,
-      render: (_: any, row: CareSeekerAppointmentType) => {
-        return (
-          <span>
-            {
-              categories.find((c) =>
-                [c.id, c.parentId].includes(row.user?.categoryId || '')
-              )?.name
-            }
-          </span>
-        );
+      render: (value: string) => {
+        return <span className="capitalize">{value?.toLowerCase()}</span>;
       },
     },
     {
@@ -84,14 +79,6 @@ const CareSeekerAppointmentsTable = ({
       sortable: false,
       render: (value: string) => {
         return <span>{dayjs(value).format('MMM DD, YYYY HH:mm A')}</span>;
-      },
-    },
-    {
-      field: 'uid',
-      label: 'Location',
-      sortable: false,
-      render: (_: any, row: CareSeekerAppointmentType) => {
-        return <span>{row?.user?.userDetails?.address}</span>;
       },
     },
     {
@@ -111,7 +98,7 @@ const CareSeekerAppointmentsTable = ({
       field: 'actions',
       label: 'Actions',
 
-      render: (_: any, row: CareSeekerAppointmentType) => (
+      render: (_: any, row: DoctorAppointment) => (
         <div className="flex items-center gap-1.5">
           {row.status === 'COMPLETED' ? (
             <button
@@ -155,7 +142,7 @@ const CareSeekerAppointmentsTable = ({
 
   return (
     <div>
-      <BaseTable<CareSeekerAppointmentType>
+      <BaseTable<DoctorAppointment>
         data={data}
         searchable={searchable || false}
         columns={columns || localColumns}

@@ -2,21 +2,36 @@
 'use client';
 
 import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
+import { useGetDoctorAppointmentsInfiniteQuery } from '@/apiQuery/doctor/appointments/getAppointments';
+import {
+  AppointmentFilter,
+  DoctorAppointment,
+} from '@/apiQuery/doctor/appointments/types';
 import { useGetAppointmentsInfiniteQuery } from '@/apiQuery/healthcareAppointments/get/getAppointments';
 import BounceLoader from '@/components/Base/BounceLoader';
 import Pagination from '@/components/Base/Pagination';
 import SpiralLoader from '@/components/Base/SpiralLoader';
 import { useGetAccountType } from '@/hooks/useGetAccountType';
-import CareSeekerAppointmentsTable from '@/modules/careseeker/components/Appointments.tsx/CareSeekerAppointmentsTable';
+import CareSeekerAppointmentsTable from '@/modules/careseeker/components/Appointments/CareSeekerAppointmentsTable';
+import DoctorAppointmentsTable from '@/modules/doctor/components/Appointments/DoctorAppointmentsTable';
 import AppointmentsTable from '@/modules/hospital/components/Agent/AppointmentsTable';
 import { CareSeekerAppointmentType } from '@/types/appointments';
 import { BookingType } from '@/types/bookings';
 import React, { JSX, useMemo } from 'react';
 
 const Appointments = () => {
+  const { accountType } = useGetAccountType();
+
   const [currentPage, setCurrentPage] = React.useState(1);
   const [activeSeekerFilters, setActiveSeekerFilters] = React.useState({
     status: undefined,
+  });
+  const [activeDoctorFilters, setActiveDoctorFilters] = React.useState<{
+    filter: AppointmentFilter | undefined;
+    hospitalId: string | undefined;
+  }>({
+    filter: undefined,
+    hospitalId: undefined,
   });
   const {
     appointments: appointmentsData,
@@ -24,14 +39,26 @@ const Appointments = () => {
     ...restSeekerQuery
   } = useGetAppointmentsInfiniteQuery({
     ...activeSeekerFilters,
+    enabled: accountType === 'SEEKER',
   });
 
   const appointments = useMemo(
     () => (appointmentsData?.length ? appointmentsData : []),
     [appointmentsData]
   );
+  const {
+    appointments: doctorsAppointmentsData,
+    isFetching: isLoadingDoctorsAppointments,
+    ...restDoctorsQuery
+  } = useGetDoctorAppointmentsInfiniteQuery({
+    ...activeDoctorFilters,
+    enabled: accountType === 'DOCTOR',
+  });
 
-  const { accountType } = useGetAccountType();
+  const doctorsAppointments = useMemo(
+    () => (doctorsAppointmentsData?.length ? doctorsAppointmentsData : []),
+    [doctorsAppointmentsData]
+  );
 
   const paginatedData = (): BookingType[] => {
     const startIndex = (currentPage - 1) * meta.pageSize;
@@ -99,7 +126,7 @@ const Appointments = () => {
           value: 'CANCELLED',
         },
       ],
-      fn: (row: CareSeekerAppointmentType, value: any) => {
+      fn: (row: CareSeekerAppointmentType | DoctorAppointment, value: any) => {
         console.log({ value });
         setActiveSeekerFilters((prev) => ({ ...prev, status: value }));
         return true;
@@ -119,6 +146,9 @@ const Appointments = () => {
             </h3>
           }
           searchable={true}
+          onSearch={(query) =>
+            setActiveDoctorFilters((prev) => ({ ...prev, hospitalId: query }))
+          }
           searchPlaceholder="Search"
           searchContainerClassName="max-w-[404px]!"
           filters={filters}
@@ -136,7 +166,32 @@ const Appointments = () => {
       </>
     ),
     AGENT: <div>Admin</div>,
-    DOCTOR: <div>Doctor Dashboard</div>,
+    DOCTOR: (
+      <>
+        <DoctorAppointmentsTable
+          data={doctorsAppointments}
+          titleComponent={
+            <h3 className="text-text text-2xl font-medium ml-3">
+              Appointments
+            </h3>
+          }
+          filters={seekerFilters}
+          searchable={true}
+          searchPlaceholder="Search"
+          searchContainerClassName="max-w-[404px]!"
+        />
+
+        {restDoctorsQuery.hasNextPage && (
+          <div className="mt-auto pt-10">
+            <Pagination
+              pages={restDoctorsQuery.data?.pages.length || 1}
+              page={currentPage}
+              setPage={setCurrentPage}
+            />
+          </div>
+        )}
+      </>
+    ),
     SEEKER: (
       <>
         <CareSeekerAppointmentsTable
@@ -176,7 +231,9 @@ const Appointments = () => {
   return (
     <div className="p-7.5 relative">
       <div className="mt-4 rounded-xl bg-surface-card pb-5 min-h-[60vh] h-full ">
-        {isLoadingAppointments && <BounceLoader />}
+        {(isLoadingAppointments || isLoadingDoctorsAppointments) && (
+          <BounceLoader />
+        )}
         {dashboards[accountType]}
       </div>
     </div>

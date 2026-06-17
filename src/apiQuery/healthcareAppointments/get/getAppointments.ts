@@ -86,25 +86,28 @@ export const getAppointments = async (
 
 type InfiniteAppointmentsOptions = Omit<
   UseInfiniteQueryOptions<
-    ApiResponse<AppointmentsResponse>, // TQueryFnData (per-page)
-    Error, // TError
-    InfiniteData<ApiResponse<AppointmentsResponse>>, // TData (the wrapped result)
-    readonly unknown[], // TQueryKey
-    number // TPageParam
+    ApiResponse<AppointmentsResponse>,
+    Error,
+    InfiniteData<ApiResponse<AppointmentsResponse>>,
+    readonly unknown[],
+    number
   >,
-  'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam'
+  'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam' | 'enabled'
 >;
 
 export const useGetAppointmentsInfiniteQuery = (
-  params?: GetAppointmentsParams,
+  params?: GetAppointmentsParams & { enabled?: boolean },
   options?: InfiniteAppointmentsOptions
 ) => {
+  const { enabled, ...apiParams } = params ?? {};
+
   const result = useInfiniteQuery({
-    queryKey: ['healthcare', 'appointments', 'infinite', params] as const,
+    queryKey: ['healthcare', 'appointments', 'infinite', apiParams] as const,
     initialPageParam: 1,
+    enabled,
     queryFn: ({ pageParam }) =>
       getAppointments({
-        ...params,
+        ...apiParams,
         page: pageParam,
       }),
     getNextPageParam: (lastPage) => {

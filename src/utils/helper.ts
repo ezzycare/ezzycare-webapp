@@ -45,6 +45,7 @@ export type StatusType =
   | 'pending'
   | 'approved'
   | 'active'
+  | 'paid'
   | 'suspended'
   | 'not assigned'
   | 'inactive';
@@ -53,6 +54,7 @@ const statuses = {
   pending: 'bg-warning-2a text-warning-11a',
   approved: 'bg-success/10 text-success',
   active: 'bg-success/10 text-success',
+  paid: 'bg-success/10 text-success',
   upcoming: 'bg-blue-3a text-primary',
   completed: 'bg-success/10 text-success',
   suspended: 'bg-error-3a text-error',

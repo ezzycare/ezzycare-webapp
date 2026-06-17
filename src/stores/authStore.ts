@@ -33,6 +33,7 @@ export interface AuthStore {
   authToken: string | null;
   signupDetails: SignupDetails;
   passwordResetToken: string | null;
+  profileCompleted?: boolean;
   updateUser: (user: User) => void;
   setToken: (token: string) => void;
   removeAuth: () => void;

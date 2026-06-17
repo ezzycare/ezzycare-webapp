@@ -76,7 +76,7 @@ const Page = () => {
                       value: 'inactive',
                     },
                   ],
-                  fn: (row: User, value: string) =>
+                  fn: (row: User, value: string | undefined) =>
                     row.status === value?.toLowerCase(),
                 },
               ]}

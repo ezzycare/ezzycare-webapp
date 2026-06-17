@@ -6,9 +6,11 @@ import {
 import { usePayWithWalletMutation } from '@/apiQuery/payment/payWithWallet';
 import { toaster } from '@/lib/toaster';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
+import { useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 export const usePaymentHandlers = () => {
+  const queryClient = useQueryClient();
   const {
     createdAppointment,
     updateBooking,
@@ -51,6 +53,9 @@ export const usePaymentHandlers = () => {
         updateBooking({ state: 'appointment-pending' });
         setCreatedAppointment(null);
         cleanUp();
+        queryClient.invalidateQueries({
+          queryKey: ['getProfile'],
+        });
       },
       onError: (error: Error | unknown) => {
         toaster.error(
@@ -104,7 +109,7 @@ export const useModalNavigation = (allStates: string[]) => {
   };
 
   const modalClassName = useMemo(() => {
-    return ['select-payment'].includes(state)
+    return ['select-payment', 'appointment-pending'].includes(state)
       ? 'min-h-auto'
       : 'min-h-[60vh] max-h-[90vh] overflow-y-auto';
   }, [state]);
