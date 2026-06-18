@@ -6,6 +6,10 @@ import { RadioItem } from '@/components/Ui/RadioGroup';
 import TextArea from '@/components/Ui/TextArea';
 import { TextInput } from '@/components/Ui/TextInput';
 import ArrowLeft from '@/icons/ArrowLeft';
+import DateTimePicker, {
+  SelectedSlotDisplay,
+} from '@/modules/hospital/components/Agent/BookAppointment/DateTimePicker';
+import DoctorCard from '@/modules/hospital/components/Agent/BookAppointment/DoctorCard';
 import {
   AppointmentTimes,
   useBookAppointmentStore,
@@ -15,12 +19,9 @@ import { timeSlotGenerator } from '@/utils/timeSlotsGenerator';
 import dayjs from 'dayjs';
 import { CircleDollarSign } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
-import DateTimePicker, {
-  SelectedSlotDisplay,
-} from '@/modules/hospital/components/Agent/BookAppointment/DateTimePicker';
-import DoctorCard from '@/modules/hospital/components/Agent/BookAppointment/DoctorCard';
 
 const TIME_INTERVAL = 30; // minutes
+const timeSlots = [...timeSlotGenerator(8, 17, TIME_INTERVAL)];
 
 interface BookAppointmentCompParams {
   doctor: DoctorProfile;
@@ -69,8 +70,6 @@ const BookAppointmentComp = ({
   proceedToPayment,
   cancelAppointment,
 }: BookAppointmentCompParams) => {
-  const timeSlots = [...timeSlotGenerator(8, 17, TIME_INTERVAL)];
-
   const { createdAppointment } = useBookAppointmentStore();
 
   const [isSelectingTime, setIsSelectingTime] = useState(false);
@@ -185,14 +184,16 @@ const BookAppointmentComp = ({
   }, [selectedTimes, selectedConsultationType, reason]);
 
   return (
-    <div className="flex flex-col -mt-5">
-      <div
-        className="flex items-center gap-2 text-text-muted mb-4 cursor-pointer"
-        onClick={goBack}
-      >
-        <ArrowLeft />
-        <p className="text-sm font-medium">Back</p>
-      </div>
+    <div className="flex flex-col">
+      {!isReschedule && (
+        <div
+          className="flex items-center gap-2 text-text-muted mb-4 cursor-pointer"
+          onClick={goBack}
+        >
+          <ArrowLeft />
+          <p className="text-sm font-medium">Back</p>
+        </div>
+      )}
 
       <div className="flex flex-col space-y-3">
         <h3 className="text-base text-text-alt font-medium">

@@ -32,7 +32,7 @@ const SelectPatientCareMode = ({
               key={careMode.id}
               className={cn(`
                 group flex items-center gap-2 p-4 rounded-xl cursor-pointer
-                hover:bg-primary
+                hover:border hover:border-primary
                 ${isActive ? 'bg-primary' : 'bg-gray-3'}`)}
               onClick={() => handleSelectCareMode(careMode.name)}
             >
@@ -45,7 +45,7 @@ const SelectPatientCareMode = ({
                 onChange={() => {}}
               />
               <p
-                className={`text-sm group-hover:text-surface-card capitalize ${isActive ? 'text-surface-card' : 'text-text'}`}
+                className={`text-sm hover:text-text capitalize ${isActive ? 'text-surface-card' : 'text-text'}`}
               >
                 {careMode.name?.toLowerCase()} consultation
               </p>

@@ -60,10 +60,12 @@ const DoctorCard = ({
             <UserIconLocal className="text-text-muted" />{' '}
             {doctorSpecialization?.name}
           </p>
-          <p className="flex items-center gap-1">
-            <MapFilledLocal className="text-text-muted" />{' '}
-            {doctor?.userDetails?.city}
-          </p>
+          {doctor?.userDetails?.city && (
+            <p className="flex items-center gap-1">
+              <MapFilledLocal className="text-text-muted" />{' '}
+              {doctor?.userDetails?.city}
+            </p>
+          )}
         </div>
 
         <div className="flex w-full gap-1 items-center mt-3 text-xs">

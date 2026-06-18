@@ -31,7 +31,7 @@ const SelectPatientCareType = ({
               key={careType.id}
               className={cn(`
                   group flex items-center gap-2 p-4 rounded-xl cursor-pointer
-                  hover:bg-primary
+                  hover:border hover:border-primary
                   ${isActive ? 'bg-primary' : 'bg-gray-3'}`)}
               onClick={() => handleSelectCareType(careType.id)}
             >
@@ -44,7 +44,7 @@ const SelectPatientCareType = ({
                 onChange={() => {}}
               />
               <p
-                className={`text-sm group-hover:text-surface-card ${isActive ? 'text-surface-card' : 'text-text'}`}
+                className={`text-sm hover:text-text ${isActive ? 'text-surface-card' : 'text-text'}`}
               >
                 {careType.name}
               </p>

@@ -3,7 +3,10 @@ import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import SpiralLoader from '@/components/Base/SpiralLoader';
 import Button from '@/components/Ui/Button';
 import SearchInput from '@/components/Ui/SearchInput';
-import type { DoctorFiltersType } from '@/stores/bookAppointmentStore';
+import {
+  useBookAppointmentStore,
+  type DoctorFiltersType,
+} from '@/stores/bookAppointmentStore';
 import { debounce } from '@/utils/helper';
 import { ArrowLeft } from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -40,6 +43,7 @@ const AllDoctorsComp = ({
   openFilter,
   goBack,
 }: AllDoctorsCompParams) => {
+  const { isHospitalAppointment } = useBookAppointmentStore();
   const [searchText, setSearchText] = useState('');
 
   const debouncedSetFilters = useRef(
@@ -73,16 +77,17 @@ const AllDoctorsComp = ({
 
   return (
     <div className="flex flex-col -mt-5">
+      {!isHospitalAppointment && (
+        <div
+          className="flex items-center gap-2 -mt-5 text-text-muted mb-4 cursor-pointer"
+          onClick={goBack}
+        >
+          <ArrowLeft size={20} />
+          <p className="text-sm font-medium">Back</p>
+        </div>
+      )}
       {!clickedDoctor && (
         <div className="flex flex-col">
-          <div
-            className="flex items-center gap-2 text-text-muted mb-4 cursor-pointer"
-            onClick={goBack}
-          >
-            <ArrowLeft size={20} />
-            <p className="text-sm font-medium">Back</p>
-          </div>
-
           <div className="mt-4 flex flex-col w-full">
             <SearchInput
               value={searchText}

@@ -19,11 +19,16 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import DoctorAppointmentsTable from './Appointments/DoctorAppointmentsTable';
-import BioDetailsModal from './BioDetailsModal';
+import SetAvailabilityModal from './Availability/SetAvailabilityModal';
+import CompleteDoctorProfileModal from './CompleteDoctorProfileModal';
+import UploadDoctorDocs from './UploadDoctorDocs';
 
 const DoctorDashboard = () => {
   const user = useAuthStore((state: AuthStore) => state.user);
   const [showProfileModal, setShowProfileModal] = React.useState(false);
+  const [showUploadDocsModal, setShowUploadDocsModal] = React.useState(false);
+  const [showAvailabilityModal, setShowAvailabilityModal] =
+    React.useState(false);
   const [showBalance, setShowBalance] = useState(true);
 
   const { appointments, isFetching: isLoadingAppointments } =
@@ -148,10 +153,20 @@ const DoctorDashboard = () => {
           </div>
         )}
       </div>
-      <BioDetailsModal
+      <CompleteDoctorProfileModal
         openModal={showProfileModal}
         setOpenModal={setShowProfileModal}
         data={user}
+      />
+      <UploadDoctorDocs
+        openModal={showUploadDocsModal}
+        setOpenModal={setShowUploadDocsModal}
+        onSuccess={() => {}}
+      />
+      <SetAvailabilityModal
+        open={showAvailabilityModal}
+        onClose={() => setShowAvailabilityModal(false)}
+        onSave={(availability) => {}}
       />
     </div>
   );
