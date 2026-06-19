@@ -2,7 +2,9 @@
 'use client';
 
 import Button from '@/components/Ui/Button';
+import Dropdown from '@/components/Ui/Dropdown';
 import Modal from '@/components/Ui/Modal';
+import { RadioItem } from '@/components/Ui/RadioGroup';
 import { toaster } from '@/lib/toaster';
 import { Clock } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -11,6 +13,7 @@ import type { ConsultationType, DayKey, Session } from './SetAvailabilityModal';
 interface AddSessionModalProps {
   open: boolean;
   day: DayKey;
+  isLoading: boolean;
   onClose: () => void;
   onSave: (session: Omit<Session, 'id'>) => void;
 }
@@ -25,6 +28,7 @@ const PERIODS: Period[] = ['AM', 'PM'];
 
 export default function AddSessionModal({
   open,
+  isLoading,
   onClose,
   onSave,
 }: AddSessionModalProps) {
@@ -72,11 +76,18 @@ export default function AddSessionModal({
   }
 
   return (
-    <Modal open={open} onClose={onClose} size="md" showCloseButton title="">
+    <Modal
+      open={open}
+      onClose={onClose}
+      size="sm"
+      showCloseButton
+      title=""
+      className="translate-y-20 rounded-[30px]!"
+    >
       <div className="flex flex-col gap-5">
         {/* Consultation type radios */}
         <div className="flex flex-col gap-3">
-          <span className="text-sm font-medium text-text">
+          <span className="text-sm font-medium text-text-muted">
             Consultation type
           </span>
           <div className="flex items-center gap-6">
@@ -85,12 +96,11 @@ export default function AddSessionModal({
                 key={type}
                 className="flex items-center gap-2 cursor-pointer"
               >
-                <input
-                  type="radio"
-                  name="consultation-type"
+                <RadioItem
+                  name="consultationType"
                   checked={consultationType === type}
+                  option={{ value: '', label: '' }}
                   onChange={() => setConsultationType(type)}
-                  className="appearance-none w-4 h-4 rounded-full border-2 border-text-muted checked:border-blue-10 checked:bg-blue-10 relative checked:after:content-[''] checked:after:absolute checked:after:inset-1 checked:after:bg-foreground checked:after:rounded-full"
                 />
                 <span className="text-sm text-text capitalize">{type}</span>
               </label>
@@ -121,14 +131,15 @@ export default function AddSessionModal({
         />
 
         {/* Selected time summary */}
-        <div className="border border-border2 rounded-xl px-4 py-3 flex items-center gap-3">
+        <div className="border border-border2 rounded-xl px-4 py-3 flex items-center justify-center gap-3">
           <span className="text-sm text-text-muted">Selected time:</span>
           <span className="text-sm font-medium text-text">{selectedLabel}</span>
         </div>
 
         <Button
           variant="primary"
-          className="w-full h-12 rounded-full"
+          className="w-full h-12 mt-4 rounded-full"
+          loading={isLoading}
           onClick={handleSave}
         >
           Save session
@@ -161,7 +172,7 @@ function TimeRow({
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
         <Clock className="w-4 h-4 text-text-muted" />
-        <span className="text-sm text-text">{label}</span>
+        <span className="text-sm text-text-muted">{label}</span>
       </div>
       <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center gap-2">
         <TimeSelect value={hour} onChange={onHourChange} options={HOURS} />
@@ -191,26 +202,13 @@ interface TimeSelectProps {
 function TimeSelect({ value, onChange, options }: TimeSelectProps) {
   return (
     <div className="relative">
-      <select
+      <Dropdown
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full h-11 pl-3 pr-8 rounded-xl bg-blue-2 border border-border2 text-sm text-text appearance-none cursor-pointer focus:outline-none focus:border-blue-10"
-      >
-        {options.map((o) => (
-          <option key={o} value={o}>
-            {o}
-          </option>
-        ))}
-      </select>
-      <svg
-        className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+        onChange={(e) => onChange(String(e))}
+        options={options?.map((o) => ({ value: o, label: o }))}
+        containerClassName="bg-gray-2! h-10 border-none!"
+        className="text-text w-full rounded-xl text-sm"
+      />
     </div>
   );
 }

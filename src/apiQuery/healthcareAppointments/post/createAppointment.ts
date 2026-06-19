@@ -35,7 +35,7 @@ export interface CreateAppointmentInterfaceParams {
 
 export interface CreateAppointmentInterface {
   id: number;
-  userId: string;
+  userId: number;
   clientId: string;
   hospitalId: string | null;
   appointmentType: ConsultationType;

@@ -1,10 +1,12 @@
 'use client';
 
+import { useUploadDoctorCertificationMutation } from '@/apiQuery/doctor/profile/uploadCertification';
 import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
+import { PdfIconLocal } from '@/icons/DashboardIcons';
 import { toaster } from '@/lib/toaster';
 import { cn } from '@/lib/utils';
-import { CheckCircle2, Trash2, UploadIcon } from 'lucide-react';
+import { Trash2, UploadIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 type DocKey = 'medical' | 'license' | 'specialist';
@@ -13,9 +15,6 @@ type DocType = {
   title: string;
   slug: DocKey;
   file: File | null;
-  progress: number;
-  uploaded: boolean;
-  uploading: boolean;
   error: string | null;
 };
 
@@ -32,34 +31,26 @@ const UploadDoctorDocs = ({
   setOpenModal,
   onSuccess,
 }: UploadDoctorDocsProps) => {
-  const [loading, setLoading] = useState(false);
+  const { mutate: uploadCertification, isPending } =
+    useUploadDoctorCertificationMutation();
 
   const [docs, setDocs] = useState<DocType[]>([
     {
       title: 'Upload medical certificate',
       slug: 'medical',
       file: null,
-      progress: 0,
-      uploaded: false,
-      uploading: false,
       error: null,
     },
     {
       title: 'Upload current practice license',
       slug: 'license',
       file: null,
-      progress: 0,
-      uploaded: false,
-      uploading: false,
       error: null,
     },
     {
       title: 'Upload specialist training certificate',
       slug: 'specialist',
       file: null,
-      progress: 0,
-      uploaded: false,
-      uploading: false,
       error: null,
     },
   ]);
@@ -70,7 +61,7 @@ const UploadDoctorDocs = ({
     );
   };
 
-  const handleFileUpload = async (slug: DocKey, file: File) => {
+  const handleFileSelect = (slug: DocKey, file: File) => {
     const validTypes = ['image/png', 'image/jpeg', 'application/pdf'];
 
     if (!validTypes.includes(file.type)) {
@@ -83,60 +74,40 @@ const UploadDoctorDocs = ({
       return;
     }
 
-    updateDoc(slug, {
-      file,
-      uploading: true,
-      uploaded: false,
-      progress: 0,
-      error: null,
-    });
-
-    try {
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 10;
-        updateDoc(slug, { progress });
-
-        if (progress >= 100) {
-          clearInterval(interval);
-          updateDoc(slug, {
-            uploading: false,
-            uploaded: true,
-            progress: 100,
-          });
-        }
-      }, 200);
-    } catch (error) {
-      updateDoc(slug, {
-        uploading: false,
-        uploaded: false,
-        error: 'Upload failed',
-      });
-      toaster.error('Upload failed');
-    }
+    updateDoc(slug, { file, error: null });
   };
 
   const removeFile = (slug: DocKey) => {
-    updateDoc(slug, {
-      file: null,
-      uploaded: false,
-      uploading: false,
-      progress: 0,
-      error: null,
-    });
+    updateDoc(slug, { file: null, error: null });
   };
 
-  const canSubmit = docs.every((doc) => doc.uploaded);
+  const canSubmit = docs.every((doc) => doc.file && !doc.error);
 
   const handleSubmit = () => {
-    setLoading(true);
-    // simulate submit
-    setTimeout(() => {
-      setLoading(false);
-      toaster.success('Documents submitted successfully');
-      setOpenModal(false);
-      onSuccess?.();
-    }, 600);
+    const medical = docs.find((d) => d.slug === 'medical')?.file;
+    const license = docs.find((d) => d.slug === 'license')?.file;
+    const specialist = docs.find((d) => d.slug === 'specialist')?.file;
+
+    if (!medical || !license || !specialist) return;
+
+    uploadCertification(
+      {
+        medicalCertificate: medical,
+        currentPracticeLicense: license,
+        specialtyTrainingCertificate: specialist,
+      },
+      {
+        onSuccess: () => {
+          toaster.success('Documents submitted successfully');
+          setOpenModal(false);
+          onSuccess?.();
+        },
+        onError: (error: unknown) => {
+          const err = error as { message?: string };
+          toaster.error(err?.message || 'Submission failed');
+        },
+      }
+    );
   };
 
   return (
@@ -152,7 +123,7 @@ const UploadDoctorDocs = ({
           <Uploader
             key={doc.slug}
             doc={doc}
-            onUpload={handleFileUpload}
+            onUpload={handleFileSelect}
             onRemove={removeFile}
           />
         ))}
@@ -160,8 +131,8 @@ const UploadDoctorDocs = ({
         <Button
           className="mt-6 flex h-12 w-full justify-center rounded-full"
           variant="primary"
-          loading={loading}
-          disabled={!canSubmit || loading}
+          loading={isPending}
+          disabled={!canSubmit || isPending}
           onClick={handleSubmit}
         >
           Submit
@@ -188,8 +159,9 @@ const Uploader = ({ doc, onUpload, onRemove }: UploaderProps) => {
     onUpload(doc.slug, file);
   };
 
-  // Show progress next to the title (inline) when uploading or uploaded
-  const showInlineProgress = doc.uploading || doc.uploaded;
+  const hasFile = doc.file !== null;
+
+  const sizeInMB = ((doc.file?.size ?? 0) / (1024 * 1024)).toFixed(2);
 
   return (
     <button
@@ -203,15 +175,15 @@ const Uploader = ({ doc, onUpload, onRemove }: UploaderProps) => {
       <input
         ref={inputRef}
         type="file"
-        accept=".png,.jpg,.jpeg,.pdf"
+        accept="application/pdf"
         onChange={handleChange}
         className="hidden"
       />
 
       <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-2a">
-          {doc.uploaded ? (
-            <CheckCircle2 size={18} className="text-green-10" />
+          {hasFile ? (
+            <PdfIconLocal className="text-green-10" />
           ) : (
             <UploadIcon size={18} className="text-blue-9" />
           )}
@@ -220,21 +192,13 @@ const Uploader = ({ doc, onUpload, onRemove }: UploaderProps) => {
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-text">{doc.title}</p>
 
-          {showInlineProgress && (
-            <div className="mt-1.5 flex items-center gap-2">
-              <div className="flex-1 h-1.5 rounded-full bg-blue-2a overflow-hidden">
-                <div
-                  className="h-full bg-blue-10 transition-all duration-200"
-                  style={{ width: `${doc.progress}%` }}
-                />
-              </div>
-              <span className="text-xs text-text-muted shrink-0 min-w-[36px] text-right">
-                {doc.progress}%
-              </span>
-            </div>
+          {hasFile && (
+            <p className="mt-0.5 text-xs text-text-muted truncate">
+              {doc.file?.name} {` ${sizeInMB} MB`}
+            </p>
           )}
 
-          {!showInlineProgress && !doc.error && (
+          {!hasFile && !doc.error && (
             <p className="mt-0.5 text-xs text-text-muted">
               Format png, jpg, pdf (max size: 5 mb)
             </p>
@@ -245,7 +209,7 @@ const Uploader = ({ doc, onUpload, onRemove }: UploaderProps) => {
           )}
         </div>
 
-        {doc.uploaded && (
+        {hasFile && (
           <Trash2
             size={18}
             className="shrink-0 text-error cursor-pointer"

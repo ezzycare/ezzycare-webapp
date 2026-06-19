@@ -1,4 +1,5 @@
 import { ACCOUNT_TYPE, User } from '@/apiQuery/auth/types';
+import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import { general } from '@/enums';
 import { getAuthToken } from '@/services/getAuthToken';
 import { create } from 'zustand';
@@ -30,11 +31,13 @@ export interface AuthStore {
   isAuthenticated: () => boolean;
   setForgotPasswordEmail: (email: string) => void;
   user: User;
+  doctorUser: DoctorProfile;
   authToken: string | null;
   signupDetails: SignupDetails;
   passwordResetToken: string | null;
   profileCompleted?: boolean;
   updateUser: (user: User) => void;
+  updateDoctorUser: (user: DoctorProfile) => void;
   setToken: (token: string) => void;
   removeAuth: () => void;
   updateSignupDetails: (details: Partial<SignupDetails>) => void;
@@ -53,11 +56,22 @@ const getInitialUser = (): User => {
   }
 };
 
+const getInitialDoctorUser = (): DoctorProfile => {
+  if (!isBrowser) return {} as DoctorProfile;
+  try {
+    const stored = localStorage.getItem(general.DOCTOR_USER);
+    return stored ? JSON.parse(stored) : ({} as DoctorProfile);
+  } catch {
+    return {} as DoctorProfile;
+  }
+};
+
 export const useAuthStore = create<AuthStore>()(
   devtools(
     (set) => ({
       forgotPasswordEmail: null,
       user: getInitialUser(),
+      doctorUser: getInitialDoctorUser(),
       authToken: getAuthToken(),
       signupDetails: {} as SignupDetails,
       passwordResetToken: null,
@@ -69,6 +83,12 @@ export const useAuthStore = create<AuthStore>()(
       updateUser: (user) => {
         set({ user });
         if (isBrowser) localStorage.setItem(general.USER, JSON.stringify(user));
+      },
+
+      updateDoctorUser: (user) => {
+        set({ doctorUser: user });
+        if (isBrowser)
+          localStorage.setItem(general.DOCTOR_USER, JSON.stringify(user));
       },
 
       setToken: (token) => {

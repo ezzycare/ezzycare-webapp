@@ -5,6 +5,7 @@ import {
   CategoryType,
   useGetCategoriesQuery,
 } from '@/apiQuery/categories/getCategories';
+import { useGetDoctorProfileQuery } from '@/apiQuery/doctor/profile/getProfile';
 import { useGetHospitalServices } from '@/apiQuery/hospital/get/getServices';
 import { useGetNotificationsInfiniteQuery } from '@/apiQuery/notifications/getNotifications';
 import { useGetProfile } from '@/apiQuery/users/getProfile';
@@ -34,6 +35,9 @@ const DashboardClientLayout = ({
   const router = useRouter();
   const [sidebarOpen, setSideBarOpen] = useState(false);
   const updateUser = useAuthStore((state: AuthStore) => state.updateUser);
+  const updateDoctorUser = useAuthStore(
+    (state: AuthStore) => state.updateDoctorUser
+  );
   const setCategories = useCategoryStore(
     (state: CategoryStore) => state.setCategories
   );
@@ -45,6 +49,7 @@ const DashboardClientLayout = ({
   );
 
   const { user } = useGetProfile();
+  const { doctorProfile } = useGetDoctorProfileQuery();
   const { categories } = useGetCategoriesQuery({
     type: 'HOSPITAL' as CategoryType,
   });
@@ -52,10 +57,17 @@ const DashboardClientLayout = ({
   const { notifications } = useGetNotificationsInfiniteQuery({ limit: 50 });
 
   useEffect(() => {
-    if (user) {
+    if (doctorProfile) {
+      updateUser(doctorProfile as unknown as User);
+      updateDoctorUser(doctorProfile);
+    }
+  }, [doctorProfile]);
+
+  useEffect(() => {
+    if (user && !doctorProfile) {
       updateUser(user);
     }
-  }, [user]);
+  }, [user, doctorProfile]);
 
   useEffect(() => {
     if (categories) {

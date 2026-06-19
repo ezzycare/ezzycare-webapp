@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 // import { redirect } from 'next/navigation';
@@ -17,7 +16,8 @@ import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { formatCurrency } from '@/utils/helper';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import AppointmentRequestCard from './Appointments/AppointmentRequestCard';
 import DoctorAppointmentsTable from './Appointments/DoctorAppointmentsTable';
 import SetAvailabilityModal from './Availability/SetAvailabilityModal';
 import CompleteDoctorProfileModal from './CompleteDoctorProfileModal';
@@ -25,16 +25,30 @@ import UploadDoctorDocs from './UploadDoctorDocs';
 
 const DoctorDashboard = () => {
   const user = useAuthStore((state: AuthStore) => state.user);
+  const [showBalance, setShowBalance] = useState(true);
   const [showProfileModal, setShowProfileModal] = React.useState(false);
-  const [showUploadDocsModal, setShowUploadDocsModal] = React.useState(false);
+  const [showUploadDocsModal, setShowUploadDocsModal] = React.useState(true);
   const [showAvailabilityModal, setShowAvailabilityModal] =
     React.useState(false);
-  const [showBalance, setShowBalance] = useState(true);
+  const [showPendingAppointment, setShowPendingAppointment] =
+    React.useState(true);
 
   const { appointments, isFetching: isLoadingAppointments } =
     useGetDoctorAppointmentsInfiniteQuery({
       limit: 10,
     });
+
+  const pendingAppointment = useMemo(() => {
+    // return pendingAppointmentsData?.length ? pendingAppointmentsData[0] : null;
+    const result = appointments?.length
+      ? appointments?.find((val) => val.status === 'PAID')
+      : null;
+    if (result) {
+      // eslint-disable-next-line react-hooks/set-state-in-render
+      setShowPendingAppointment(true);
+    }
+    return result;
+  }, [appointments]);
 
   useEffect(() => {
     const storedShowBalance = localStorage.getItem('showCareSeekerBalance');
@@ -60,6 +74,13 @@ const DoctorDashboard = () => {
           </h2>
           <p className="text-sm">How are you doing today? </p>
         </div>
+
+        {pendingAppointment && showPendingAppointment && (
+          <AppointmentRequestCard
+            appointment={pendingAppointment}
+            onClose={() => setShowPendingAppointment(false)}
+          />
+        )}
       </div>
       {user && user?.status === 'PROFILE_NOT_COMPLETE' && (
         <div className="w-full mt-5">
@@ -133,7 +154,7 @@ const DoctorDashboard = () => {
             {!appointments?.length && (
               <EmptyAppointment>
                 {!user.profileCompleted && (
-                  <div className="w-[308px] flex flex-col mx-auto space-y-3">
+                  <div className="w-77 flex flex-col mx-auto space-y-3">
                     <Button variant="primary">Get verified</Button>
                     <Button
                       variant="outline"

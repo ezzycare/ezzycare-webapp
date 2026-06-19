@@ -6,7 +6,7 @@ import { ConsultationType } from '../hospital/types';
 import { Doctor } from './getDoctorDiscovery';
 
 export interface GetDoctorParams {
-  id: string;
+  id: number | null;
 }
 
 export type Education = {

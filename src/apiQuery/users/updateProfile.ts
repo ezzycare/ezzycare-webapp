@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-query';
 import { ApiResponse } from '../types';
 
-export type Gender = 'MALE' | 'FEMALE' | 'OTHER';
+export type Gender = 'MALE' | 'FEMALE';
 
 export interface UpdateProfilePayload {
   firstName?: string;

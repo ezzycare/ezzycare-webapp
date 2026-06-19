@@ -7,21 +7,30 @@ import { AlertCircle } from 'lucide-react';
 
 interface DeleteSessionModalProps {
   open: boolean;
+  isLoading: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
 
 export default function DeleteSessionModal({
   open,
+  isLoading,
   onClose,
   onConfirm,
 }: DeleteSessionModalProps) {
   return (
-    <Modal open={open} onClose={onClose} size="sm" showCloseButton title="">
+    <Modal
+      open={open}
+      onClose={onClose}
+      size="sm"
+      showCloseButton
+      title=""
+      className="translate-y-20 rounded-[30px]!"
+    >
       <div className="flex flex-col items-center gap-5 text-center">
         <h3 className="text-base font-semibold text-text">Delete session?</h3>
 
-        <div className="w-20 h-20 rounded-full bg-error-3a flex items-center justify-center">
+        <div className="w-20 h-20 rounded-full bg-error-3a flex items-center justify-center mt-6">
           <AlertCircle className="w-9 h-9 text-error" strokeWidth={1.5} />
         </div>
 
@@ -29,10 +38,11 @@ export default function DeleteSessionModal({
           Are you sure you want to delete the session time?
         </p>
 
-        <div className="flex items-center gap-3 w-full mt-2">
+        <div className="flex items-center gap-3 w-full mt-6">
           <Button
             variant="primary"
-            className="flex-1 h-11 rounded-full bg-surface-card text-blue-10 border border-blue-10 hover:bg-blue-2"
+            className="flex-1 h-11 rounded-full bg-surface-card text-blue-10! border border-blue-10! hover:bg-blue-2"
+            disabled={isLoading}
             onClick={onClose}
           >
             No
@@ -40,6 +50,8 @@ export default function DeleteSessionModal({
           <Button
             variant="primary"
             className="flex-1 h-11 rounded-full"
+            disabled={isLoading}
+            loading={isLoading}
             onClick={onConfirm}
           >
             Yes, delete

@@ -65,6 +65,11 @@ export const dashNavItems = [
     icon: <WalletIconLocal />,
   },
   {
+    name: 'Profile',
+    href: '/dashboard/profile',
+    icon: <UserIconLocal />,
+  },
+  {
     name: 'Verifications',
     href: '/dashboard/verifications',
     icon: <MenuBoardIconLocal />,
