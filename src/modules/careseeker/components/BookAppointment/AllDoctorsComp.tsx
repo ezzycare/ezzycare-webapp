@@ -1,6 +1,6 @@
 import { Doctor } from '@/apiQuery/doctor/getDoctorDiscovery';
 import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
-import SpiralLoader from '@/components/Base/SpiralLoader';
+import BounceLoader from '@/components/Base/BounceLoader';
 import Button from '@/components/Ui/Button';
 import SearchInput from '@/components/Ui/SearchInput';
 import {
@@ -16,9 +16,11 @@ import DoctorsList from './DoctorsList';
 interface AllDoctorsCompParams {
   isLoading: boolean;
   doctors: Doctor[] | undefined;
+  firstPageItems: Doctor[] | undefined;
   selectedDoctor: DoctorProfile;
   hasNextPage: boolean;
   fetchNextPage: () => void;
+  isFetchingNextPage: boolean;
   filters: DoctorFiltersType;
   setFilters: React.Dispatch<React.SetStateAction<DoctorFiltersType>>;
   clickedDoctor: Doctor | null;
@@ -32,11 +34,13 @@ interface AllDoctorsCompParams {
 const AllDoctorsComp = ({
   isLoading,
   doctors,
+  firstPageItems,
   selectedDoctor,
   filters,
   setFilters,
   hasNextPage,
   fetchNextPage,
+  isFetchingNextPage,
   clickedDoctor,
   setClickedDoctor,
   action,
@@ -108,22 +112,20 @@ const AllDoctorsComp = ({
             )}
           </div>
 
-          {!isLoading && (
+          {!!doctors?.length && (
             <DoctorsList
               doctors={doctors}
+              firstPageItems={firstPageItems}
               hasNextPage={hasNextPage}
               fetchNextPage={fetchNextPage}
+              isFetchingNextPage={isFetchingNextPage}
               setClickedDoctor={setClickedDoctor}
             />
           )}
         </div>
       )}
 
-      {isLoading && (
-        <div className="w-full h-[50vh] flex justify-center items-center">
-          <SpiralLoader />
-        </div>
-      )}
+      {isLoading && !isFetchingNextPage && <BounceLoader />}
 
       {clickedDoctor && selectedDoctor && !isLoading && (
         <DoctorProfileComp

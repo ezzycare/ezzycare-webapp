@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Category } from '@/apiQuery/categories/getCategories';
 import {
   HospitalDiscoveryItem,
   useGetHospitalDiscovery,
@@ -12,6 +13,7 @@ import Modal from '@/components/Ui/Modal';
 import { BoldWalletIcon, PaypalIconLocal } from '@/icons/DashboardIcons';
 import { useModalNavigation } from '@/modules/careseeker/hooks/useAppointmentActions';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
+import { useCategoryStore } from '@/stores/categoryStore';
 import React, { JSX, useEffect, useMemo } from 'react';
 import AllHospitalsComp from './AllHospitalsComp';
 import HospitalFilter from './HospitalFilter';
@@ -47,9 +49,9 @@ const BookHospitalAppointment = ({
     updateHospitalState('select-hospital');
   }, []);
 
-  console.log({ hospitalState });
-
-  const services: any[] = [];
+  const services =
+    useCategoryStore((state) => state.categories.allCategories) ||
+    ([] as Category[]);
 
   const hospitalFilters = useMemo(
     () => activeHospitalFilters ?? {},
@@ -120,9 +122,15 @@ const BookHospitalAppointment = ({
             <AllHospitalsComp
               isLoading={isLoading}
               hospitals={hospitals}
+              firstPageItems={
+                restHospitalQueries.data?.pages?.[0]?.data?.items as
+                  | HospitalDiscoveryItem[]
+                  | undefined
+              }
               selectedHospital={hospital}
               hasNextPage={restHospitalQueries.hasNextPage}
               fetchNextPage={restHospitalQueries.fetchNextPage}
+              isFetchingNextPage={restHospitalQueries.isFetchingNextPage}
               filters={activeHospitalFilters}
               setFilters={(value) =>
                 updateBooking({
@@ -150,8 +158,6 @@ const BookHospitalAppointment = ({
           {hospitalState === 'set-filter' && (
             <HospitalFilter
               services={services}
-              careTypes={careTypes}
-              careModes={careModes}
               filters={activeHospitalFilters}
               setFilters={(value) =>
                 updateBooking({
@@ -159,6 +165,7 @@ const BookHospitalAppointment = ({
                     typeof value === 'function'
                       ? value(activeHospitalFilters)
                       : value,
+                  hospitalState: 'select-hospital',
                 })
               }
               goBack={goBack}

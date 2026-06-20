@@ -4,4 +4,5 @@ export const general = {
   ACCOUNT_TYPE: 'account_type',
   USER: 'user',
   DOCTOR_USER: 'doctor-user',
+  USER_LOCATION: 'ezzycare-user-location',
 };

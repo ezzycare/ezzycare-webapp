@@ -5,10 +5,10 @@ import type {
 import Tabs from '@/components/Base/Tabs';
 import Button from '@/components/Ui/Button';
 import { UserIconLocal } from '@/icons/DashboardNavIcons';
+import DoctorCard from '@/modules/hospital/components/Agent/BookAppointment/DoctorCard';
 import { formatCurrency } from '@/utils/helper';
 import { ArrowLeft, MapPin } from 'lucide-react';
 import { useState } from 'react';
-import DoctorCard from '@/modules/hospital/components/Agent/BookAppointment/DoctorCard';
 
 const DoctorProfileComp = ({
   doctor,
@@ -25,7 +25,7 @@ const DoctorProfileComp = ({
   const doctorAddress = `${doctor?.userDetails?.address}, ${doctor?.userDetails?.city}, ${doctor?.userDetails?.country}`;
 
   return (
-    <div className="">
+    <div className="mt-5">
       <div
         className="flex items-center gap-2 text-text-muted mb-4 cursor-pointer"
         onClick={setState}
