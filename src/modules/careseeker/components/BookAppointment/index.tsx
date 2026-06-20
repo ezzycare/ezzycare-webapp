@@ -149,7 +149,7 @@ const BookDoctorAppointment = ({
 
   const { doctor: doctorData, isFetching: loadingSingleDoctor } =
     useGetSingleDoctorQuery({
-      id: clickedDoctor?.id || '',
+      id: clickedDoctor?.id ? Number(clickedDoctor.id) : null,
     });
 
   const doctor = useMemo(() => {

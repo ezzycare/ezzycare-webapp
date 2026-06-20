@@ -303,13 +303,29 @@ const modules: ModuleGroup[] = [
           { key: 'subcategoryId', label: 'Subcategory ID', type: 'number' },
           { key: 'feesMinute', label: 'Fee Per Minute', type: 'number' },
           { key: 'feesHour', label: 'Fee Per Hour', type: 'number' },
-          { key: 'clinicConsultationCharge', label: 'Clinic Charge', type: 'number' },
-          { key: 'videoConsultationCharge', label: 'Video Charge', type: 'number' },
-          { key: 'homeConsultationCharge', label: 'Home Charge', type: 'number' },
+          {
+            key: 'clinicConsultationCharge',
+            label: 'Clinic Charge',
+            type: 'number',
+          },
+          {
+            key: 'videoConsultationCharge',
+            label: 'Video Charge',
+            type: 'number',
+          },
+          {
+            key: 'homeConsultationCharge',
+            label: 'Home Charge',
+            type: 'number',
+          },
           { key: 'clinicName', label: 'Clinic Name' },
           { key: 'clinicState', label: 'Clinic State' },
           { key: 'clinicCountry', label: 'Clinic Country' },
-          { key: 'practicingLicenceDate', label: 'Licence Date', placeholder: 'YYYY-MM-DD' },
+          {
+            key: 'practicingLicenceDate',
+            label: 'Licence Date',
+            placeholder: 'YYYY-MM-DD',
+          },
           { key: 'university', label: 'University' },
           { key: 'yearGraduated', label: 'Year Graduated' },
           { key: 'yearsOfExperience', label: 'Years Experience' },
@@ -317,7 +333,11 @@ const modules: ModuleGroup[] = [
           { key: 'clinicPlace', label: 'Clinic Place' },
           { key: 'latitude', label: 'Latitude', type: 'number' },
           { key: 'longitude', label: 'Longitude', type: 'number' },
-          { key: 'urgentCriteria', label: 'Urgent Criteria', placeholder: 'VIDEO, HOME (comma-sep)' },
+          {
+            key: 'urgentCriteria',
+            label: 'Urgent Criteria',
+            placeholder: 'VIDEO, HOME (comma-sep)',
+          },
         ],
         description: 'PATCH /doctors/update-bio',
         module: 'doctor',
@@ -464,7 +484,11 @@ const modules: ModuleGroup[] = [
           { key: 'day', label: 'Day', placeholder: 'Monday' },
           { key: 'startTime', label: 'Start Time', placeholder: '09:00' },
           { key: 'endTime', label: 'End Time', placeholder: '17:00' },
-          { key: 'consultationType', label: 'Type', placeholder: 'VIDEO | HOME | CLINIC' },
+          {
+            key: 'consultationType',
+            label: 'Type',
+            placeholder: 'VIDEO | HOME | CLINIC',
+          },
         ],
         description: 'POST /doctors/availability',
         module: 'doctorAvailability',
@@ -480,8 +504,17 @@ const modules: ModuleGroup[] = [
         method: 'PATCH',
         name: 'Update Settings',
         params: [
-          { key: 'sameTiming', label: 'Same Timing', type: 'number', placeholder: '0 or 1' },
-          { key: 'availability', label: 'Status', placeholder: 'ACTIVE | INACTIVE' },
+          {
+            key: 'sameTiming',
+            label: 'Same Timing',
+            type: 'number',
+            placeholder: '0 or 1',
+          },
+          {
+            key: 'availability',
+            label: 'Status',
+            placeholder: 'ACTIVE | INACTIVE',
+          },
         ],
         description: 'PATCH /doctors/availability/settings',
         module: 'doctorAvailability',
@@ -1146,7 +1179,7 @@ const executeApi = async (callKey: string, params: Record<string, string>) => {
     case 'doctor_Doctor Discovery':
       return getDoctorsDiscovery();
     case 'doctor_Single Doctor':
-      return getSingleDoctorProfile({ id: params.doctorId });
+      return getSingleDoctorProfile({ id: Number(params.doctorId) });
     case 'doctor_Doctor Profile':
       return getDoctorProfile();
     case 'doctor_Update Bio':
@@ -1169,11 +1202,16 @@ const executeApi = async (callKey: string, params: Record<string, string>) => {
         clinicPlace: params.clinicPlace,
         latitude: Number(params.latitude),
         longitude: Number(params.longitude),
-        urgentCriteria: (params.urgentCriteria?.split(',').map((s: string) => s.trim()) as ('VIDEO' | 'HOME')[]) || [],
+        urgentCriteria:
+          (params.urgentCriteria?.split(',').map((s: string) => s.trim()) as (
+            | 'VIDEO'
+            | 'HOME'
+          )[]) || [],
       });
     case 'doctor_Upload Certification':
       return {
-        error: 'Upload Certification requires File inputs — not available in playground',
+        error:
+          'Upload Certification requires File inputs — not available in playground',
       };
     case 'doctor_Hospital Invitations':
       return getHospitalInvitations();
@@ -1193,17 +1231,17 @@ const executeApi = async (callKey: string, params: Record<string, string>) => {
     case 'doctorAppointments_Stats':
       return getDoctorAppointmentStats();
     case 'doctorAppointments_Single Appointment':
-      return getDoctorAppointment({ id: params.id });
+      return getDoctorAppointment({ id: Number(params.id) });
     case 'doctorAppointments_Accept':
       return acceptDoctorAppointment({ id: params.id });
     case 'doctorAppointments_Decline':
       return declineDoctorAppointment({
-        id: params.id,
+        id: Number(params.id),
         reason: params.reason,
       });
     case 'doctorAppointments_Cancel':
       return cancelDoctorAppointment({
-        id: params.id,
+        id: Number(params.id),
         reason: params.reason,
       });
     case 'doctorAppointments_Start':
@@ -1233,7 +1271,10 @@ const executeApi = async (callKey: string, params: Record<string, string>) => {
         day: params.day,
         startTime: params.startTime,
         endTime: params.endTime,
-        consultationType: params.consultationType as 'VIDEO' | 'HOME' | 'CLINIC',
+        consultationType: params.consultationType as
+          | 'VIDEO'
+          | 'HOME'
+          | 'CLINIC',
       });
     case 'doctorAvailability_Delete Slot':
       return deleteAvailabilitySlot({ id: params.id });

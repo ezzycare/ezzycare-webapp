@@ -38,7 +38,7 @@ const AppointmentRequestCard = ({
 
   const handleAccept = () => {
     acceptAppointment(
-      { id: appointment.id },
+      { id: String(appointment.id) },
       {
         onSuccess: () => {
           invalidateAppointments();
