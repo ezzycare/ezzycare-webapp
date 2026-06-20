@@ -38,32 +38,34 @@ export async function loginAction({ email, password }: LoginPayload) {
       expires: dayjs().add(10, 'minute').toISOString(),
     };
 
-    const cookieStore = await cookies();
+    if (updatedUser.email_verified) {
+      const cookieStore = await cookies();
 
-    cookieStore.set(
-      general.COOKIE_NAME,
-      JSON.stringify({
-        ...updatedUser,
-        user: {
-          id: loginResponse.data.user.id,
-          firstName: loginResponse.data.user.firstName,
-          lastName: loginResponse.data.user.lastName,
-          email: loginResponse.data.user.email,
-          mobileNo: loginResponse.data.user.mobileNo,
-          accountType: loginResponse.data.user.accountType,
-          account_type: loginResponse.data.user.accountType,
-          profileCompleted: loginResponse.data.user.profileCompleted,
-        },
-      }),
-      {
-        // httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        // secure: false,
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24,
-        path: '/',
-      }
-    );
+      cookieStore.set(
+        general.COOKIE_NAME,
+        JSON.stringify({
+          ...updatedUser,
+          user: {
+            id: loginResponse.data.user.id,
+            firstName: loginResponse.data.user.firstName,
+            lastName: loginResponse.data.user.lastName,
+            email: loginResponse.data.user.email,
+            mobileNo: loginResponse.data.user.mobileNo,
+            accountType: loginResponse.data.user.accountType,
+            account_type: loginResponse.data.user.accountType,
+            profileCompleted: loginResponse.data.user.profileCompleted,
+          },
+        }),
+        {
+          // httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          // secure: false,
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24,
+          path: '/',
+        }
+      );
+    }
 
     return {
       success: true,

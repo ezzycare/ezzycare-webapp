@@ -5,7 +5,7 @@ import Tabs from '@/components/Base/Tabs';
 import Button from '@/components/Ui/Button';
 import { RadioItem } from '@/components/Ui/RadioGroup';
 import { Slider } from '@/components/Ui/Slider';
-import { AuthStore, useAuthStore } from '@/stores/authStore';
+import { useGeolocation } from '@/hooks/useGeolocation';
 import { DoctorFiltersType } from '@/stores/bookAppointmentStore';
 import { cn } from '@heroui/styles';
 import { StarIcon } from '@radix-ui/react-icons';
@@ -15,6 +15,7 @@ const DoctorFilter = ({
   specialties,
   careTypes,
   careModes,
+  filters,
   setFilters,
   goBack,
 }: {
@@ -25,12 +26,14 @@ const DoctorFilter = ({
   setFilters: React.Dispatch<React.SetStateAction<DoctorFiltersType>>;
   goBack: () => void;
 }) => {
-  const user = useAuthStore((state: AuthStore) => state.user);
+  const { latitude, longitude, hasLocation } = useGeolocation();
   const tabs = ['Doctor Specialty', 'Appointment Type'];
   const [activeTab, setActiveTab] = useState(0);
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
   const [searchByCountry, setSearchByCountry] = useState(false);
-  const [currentFilters, setCurrentFilters] = useState<DoctorFiltersType>({});
+  const [currentFilters, setCurrentFilters] = useState<DoctorFiltersType>(
+    () => filters ?? {}
+  );
   const [appointmentType, setAppointmentType] = useState<string>('');
 
   const allSpecialties = useMemo(() => {
@@ -42,23 +45,34 @@ const DoctorFilter = ({
       ...prev,
       search: undefined,
     }));
-    setFilters({});
   }, []);
 
   const handleSetFilters = <K extends keyof DoctorFiltersType>(
     key: K,
     value: DoctorFiltersType[K]
   ) => {
-    const longLat = {
-      latitude: user?.latitude ?? undefined,
-      longitude: user?.longitude ?? undefined,
-    };
     if (key === 'distance') {
-      setCurrentFilters((prev) => ({
-        ...prev,
-        [key]: value,
-        ...longLat,
-      }));
+      if (value === 0) {
+        setCurrentFilters((prev) => {
+          const {
+            latitude: _lat,
+            longitude: _lng,
+            distance: _dist,
+            ...rest
+          } = prev;
+          return rest as DoctorFiltersType;
+        });
+      } else {
+        const longLat =
+          hasLocation && latitude != null && longitude != null
+            ? { latitude, longitude }
+            : {};
+        setCurrentFilters((prev) => ({
+          ...prev,
+          [key]: value,
+          ...longLat,
+        }));
+      }
       return;
     }
     setCurrentFilters((prev) => ({
@@ -68,7 +82,17 @@ const DoctorFilter = ({
   };
 
   const handleApplyFilters = () => {
-    setFilters((prev) => ({ ...prev, ...currentFilters, search: undefined }));
+    const cleaned = { ...currentFilters };
+
+    if (!cleaned.distance || cleaned.distance === 0) {
+      delete cleaned.distance;
+      delete cleaned.latitude;
+      delete cleaned.longitude;
+    } else if (cleaned.latitude == null || cleaned.longitude == null) {
+      delete cleaned.distance;
+    }
+
+    setFilters((prev) => ({ ...prev, ...cleaned, search: undefined }));
     goBack();
   };
 
@@ -103,7 +127,8 @@ const DoctorFilter = ({
                 <RadioItem
                   name="department"
                   checked={
-                    currentFilters.categoryId === specialty.id ||
+                    String(currentFilters.categoryId) ===
+                      String(specialty.id) ||
                     selectedSpecialty === specialty.name
                   }
                   option={{ value: String(selectedSpecialty) }}
