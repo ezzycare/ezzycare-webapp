@@ -55,10 +55,12 @@ const SignInForm = () => {
         setLoading(true);
         if (!response.data.email_verified) {
           push(
-            '/auth/verify-email?type=signin&email=' + data.email
-            // '/auth/verify-email?type=signin&resend=true&email=' + data.email
+            `/auth/verify-email?type=signin&email=${encodeURIComponent(data.email)}`
           );
+
+          return;
         }
+
         authStore.updateUser(response.data.user);
         authStore.setToken(response.data.access_token);
 
@@ -79,6 +81,7 @@ const SignInForm = () => {
       <h1 className="text-2xl text-text font-medium ">Login</h1>
       <p className="text-sm text-text/50 mt-1.5">login to your account</p>
       <form
+        method="post"
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-2 mt-5 flex flex-col"
       >

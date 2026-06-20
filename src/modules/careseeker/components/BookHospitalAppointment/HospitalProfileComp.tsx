@@ -77,8 +77,10 @@ const HospitalProfileComp = ({
         <div>
           <DoctorsList
             doctors={doctors}
+            firstPageItems={doctors}
             hasNextPage={false}
             fetchNextPage={() => {}}
+            isFetchingNextPage={false}
             setClickedDoctor={setClickedDoctor}
           />
         </div>

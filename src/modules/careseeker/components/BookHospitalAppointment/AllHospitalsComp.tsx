@@ -1,12 +1,14 @@
 import { HospitalDiscoveryItem } from '@/apiQuery/hospital/discovery/getHospitalDiscovery';
 import { HospitalProfileType } from '@/apiQuery/hospital/discovery/getSingleHospital';
 
-import SpiralLoader from '@/components/Base/SpiralLoader';
+import BounceLoader from '@/components/Base/BounceLoader';
 import Button from '@/components/Ui/Button';
 import SearchInput from '@/components/Ui/SearchInput';
+import { useHorizontalScroll } from '@/hooks/useHorizontalScroll';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import type { HospitalFiltersType } from '@/stores/bookAppointmentStore';
 import { debounce } from '@/utils/helper';
-import { ArrowLeft, Star } from 'lucide-react';
+import { ArrowLeft, LoaderCircle, Star } from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import HospitalCard from './HospitalCard';
 import HospitalProfileComp from './HospitalProfileComp';
@@ -14,9 +16,11 @@ import HospitalProfileComp from './HospitalProfileComp';
 interface AllHospitalsCompParams {
   isLoading: boolean;
   hospitals: HospitalDiscoveryItem[] | undefined;
+  firstPageItems: HospitalDiscoveryItem[] | undefined;
   selectedHospital: HospitalProfileType;
   hasNextPage: boolean;
   fetchNextPage: () => void;
+  isFetchingNextPage: boolean;
   filters: HospitalFiltersType;
   setFilters: React.Dispatch<React.SetStateAction<HospitalFiltersType>>;
   clickedHospital: HospitalDiscoveryItem | null;
@@ -32,11 +36,13 @@ interface AllHospitalsCompParams {
 const AllHospitalsComp = ({
   isLoading,
   hospitals,
+  firstPageItems,
   selectedHospital,
   filters,
   setFilters,
   hasNextPage,
   fetchNextPage,
+  isFetchingNextPage,
   clickedHospital,
   setClickedHospital,
   action,
@@ -74,28 +80,46 @@ const AllHospitalsComp = ({
       .some(Boolean);
   }, [filters]);
 
-  const topHospital = useMemo(() => {
+  const topHospitals = useMemo(() => {
     if (!hospitals?.length) return null;
 
-    const eligibleHospitals = hospitals.filter(
-      (hospital) => hospital.rating >= 4.5
-    );
-
-    if (!eligibleHospitals.length) return null;
-
-    return eligibleHospitals.reduce((best, current) => {
-      if (current.rating > best.rating) return current;
-
-      if (current.rating === best.rating) {
-        return current;
-      }
-
-      return best;
-    });
+    return hospitals.filter((hospital) => hospital.rating >= 4.5);
   }, [hospitals]);
 
+  const topHospitalsFiltered = useMemo(
+    () =>
+      topHospitals
+        ?.filter((hospital) => hospital.rating >= 4.5)
+        .sort((a, b) => b.rating - a.rating)
+        .slice(0, 5) ?? [],
+    [topHospitals]
+  );
+
+  const topHospitalsScrollRef = useRef<HTMLDivElement>(null);
+  const { LeftArrow, RightArrow, Indicators } = useHorizontalScroll({
+    scrollRef: topHospitalsScrollRef,
+    itemCount: topHospitals?.length ?? 0,
+  });
+
+  const nearYouItems = useMemo(
+    () =>
+      hospitals?.filter((hospital) =>
+        topHospitalsFiltered.some((h) => h.id === hospital.id)
+      ) ?? [],
+    [hospitals, topHospitalsFiltered]
+  );
+
+  const { accumulatedItems, sentinelRef } = useInfiniteScroll({
+    listKey: 'hospitals-near-you',
+    items: nearYouItems,
+    firstPageItems,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  });
+
   return (
-    <div className="flex flex-col -mt-5">
+    <div className="flex flex-col -mt-5 relative">
       {!clickedHospital && (
         <div className="flex flex-col">
           <div
@@ -126,89 +150,93 @@ const AllHospitalsComp = ({
             )}
           </div>
 
-          {!isLoading && (
-            <>
-              {topHospital && (
-                <div className="mt-5">
-                  <div className="w-full flex items-center justify-between gap-2">
-                    <p className="flex items-center gap-1.5">
-                      <Star size={18} className="text-text" /> Top Hospitals
-                    </p>
-                    <p className="text-primary text-sm">View all</p>
-                  </div>
-
-                  <div>
-                    {topHospital && (
-                      <div
-                        key={topHospital?.id}
-                        className="cursor-pointer w-full mt-2.25"
-                        onClick={() => {
-                          setClickedHospital(topHospital);
-                        }}
-                      >
-                        <HospitalCard
-                          key={topHospital.id}
-                          hospital={topHospital}
-                          showArrow
-                          className="shadow-sm rounded-xl"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
+          <>
+            {!!topHospitals?.length && (
               <div className="mt-5">
-                <p className="flex items-center gap-1.5">
-                  <Star size={18} className="text-text" /> Hospitals near you
-                </p>
+                <div className="w-full flex items-center justify-between gap-2">
+                  <p className="flex items-center gap-1.5">
+                    <Star size={18} className="text-text" /> Top Hospitals
+                  </p>
+                  <p className="text-primary text-sm">View all</p>
+                </div>
 
-                <div
-                  className="mt-4 min-h-[30vh] max-h-[40vh] overflow-y-auto flex flex-col gap-2.25"
-                  style={{
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: 'var(--primary) transparent',
-                    scrollBehavior: 'smooth',
-                  }}
-                >
-                  {hospitals
-                    ?.filter((hospital) => hospital.id !== topHospital?.id)
-                    ?.map((hospital) => (
+                <div className="relative mt-2.25">
+                  {LeftArrow}
+                  {RightArrow}
+
+                  <div
+                    ref={topHospitalsScrollRef}
+                    className="flex overflow-x-auto snap-x snap-mandatory gap-3 no-scrollbar"
+                    style={{
+                      scrollbarWidth: 'none',
+                      scrollBehavior: 'smooth',
+                    }}
+                  >
+                    {topHospitals?.map((hospital) => (
                       <div
-                        key={hospital.id}
-                        className="w-full cursor-pointer"
+                        key={hospital?.id}
+                        className="cursor-pointer shrink-0 w-[90%] my-1 snap-center"
                         onClick={() => setClickedHospital(hospital)}
                       >
                         <HospitalCard
                           key={hospital.id}
                           hospital={hospital}
                           showArrow
-                          className="shadow-md rounded-xl"
+                          className="shadow-sm rounded-xl h-full"
                         />
                       </div>
                     ))}
+                  </div>
+
+                  {Indicators}
                 </div>
               </div>
-              {hasNextPage && (
-                <div className="flex items-center justify-center mt-4">
-                  <button
-                    className="text-primary text-sm cursor-pointer"
-                    onClick={() => fetchNextPage()}
-                  >
-                    Load more
-                  </button>
-                </div>
-              )}
-            </>
-          )}
+            )}
+
+            <div className="mt-5">
+              <p className="flex items-center gap-1.5">
+                <Star size={18} className="text-text" /> Hospitals near you
+              </p>
+
+              <div
+                className="mt-4 min-h-[30vh] max-h-[40vh] overflow-y-auto flex flex-col gap-2.25"
+                style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: 'var(--primary) transparent',
+                  scrollBehavior: 'smooth',
+                }}
+              >
+                {(accumulatedItems as HospitalDiscoveryItem[])?.map(
+                  (hospital) => (
+                    <div
+                      key={hospital.id}
+                      className="w-full cursor-pointer"
+                      onClick={() => setClickedHospital(hospital)}
+                    >
+                      <HospitalCard
+                        key={hospital.id}
+                        hospital={hospital}
+                        showArrow
+                        className="shadow-md rounded-xl"
+                      />
+                    </div>
+                  )
+                )}
+
+                <div ref={sentinelRef} className="h-px" />
+
+                {isFetchingNextPage && (
+                  <div className="flex justify-center py-4">
+                    <LoaderCircle className="text-primary animate-spin" />
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
         </div>
       )}
 
-      {isLoading && (
-        <div className="w-full h-[50vh] flex justify-center items-center">
-          <SpiralLoader />
-        </div>
-      )}
+      {isLoading && !isFetchingNextPage && <BounceLoader />}
 
       {clickedHospital && selectedHospital && !isLoading && (
         <HospitalProfileComp

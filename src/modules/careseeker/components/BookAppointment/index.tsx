@@ -15,6 +15,7 @@ import {
 import { ConsultationType } from '@/apiQuery/hospital/types';
 import { ApiResponse } from '@/apiQuery/types';
 import Modal from '@/components/Ui/Modal';
+import { useGeolocation } from '@/hooks/useGeolocation';
 import { BoldWalletIcon, PaypalIconLocal } from '@/icons/DashboardIcons';
 import { toaster } from '@/lib/toaster';
 import {
@@ -122,7 +123,19 @@ const BookDoctorAppointment = ({
     return categories?.length ? categories : [];
   }, [categories]);
 
-  const doctorFilters = useMemo(() => ({ ...activeFilters }), [activeFilters]);
+  const doctorFilters = useMemo(() => {
+    const filters = { ...activeFilters };
+
+    if (!filters.distance || filters.distance === 0) {
+      delete filters.distance;
+      delete filters.latitude;
+      delete filters.longitude;
+    } else if (filters.latitude == null || filters.longitude == null) {
+      delete filters.distance;
+    }
+
+    return filters;
+  }, [activeFilters]);
 
   const {
     doctors: doctorsData,
@@ -146,6 +159,50 @@ const BookDoctorAppointment = ({
   const isLoading = useMemo(() => {
     return loadingDoctors || loadingSingleDoctor;
   }, [loadingDoctors, loadingSingleDoctor]);
+
+  const selectedSpecialtyFromFilter = useMemo(() => {
+    if (!activeFilters.categoryId) return 'all';
+    return (
+      specialties.find((c) => Number(c.id) === activeFilters.categoryId)
+        ?.name ?? 'all'
+    );
+  }, [activeFilters.categoryId, specialties]);
+
+  const selectedCareModeFromFilter = useMemo(() => {
+    return activeFilters.type ?? selectedCareMode;
+  }, [activeFilters.type, selectedCareMode]);
+
+  const {
+    latitude,
+    longitude,
+    hasLocation,
+    permissionGranted,
+    requestPermission,
+  } = useGeolocation();
+
+  useEffect(() => {
+    if (state === 'select-doctor' && !permissionGranted) {
+      requestPermission();
+    }
+  }, [state, permissionGranted, requestPermission]);
+
+  useEffect(() => {
+    if (
+      hasLocation &&
+      latitude != null &&
+      longitude != null &&
+      activeFilters.distance == null
+    ) {
+      updateBooking({
+        activeFilters: {
+          ...activeFilters,
+          latitude,
+          longitude,
+          distance: 100,
+        },
+      });
+    }
+  }, [hasLocation, latitude, longitude]);
 
   const cleanUp = () => {
     resetBookingFlow();
@@ -249,15 +306,25 @@ const BookDoctorAppointment = ({
           {state === 'select-specialty' && (
             <SelectDoctorSpecialty
               specialties={specialties}
-              selectedSpecialty={selectedSpecialty}
-              setSelectedSpecialty={(value) =>
+              selectedSpecialty={selectedSpecialtyFromFilter}
+              setSelectedSpecialty={(value) => {
+                const resolved =
+                  typeof value === 'function'
+                    ? value(selectedSpecialtyFromFilter)
+                    : value;
+                const specialtyId =
+                  resolved !== 'all'
+                    ? specialties.find((category) => category.name === resolved)
+                        ?.id
+                    : undefined;
                 updateBooking({
-                  selectedSpecialty:
-                    typeof value === 'function'
-                      ? value(selectedSpecialty)
-                      : value,
-                })
-              }
+                  selectedSpecialty: resolved,
+                  activeFilters: {
+                    ...activeFilters,
+                    categoryId: specialtyId ? Number(specialtyId) : undefined,
+                  },
+                });
+              }}
               action={() => updateBooking({ state: 'select-care-type' })}
             />
           )}
@@ -265,35 +332,33 @@ const BookDoctorAppointment = ({
             <SelectPatientCareType
               careTypes={careTypes}
               selectedCareType={selectedCareType}
-              setSelectedCareType={(value) =>
+              setSelectedCareType={(value) => {
+                const resolved =
+                  typeof value === 'function' ? value(selectedCareType) : value;
                 updateBooking({
-                  selectedCareType:
-                    typeof value === 'function'
-                      ? value(selectedCareType)
-                      : value,
-                  activeFilters: {
-                    categoryId: selectedCareType,
-                  },
-                })
-              }
+                  selectedCareType: resolved,
+                });
+              }}
               action={() => updateBooking({ state: 'select-care-mode' })}
             />
           )}
           {state === 'select-care-mode' && (
             <SelectPatientCareMode
               careModes={careModes}
-              selectedCareMode={selectedCareMode}
-              setSelectedCareMode={(value) =>
+              selectedCareMode={selectedCareModeFromFilter}
+              setSelectedCareMode={(value) => {
+                const resolved =
+                  typeof value === 'function'
+                    ? value(selectedCareModeFromFilter)
+                    : value;
                 updateBooking({
-                  selectedCareMode:
-                    typeof value === 'function'
-                      ? value(selectedCareMode)
-                      : value,
+                  selectedCareMode: resolved,
                   activeFilters: {
-                    type: selectedCareMode as ConsultationType,
+                    ...activeFilters,
+                    type: resolved as ConsultationType,
                   },
-                })
-              }
+                });
+              }}
               action={() => updateBooking({ state: 'select-doctor' })}
             />
           )}
@@ -301,9 +366,15 @@ const BookDoctorAppointment = ({
             <AllDoctorsComp
               isLoading={isLoading}
               doctors={doctors}
+              firstPageItems={
+                restDoctorQueries.data?.pages?.[0]?.data?.items as
+                  | Doctor[]
+                  | undefined
+              }
               selectedDoctor={doctor}
               hasNextPage={restDoctorQueries.hasNextPage}
               fetchNextPage={restDoctorQueries.fetchNextPage}
+              isFetchingNextPage={restDoctorQueries.isFetchingNextPage}
               filters={activeFilters}
               setFilters={(value) =>
                 updateBooking({
