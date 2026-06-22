@@ -26,6 +26,17 @@ export type VerifyOtpRequestPropsType = {
 
 export type ACCOUNT_TYPE = 'HOSPITAL' | 'AGENT' | 'ADMIN' | 'DOCTOR' | 'SEEKER';
 
+export interface BankAccount {
+  id: string;
+  userId: string;
+  bankId: string;
+  name: string;
+  bankName: string;
+  accountNumber: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface User {
   id: string;
   categoryId: string | null;
@@ -67,11 +78,14 @@ export interface User {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
-  hospitalroleId: number | null;
+  hospitalRoleId?: number | null;
   userDetails?: UserDetails;
+  bankAccounts?: BankAccount[];
   account_type: string;
   account_type_label: string;
   profileCompleted: boolean;
+  email_verified?: boolean;
+  is_account_type_selected?: boolean;
 }
 
 export interface UserDetails {
@@ -117,7 +131,8 @@ export interface UserDetails {
   healthFacilityCertStatus: string | null;
   regstrationCertStatus: string | null;
   pharmacistCertStatus: string | null;
-  totalExperienceYear: number | null;
+  proofOfAddress?: string | null;
+  totalExperienceYear?: string | null;
   sameTiming: boolean | null;
   feesHour: number | null;
   feesDay: number | null;

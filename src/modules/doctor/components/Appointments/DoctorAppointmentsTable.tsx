@@ -77,8 +77,10 @@ const CareSeekerAppointmentsTable = ({
       field: 'appointmentDate',
       label: 'Appointment Date',
       sortable: false,
-      render: (value: string) => {
-        return <span>{dayjs(value).format('MMM DD, YYYY HH:mm A')}</span>;
+      render: (value: string, row: DoctorAppointment) => {
+        return (
+          <span>{`${dayjs(value).format('MMM DD, YYYY')} ${row.appointmentTime}`}</span>
+        );
       },
     },
     {

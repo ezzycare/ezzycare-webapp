@@ -14,7 +14,10 @@ export const useHorizontalScroll = ({
 }: UseHorizontalScrollParams) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeIndexRef = useRef(activeIndex);
-  activeIndexRef.current = activeIndex;
+
+  useEffect(() => {
+    activeIndexRef.current = activeIndex;
+  }, [activeIndex]);
 
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;

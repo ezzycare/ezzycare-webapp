@@ -1,6 +1,9 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { User } from '@/apiQuery/auth/types';
-import { Gender } from '@/apiQuery/users/updateProfile';
+import {
+  Gender,
+  useUpdateProfileMutation,
+} from '@/apiQuery/users/updateProfile';
 import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { RadioItem } from '@/components/Ui/RadioGroup';
@@ -9,8 +12,10 @@ import { UserIconLocal } from '@/icons/DashboardNavIcons';
 import { toaster } from '@/lib/toaster';
 import React, { useEffect, useState } from 'react';
 
+import dayjs from 'dayjs';
+
 const genders: Gender[] = ['MALE', 'FEMALE'];
-const BioDetailsModal = ({
+const CompleteDoctorProfileModal = ({
   openModal,
   setOpenModal,
   data,
@@ -19,11 +24,51 @@ const BioDetailsModal = ({
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   data: User;
 }) => {
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
   const [selectedGender, setSelectedGender] = useState<Gender>('MALE');
+  const [dobDay, setDobDay] = useState('');
+  const [dobMonth, setDobMonth] = useState('');
+  const [dobYear, setDobYear] = useState('');
+
+  const { mutateAsync: update, isPending } = useUpdateProfileMutation();
 
   useEffect(() => {
-    setSelectedGender(data?.gender || '');
-  }, []);
+    setFullName(`${data?.firstName ?? ''} ${data?.lastName ?? ''}`.trim());
+    setPhone(data?.mobileNo ?? '');
+    setSelectedGender((data?.gender as Gender) || 'MALE');
+
+    if (data?.userDetails?.dob) {
+      const d = dayjs(data.userDetails.dob);
+      if (d.isValid()) {
+        setDobDay(d.format('DD'));
+        setDobMonth(d.format('MM'));
+        setDobYear(d.format('YYYY'));
+      }
+    }
+  }, [data]);
+  const handleSubmit = async () => {
+    const nameParts = fullName.trim().split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+
+    const day = dobDay.padStart(2, '0');
+    const month = dobMonth.padStart(2, '0');
+    const year = dobYear || '';
+    const dob = day && month && year ? `${year}-${month}-${day}` : undefined;
+
+    await update({
+      firstName,
+      lastName,
+      mobileNo: phone,
+      gender: selectedGender,
+      dob,
+    });
+
+    toaster.success('Profile updated!');
+    setOpenModal(false);
+  };
+
   return (
     <div>
       <Modal
@@ -36,13 +81,15 @@ const BioDetailsModal = ({
         <div className="space-y-4 flex w-full flex-col">
           <div className="space-y-2 mt-5 flex flex-col">
             <TextInput
-              defaultValue={`${data?.firstName} ${data?.lastName}`}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
               placeholder="E.g Emmanuel Smith"
               label="Full Name"
               leftIcon={<UserIconLocal className="text-text-muted" />}
             />
             <PhoneInput
-              defaultValue={data?.mobileNo}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               placeholder=""
               label="Phone"
             />
@@ -76,9 +123,27 @@ const BioDetailsModal = ({
                 Date of birth
               </p>
               <div className="flex items-center gap-1.5">
-                <TextInput placeholder="DD -" className="" />
-                <TextInput placeholder="MM -" className="" />
-                <TextInput placeholder="YY -" className="" />
+                <TextInput
+                  value={dobDay}
+                  onChange={(e) => setDobDay(e.target.value)}
+                  placeholder="DD"
+                  className=""
+                  maxLength={2}
+                />
+                <TextInput
+                  value={dobMonth}
+                  onChange={(e) => setDobMonth(e.target.value)}
+                  placeholder="MM"
+                  className=""
+                  maxLength={2}
+                />
+                <TextInput
+                  value={dobYear}
+                  onChange={(e) => setDobYear(e.target.value)}
+                  placeholder="YYYY"
+                  className=""
+                  maxLength={4}
+                />
               </div>
             </div>
           </div>
@@ -87,10 +152,8 @@ const BioDetailsModal = ({
             <Button
               variant="primary"
               className="w-full"
-              onClick={() => {
-                toaster.success('Profile updated!');
-                setOpenModal(false);
-              }}
+              loading={isPending}
+              onClick={handleSubmit}
             >
               Continue
             </Button>
@@ -101,4 +164,4 @@ const BioDetailsModal = ({
   );
 };
 
-export default BioDetailsModal;
+export default CompleteDoctorProfileModal;

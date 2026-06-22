@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 interface GetSingleHospitalPayload {
-  id: number;
+  id: number | null;
 }
 
 export interface HospitalContact {

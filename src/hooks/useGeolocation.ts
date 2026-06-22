@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 import { general } from '@/enums';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface GeolocationState {
   latitude: number | null;
@@ -48,9 +49,16 @@ const clearStoredLocation = () => {
   }
 };
 
+const getUserFallbackLocation = (
+  user: AuthStore['user']
+): { latitude: number | null; longitude: number | null } => {
+  const userLat = user?.latitude ?? user?.currentLatitude ?? null;
+  const userLng = user?.longitude ?? user?.currentLongitude ?? null;
+  return { latitude: userLat, longitude: userLng };
+};
+
 export const useGeolocation = () => {
   const user = useAuthStore((state: AuthStore) => state.user);
-  const hasAppliedUserFallback = useRef(false);
 
   const [state, setState] = useState<GeolocationState>(() => {
     const stored = readStoredLocation();
@@ -63,14 +71,11 @@ export const useGeolocation = () => {
       };
     }
 
-    const userLat = user?.latitude ?? user?.currentLatitude ?? null;
-    const userLng = user?.longitude ?? user?.currentLongitude ?? null;
+    const fallback = getUserFallbackLocation(user);
 
-    if (userLat != null && userLng != null) {
-      hasAppliedUserFallback.current = true;
+    if (fallback.latitude != null && fallback.longitude != null) {
       return {
-        latitude: userLat,
-        longitude: userLng,
+        ...fallback,
         permissionGranted: false,
         permissionDenied: false,
         error: null,
@@ -86,6 +91,29 @@ export const useGeolocation = () => {
     };
   });
 
+  useEffect(() => {
+    const stored = readStoredLocation();
+    if (stored.latitude != null && stored.longitude != null) return;
+
+    const fallback = getUserFallbackLocation(user);
+
+    if (fallback.latitude != null && fallback.longitude != null) {
+      setState((prev) => {
+        if (prev.permissionGranted) return prev;
+        if (
+          prev.latitude === fallback.latitude &&
+          prev.longitude === fallback.longitude
+        )
+          return prev;
+        return {
+          ...prev,
+          latitude: fallback.latitude,
+          longitude: fallback.longitude,
+        };
+      });
+    }
+  }, [user]);
+
   const requestPermission = useCallback(() => {
     if (!navigator.geolocation) {
       setState((prev) => ({
@@ -99,7 +127,6 @@ export const useGeolocation = () => {
       (position) => {
         const { latitude, longitude } = position.coords;
         writeStoredLocation(latitude, longitude);
-        hasAppliedUserFallback.current = true;
         setState({
           latitude,
           longitude,
@@ -109,12 +136,11 @@ export const useGeolocation = () => {
         });
       },
       (err) => {
-        const userLat = user?.latitude ?? user?.currentLatitude ?? null;
-        const userLng = user?.longitude ?? user?.currentLongitude ?? null;
+        const fallback = getUserFallbackLocation(user);
 
         setState((prev) => ({
-          latitude: prev.latitude ?? userLat,
-          longitude: prev.longitude ?? userLng,
+          latitude: prev.latitude ?? fallback.latitude,
+          longitude: prev.longitude ?? fallback.longitude,
           permissionGranted: false,
           permissionDenied: err.code === err.PERMISSION_DENIED,
           error: err.message,
@@ -130,7 +156,6 @@ export const useGeolocation = () => {
 
   const clearLocation = useCallback(() => {
     clearStoredLocation();
-    hasAppliedUserFallback.current = false;
     setState({
       latitude: null,
       longitude: null,
@@ -139,25 +164,6 @@ export const useGeolocation = () => {
       error: null,
     });
   }, []);
-
-  useEffect(() => {
-    if (hasAppliedUserFallback.current) return;
-
-    const stored = readStoredLocation();
-    if (stored.latitude != null && stored.longitude != null) return;
-
-    const userLat = user?.latitude ?? user?.currentLatitude ?? null;
-    const userLng = user?.longitude ?? user?.currentLongitude ?? null;
-
-    if (userLat != null && userLng != null) {
-      hasAppliedUserFallback.current = true;
-      setState((prev) => ({
-        ...prev,
-        latitude: userLat,
-        longitude: userLng,
-      }));
-    }
-  }, [user]);
 
   return {
     ...state,

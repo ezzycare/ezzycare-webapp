@@ -131,6 +131,10 @@ const Modal = ({
           ${sizeClasses[size]}
           ${className}
         `}
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'var(--primary) var(--surface-card)',
+        }}
       >
         {/* Header */}
         {(title || description || showCloseButton) && (

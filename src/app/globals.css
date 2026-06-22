@@ -14,6 +14,7 @@
   --blue-3a: #00c8ff25;
   --blue-6a: #00b2e66d;
   --blue-7: #6bcfea;
+  --blue-7a: #00addb94;
   --blue-9: #17c9ed;
   --blue-10: #00bee2;
   --blue-10a: #00bee2fa;
@@ -143,6 +144,7 @@
   --color-blue-3a: var(--blue-3a);
   --color-blue-6a: var(--blue-6a);
   --color-blue-7: var(--blue-7);
+  --color-blue-7a: var(--blue-7a);
   --color-blue-9: var(--blue-9);
   --color-blue-10: var(--blue-10);
   --color-blue-10a: var(--blue-10a);

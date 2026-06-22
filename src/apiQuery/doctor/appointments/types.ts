@@ -1,5 +1,7 @@
-import { ApiResponse } from '@/apiQuery/types';
 import type { User } from '@/apiQuery/auth/types';
+import { ApiResponse } from '@/apiQuery/types';
+import { Gender } from '@/apiQuery/users/updateProfile';
+import { ConsultationType } from '../availability/types';
 
 export type DoctorAppointmentStatus =
   | 'PENDING'
@@ -10,7 +12,12 @@ export type DoctorAppointmentStatus =
   | 'COMPLETED'
   | 'CANCELLED';
 
-export type AppointmentFilter = 'all' | 'upcoming' | 'completed' | 'cancelled';
+export type AppointmentFilter =
+  | 'all'
+  | 'upcoming'
+  | 'completed'
+  | 'cancelled'
+  | 'pending';
 
 export interface DoctorAppointmentClient {
   id: string;
@@ -22,17 +29,17 @@ export interface DoctorAppointmentClient {
 }
 
 export interface DoctorAppointment {
-  id: string;
-  userId: string;
-  clientId: string;
-  hospitalId: string | null;
-  appointmentType: string;
+  id: number;
+  userId: number;
+  clientId: number;
+  hospitalId: number | null;
+  appointmentType: ConsultationType;
   urgent: number;
   name: string;
   email: string;
   mobileNo: string;
   age: string;
-  gender: string;
+  gender: Gender;
   reason: string;
   appointmentDate: string;
   appointmentTime: string;
@@ -117,16 +124,16 @@ export interface GetDoctorAppointmentsParams {
 }
 
 export interface GetDoctorAppointmentParams {
-  id: string;
+  id: number;
 }
 
 export interface DeclineAppointmentParams {
-  id: string;
+  id: number;
   reason: string;
 }
 
 export interface CancelAppointmentParams {
-  id: string;
+  id: number;
   reason: string;
 }
 

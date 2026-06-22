@@ -1,21 +1,21 @@
 'use client';
 
-import * as React from 'react';
-import {
-  today,
-  getLocalTimeZone,
-  CalendarDate,
-  type DateValue,
-} from '@internationalized/date';
+import { CalendarIconLocal } from '@/icons/DashboardNavIcons';
+import { cn } from '@/lib/utils';
 import {
   Calendar,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@heroui/react';
+import {
+  CalendarDate,
+  getLocalTimeZone,
+  today,
+  type DateValue,
+} from '@internationalized/date';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { CalendarIconLocal } from '@/icons/DashboardNavIcons';
-import { cn } from '@/lib/utils';
+import * as React from 'react';
 
 type DatePickerProps = {
   value?: DateValue | null;
@@ -26,9 +26,11 @@ type DatePickerProps = {
   minValue?: DateValue;
   maxValue?: DateValue;
   isDisabled?: boolean;
+  fullWidth?: boolean;
   className?: string;
   buttonClassName?: string;
   startContent?: React.ReactNode;
+  iconPlacement?: 'left' | 'right';
 };
 
 const formatDate = (date: DateValue | null | undefined) => {
@@ -76,9 +78,11 @@ export function DatePicker({
   minValue,
   maxValue,
   isDisabled,
+  fullWidth,
   className,
   buttonClassName,
   startContent,
+  iconPlacement = 'left',
 }: DatePickerProps) {
   const normalizedDefault = React.useMemo(() => {
     if (typeof defaultValue === 'string') {
@@ -99,19 +103,24 @@ export function DatePicker({
   };
 
   return (
-    <div className={cn(`inline-flex relative ${className}`)}>
+    <div
+      className={cn(
+        `inline-flex relative ${fullWidth ? 'w-full' : ''} ${className}`
+      )}
+    >
       <Popover>
-        <PopoverTrigger>
+        <PopoverTrigger className={fullWidth ? 'w-full' : ''}>
           <button
             className={cn(
               `bg-gray-2 px-3 py-3 rounded-xl flex items-center gap-2 
               cursor-pointer border border-transparent hover:border-gray-300 transition
+              ${fullWidth ? 'w-full justify-between' : ''}
               ${buttonClassName}
               `
             )}
             disabled={isDisabled}
           >
-            <CalendarIconLocal />
+            {iconPlacement === 'left' && <CalendarIconLocal />}
 
             <div className="flex items-center gap-2">
               {startContent}
@@ -120,8 +129,11 @@ export function DatePicker({
                 {selectedDate ? formatDate(selectedDate) : placeholder}
               </span>
 
-              <ChevronDownIcon className="h-4 w-4 transition-transform text-muted" />
+              {iconPlacement === 'left' && (
+                <ChevronDownIcon className="h-4 w-4 transition-transform text-muted" />
+              )}
             </div>
+            {iconPlacement === 'right' && <CalendarIconLocal />}
           </button>
         </PopoverTrigger>
 
