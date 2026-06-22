@@ -45,6 +45,7 @@ const CareSeekerDashboard = () => {
     status?: AppointmentStatus;
   }>({
     search: '',
+    status: 'UPCOMING',
   });
 
   const debouncedSetFilters = useRef(

@@ -300,9 +300,10 @@ const BookDoctorAppointment = ({
         title={showModalHeader ? 'Book Appointment' : ''}
         description={showModalHeader ? 'Book an appointment with ease' : ''}
         size="md"
+        className={modalClassName}
         persistent
       >
-        <div className={modalClassName}>
+        <div>
           {state === 'select-specialty' && (
             <SelectDoctorSpecialty
               specialties={specialties}

@@ -41,7 +41,7 @@ const AppointmentFilterModal = ({
   initialStatus?: AppointmentStatus;
 }) => {
   const [type, setType] = useState<string>(initialType ?? '');
-  const [status, setStatus] = useState<string>(initialStatus ?? '');
+  const [status, setStatus] = useState<string>(initialStatus ?? 'UPCOMING');
 
   const handleApply = () => {
     onApply({
