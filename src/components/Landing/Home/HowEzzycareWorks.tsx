@@ -60,7 +60,7 @@ const HowEzzycareWorks = ({ children }: { children?: React.ReactNode }) => {
                   <div
                     className={`w-15 h-15 mr-7.5 rounded-full flex items-center justify-center 
                       border border-[#DAF7FF] transition-all duration-300
-                      ${activeOrderStep === index ? 'bg-[#F1FBFD] text-primary' : 'bg-white text-black'}`}
+                      ${activeOrderStep === index ? 'bg-[#F1FBFD] text-primary' : 'bg-surface-card text-black'}`}
                   >
                     0{index + 1}
                   </div>

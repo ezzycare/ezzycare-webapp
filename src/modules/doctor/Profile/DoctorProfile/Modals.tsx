@@ -243,7 +243,7 @@ export const AddClinicLocationModal = ({
               )}
 
               {suggestions.length > 0 && (
-                <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-border1 bg-white shadow-lg">
+                <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-border1 bg-surface-card shadow-lg">
                   {suggestions.map((item) => (
                     <button
                       key={item.place_id}
@@ -352,7 +352,7 @@ export const AddLocationDetailsModal = ({
 
           <div className="relative">
             <select
-              className="w-full p-3 border border-border1 rounded-lg text-sm text-text-alt outline-none bg-white appearance-none cursor-pointer"
+              className="w-full p-3 border border-border1 rounded-lg text-sm text-text-alt outline-none bg-surface-card appearance-none cursor-pointer"
               value={state}
               onChange={(e) => setState(e.target.value)}
             >
@@ -366,7 +366,7 @@ export const AddLocationDetailsModal = ({
 
           <div className="relative">
             <select
-              className="w-full p-3 border border-border1 rounded-lg text-sm text-text-alt outline-none bg-white appearance-none cursor-pointer"
+              className="w-full p-3 border border-border1 rounded-lg text-sm text-text-alt outline-none bg-surface-card appearance-none cursor-pointer"
               value={country}
               onChange={(e) => setCountry(e.target.value)}
             >

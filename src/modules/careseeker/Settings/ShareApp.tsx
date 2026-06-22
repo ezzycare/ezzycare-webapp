@@ -81,7 +81,7 @@ export const EzzyCareCard = ({ user }: { user: User }) => {
               />
             </div>
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-white rounded-lg">
+            <div className="w-full h-full flex items-center justify-center bg-surface-card rounded-lg">
               {/* Fallback QR placeholder */}
               <div className="grid grid-cols-5 gap-1 w-32 h-32">
                 {Array.from({ length: 25 }).map((_, i) => (

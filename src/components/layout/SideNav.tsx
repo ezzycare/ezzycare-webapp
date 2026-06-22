@@ -2,17 +2,19 @@
 
 import { handleLogout } from '@/apiQuery/auth/logout';
 import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
+import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { LogoutIconLocal, SideBarBaseIcon } from '@/icons/DashboardNavIcons';
 import FullLogo from '@/icons/FullLogo';
 import { cn } from '@/lib/utils';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { dashNavItems, getAccountNavItems } from '@/utils/route';
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import clsx from 'clsx';
-import { ChevronsUpDown } from 'lucide-react';
+import { ChevronRight, ChevronsUpDown } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const SideNav = ({
   sidebarOpen,
@@ -28,6 +30,8 @@ const SideNav = ({
 
   const user = useAuthStore((state: AuthStore) => state.user);
   const email = user?.email ?? '';
+
+  const doctorUser = useAuthStore((state) => state.doctorUser);
 
   const accountNavItems = useMemo(
     () => (accountType ? getAccountNavItems(accountType) : []),
@@ -79,6 +83,9 @@ const SideNav = ({
           className="h-10.25 w-36 my-5 ml-12.5"
           onClick={() => setSideBarOpen(false)}
         />
+        {accountType === 'DOCTOR' && !!doctorUser?.hospitals?.length && (
+          <WorkspaceSwitcher doctorUser={doctorUser} />
+        )}
         <nav className="flex flex-col gap-2.5 max-h-[90vh] overflow-y-auto">
           {accessibleNavItems.map((item) => {
             const active =
@@ -125,3 +132,72 @@ const SideNav = ({
 };
 
 export default SideNav;
+
+const WorkspaceSwitcher = ({ doctorUser }: { doctorUser: DoctorProfile }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const hospitals = doctorUser.hospitals;
+
+  const initials = doctorUser?.firstName
+    ? `${doctorUser.firstName[0]}${doctorUser.lastName?.[0] ?? ''}`
+    : '';
+
+  if (!doctorUser?.firstName) return null;
+
+  const handleLogoutUser = async () => {
+    try {
+      await handleLogout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  return (
+    <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger>
+        <div className="flex items-center gap-3 bg-background py-2.5 px-3 cursor-pointer hover:bg-gray-2 transition-colors mb-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-surface-card text-sm font-medium">
+            {initials}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="text-sm font-semibold truncate">{`${doctorUser.firstName} ${doctorUser.lastName}`}</h2>
+            <p className="text-xs text-text-muted truncate">
+              {doctorUser.email}
+            </p>
+          </div>
+          <ChevronsUpDown
+            size={18}
+            className="ml-auto text-text-muted shrink-0"
+          />
+        </div>
+      </PopoverTrigger>
+
+      <PopoverContent className="w-72.25 p-5 rounded-none! -ml-3">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-text-muted text-sm">Switch workspaces</h2>
+          <div className="mt-2 space-y-2">
+            {hospitals?.map((hospital) => (
+              <div
+                key={hospital.id}
+                className="flex items-center gap-3 border border-border2 rounded-lg py-2.5 px-3 cursor-pointer hover:bg-gray-2 transition-colors"
+              >
+                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-primary text-surface-card text-xs font-medium uppercase">
+                  {hospital.hospitalName.slice(0, 1)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-xs font-medium truncate">
+                    {hospital.hospitalName}
+                  </h3>
+                </div>
+                <ChevronRight
+                  size={18}
+                  className="ml-auto text-text-muted shrink-0"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};

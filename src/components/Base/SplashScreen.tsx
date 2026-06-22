@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 const SplashScreen = () => {
   const [show, setShow] = useState(() => false);
@@ -17,7 +17,7 @@ const SplashScreen = () => {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface-card">
       <Image
         src="/Ezzycare-logo-gif.gif"
         alt="logo-gif"

@@ -269,87 +269,128 @@
 }
 
 .dark {
-  --surface-card: #111827;
-
   /* =========================
     BASE SURFACES
+    Three-layer depth: page bg → elevated cards → highest elements
+    Modern dark UIs use near-blacks with slight blue undertones for less eye strain
   ========================= */
-  --background: #0b0f17; /* deep slate navy */
-  --border: #1b2433; /* subtle separation */
-  --text-muted: #8a93a6;
+  --background: #0a0e1a;          /* page background — deep, near-black */
+  --surface-card: #131825;        /* card / panel — one step up from bg */
+  --foreground: #1a2030;          /* elevated / modal — one more step up */
 
-  /* foreground = cards / elevated surfaces */
-  --foreground: #111827;
+  --border: #ffffff14;            /* subtle white-on-dark, 8% opacity */
+  --text-muted: #94a3b8c4;        /* warm-cool muted text */
 
   /* =========================
-    TEXT COLORS
+    GRAY SCALE — inverted hierarchy
+    1-2: surfaces (darkest), 10-12: text (lightest)
   ========================= */
-  --gray-12: #e6eaf2;
-  --gray-11: #b6c0d1;
-  --gray-10: #8a93a6;
-
-  --neutral-12: #e8ecf5;
-  --neutral-11a: #a3adc2;
-  --neutral-9a: #6b768a;
+  --gray-1: #0a0e1a;              /* deepest, page bg */
+  --gray-2: #131825;              /* card */
+  --gray-3: #1a2030;              /* elevated card */
+  --gray-3a: #ffffff08;           /* hover / subtle overlay */
+  --gray-4: #232b3d;              /* borders, dividers */
+  --gray-8a: #ffffff1f;           /* stronger overlay */
+  --gray-10: #94a3b8;             /* muted text */
+  --gray-11: #cbd5e1;             /* secondary text */
+  --gray-11a: #cbd5e1cc;          /* secondary with alpha */
+  --gray-12: #f1f5f9;             /* primary text */
 
   /* =========================
-    SURFACE OVERRIDES
+    NEUTRAL — alpha-based for layering
+    These are designed to work as overlays on dark surfaces
   ========================= */
-  --gray-2: #111827; /* cards */
-  --gray-3: #141b2a; /* elevated cards */
-  --gray-3a: #ffffff0a;
-  --gray-8a: #ffffff1a;
-
-  --neutral-3a: #ffffff0a;
-  --neutral-5a: #ffffff14;
-  --neutral-8a: #ffffff22;
+  --neutral-3a: #ffffff0a;        /* 4% white — subtle dividers */
+  --neutral-5a: #ffffff14;        /* 8% white — borders */
+  --neutral-6a: #ffffff1a;        /* 10% white — hovers */
+  --neutral-8a: #ffffff29;        /* 16% white — active states */
+  --neutral-9a: #ffffff52;        /* 32% white — disabled text */
+  --neutral-10: #a3a8b5;
+  --neutral-11a: #cbd5e1d4;
+  --neutral-12: #f1f5f9;
 
   /* =========================
-    PRIMARY (keep brand consistent)
+    BLUE — brand stays cyan, but slightly brightened
+    Cyan needs more luminance on dark to feel "alive"
   ========================= */
-  --primary: #17c9ed;
-  --blue-9: #17c9ed;
-  --blue-10: #00bee2;
-  --blue-10a: #00bee2e6;
-  --blue-11: #56d9f5;
-
-  /* soften glow in dark mode */
-  --blue-3a: #17c9ed1a;
+  --blue-1: #06141a;              /* darkest blue surface */
+  --blue-2: #0a1e26;              /* card with blue tint */
+  --blue-2a: #00b7db14;           /* subtle blue glow */
+  --blue-3: #0d2a35;              /* elevated blue */
+  --blue-3a: #00c8ff2e;           /* blue overlay, slightly stronger for dark */
+  --blue-6a: #00b2e699;
+  --blue-7: #4dd4f0;              /* brightened from #6bcfea */
+  --blue-7a: #00addbb8;
+  --blue-9: #38d4f0;              /* brand cyan, brightened */
+  --blue-10: #1ec8e8;             /* primary cyan — most-used */
+  --blue-10a: #1ec8e8fa;
+  --blue-10ab: #2a9bf5fa;
+  --blue-11: #5ee0f5;             /* lighter for hover/text on dark */
+  --blue-11a: #5ee0f5;
+  --blue-12: #b3ecf5;             /* lightest blue — for emphasis text */
 
   /* =========================
-    ACCENT (slightly brighter in dark UI)
+    GREEN — desaturated slightly for dark contrast comfort
   ========================= */
-  --accent-10: #2dd4ff;
-  --accent-11a: #00a7d6;
-  --accent-12: #0a2a36;
+  --green-3a: #00db662e;
+  --green-5: #1a4733;             /* dark surface variant */
+  --green-6a: #00be6b8c;
+  --green-8: #1fd494;
+  --green-10: #25dd9a;            /* primary success */
+  --green-11a: #5ee8b3;
+  --green-12: #aaf5d4;
 
   /* =========================
-    SEMANTIC COLORS (adjusted for dark contrast)
+    CRIMSON / PINK / PURPLE — brightened for visibility
   ========================= */
-  --success: #22c55e;
-  --success-600: #16a34a;
-
-  --warning: #fbbf24;
-  --warning-2a: #fbbf2420;
-
-  --info: #38bdf8;
-  --info-3a: #38bdf820;
-
-  --error: #f87171;
-  --error-3a: #f8717120;
+  --crimson-11: #ff5c8a;
+  --plum-11a: #c478e6;
+  --pink-3a: #f400ff2e;
+  --pink-10: #d066e6;
+  --pink-11a: #d066e6e0;
+  --pink-11: #d96cf0;
+  --pink-12a: #ffc4f5;
+  --purple-3a: #8e00f124;
+  --purple-10: #a875e0;
+  --purple-11a: #b88ae6;
+  --orange-10a: #ff7a1f;
 
   /* =========================
-    SPECIAL COLORS
+    ACCENT — mirrors blue brand
   ========================= */
-  --crimson-11: #fb4e7c;
-  --pink-11: #d946ef;
-  --purple-10: #a855f7;
-  --orange-10a: #fb923c;
+  --accent-3a: #00c8ff2e;
+  --accent-8a: #1ec8e8;
+  --accent-10: #1ec8e8;
+  --accent-11a: #5ee0f5;
+  --accent-12: #b3ecf5;
 
   /* =========================
-    SURFACE / LAYOUT OVERRIDES
+    PRIMARY
   ========================= */
-  --sidebar-primary: #0f172a;
+  --primary: #1ec8e8;
+  --sidebar-primary: #0f1525;
+
+  /* =========================
+    SEMANTIC COLORS — adjusted for dark contrast
+    Brighter & slightly desaturated; raw saturated colors hurt on dark
+  ========================= */
+  --success: #25dd9a;
+  --success-600: #1fd494;
+
+  --warning: #ffc94d;             /* warmer, less harsh than amber */
+  --warning-2a: #ffc94d1f;
+  --warning-3a: #ffc94d33;
+  --warning-8a: #ffc94db8;
+  --warning-11a: #ffd66e;
+
+  --info: #38d4f0;
+  --info-3a: #38d4f024;
+  --info-11a: #5ee0f5;
+
+  --error: #ff6b6b;               /* readable red, not full saturation */
+  --error-3a: #ff6b6b1f;
+  --error-8a: #ff6b6bb8;
+  --error-11a: #ff8585;
 }
 
 @layer base {

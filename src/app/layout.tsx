@@ -1,5 +1,6 @@
 import QueryProvider from '@/components/Base/QueryProvider';
 import SplashScreen from '@/components/Base/SplashScreen';
+import ThemeInitializer from '@/components/Base/ThemeInitializer';
 import {
   geistMono,
   geistSans,
@@ -9,6 +10,7 @@ import {
 } from '@/lib/fonts';
 import { AppToaster } from '@/lib/toaster';
 import { cn } from '@/lib/utils';
+import { THEME_SCRIPT } from '@/utils/themeScript';
 import type { Metadata } from 'next';
 import './globals.css';
 
@@ -52,7 +54,9 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <QueryProvider>
+          <ThemeInitializer />
           <SplashScreen />
 
           {children}

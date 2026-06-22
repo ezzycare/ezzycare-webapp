@@ -2,17 +2,13 @@ import { ApiResponse } from '@/apiQuery/types';
 import { axiosClient } from '@/services/axiosClient';
 import {
   useMutation,
-  useQuery,
   UseMutationOptions,
   UseMutationResult,
   useQueryClient,
 } from '@tanstack/react-query';
 import axios from 'axios';
-import {
-  AddBankAccountParams,
-  BankAccount,
-  BankAccountsResponse,
-} from './types';
+import { BankAccount } from '../auth/types';
+import { AddBankAccountParams } from './types';
 
 export const addBankAccount = async (
   params: AddBankAccountParams
@@ -55,30 +51,4 @@ export const useAddBankAccountMutation = (
 
     ...options,
   });
-};
-
-export const getBankAccounts = async (): Promise<BankAccountsResponse> => {
-  try {
-    const response = await axiosClient.get<BankAccountsResponse>(
-      '/wallet/bank-accounts'
-    );
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw error.response?.data ?? error;
-    }
-    throw error;
-  }
-};
-
-export const useGetBankAccounts = () => {
-  const result = useQuery<BankAccountsResponse, Error>({
-    queryKey: ['wallet', 'bank-accounts'],
-    queryFn: getBankAccounts,
-  });
-
-  return {
-    ...result,
-    accounts: result.data?.data ?? [],
-  };
 };

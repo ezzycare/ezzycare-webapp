@@ -70,7 +70,7 @@ const Toggle = ({
       >
         <span
           className={cn(
-            'absolute left-1 rounded-full bg-white transition-transform duration-200',
+            'absolute left-1 rounded-full bg-surface-card transition-transform duration-200',
             styles.ball,
             value ? styles.translate : 'translate-x-0'
           )}

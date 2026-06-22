@@ -79,6 +79,7 @@ const CompleteDoctorProfileModal = ({
       title="Complete your profile"
       description="This helps you get verified on EzzyCare"
       size="md"
+      persistent
     >
       <div className="flex flex-col gap-4 mt-2">
         <TextInput

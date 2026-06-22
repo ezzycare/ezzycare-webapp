@@ -48,6 +48,7 @@ export type StatusType =
   | 'paid'
   | 'suspended'
   | 'not assigned'
+  | 'in_progress'
   | 'inactive';
 
 const statuses = {
@@ -55,6 +56,7 @@ const statuses = {
   approved: 'bg-success/10 text-success',
   active: 'bg-success/10 text-success',
   paid: 'bg-success/10 text-success',
+  in_progress: 'bg-primary/10 text-blue-11',
   upcoming: 'bg-blue-3a text-primary',
   completed: 'bg-success/10 text-success',
   suspended: 'bg-error-3a text-error',

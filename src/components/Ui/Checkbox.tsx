@@ -106,7 +106,7 @@ const Checkbox = ({
         </svg>
 
         {indeterminate && (
-          <span className="absolute inset-0 m-auto w-2 h-0.5 rounded-full bg-white" />
+          <span className="absolute inset-0 m-auto w-2 h-0.5 rounded-full bg-surface-card" />
         )}
       </span>
 

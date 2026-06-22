@@ -88,8 +88,9 @@ import { getProfile } from '@/apiQuery/users/getProfile';
 import { updateProfile as updateUserProfile } from '@/apiQuery/users/updateProfile';
 import {
   addBankAccount,
-  getBankAccounts,
 } from '@/apiQuery/wallet/addBankAccount';
+import { getBankAccounts } from '@/apiQuery/wallet/getBankAccounts';
+import { updatePrimaryAccount } from '@/apiQuery/wallet/updatePrimaryAccount';
 import { deleteBankAccount } from '@/apiQuery/wallet/deleteBankAccount';
 import { getBanks } from '@/apiQuery/wallet/getBanks';
 import { getPayouts } from '@/apiQuery/wallet/getPayouts';
@@ -984,6 +985,13 @@ const modules: ModuleGroup[] = [
         description: 'DELETE /wallet/bank-accounts/{id}',
         module: 'wallet',
       },
+      {
+        method: 'PATCH',
+        name: 'Update Primary Account',
+        params: [{ key: 'id', label: 'Account ID', type: 'number' }],
+        description: 'PATCH /wallet/bank-accounts/{id}',
+        module: 'wallet',
+      },
     ],
   },
   {
@@ -1494,6 +1502,8 @@ const executeApi = async (callKey: string, params: Record<string, string>) => {
       });
     case 'wallet_Delete Bank Account':
       return deleteBankAccount({ id: Number(params.id) });
+    case 'wallet_Update Primary Account':
+      return updatePrimaryAccount({ id: Number(params.id) });
 
     // Chat
     case 'chat_Conversations':
@@ -1529,7 +1539,7 @@ const executeApi = async (callKey: string, params: Record<string, string>) => {
     case 'communication_Agora Token':
       return getAgoraToken({
         channelName: params.channelName,
-        uid: Number(params.uid),
+        uid: Number(params.uid) || 1,
       });
     case 'communication_Send SMS':
       return sendSms({ to: params.to, message: params.message });

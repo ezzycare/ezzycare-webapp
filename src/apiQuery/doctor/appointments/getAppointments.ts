@@ -72,5 +72,6 @@ export const useGetDoctorAppointmentsInfiniteQuery = (
   return {
     ...result,
     appointments,
+    totalAppointments: result.data?.pages[0]?.data?.meta.totalItems ?? 0,
   };
 };

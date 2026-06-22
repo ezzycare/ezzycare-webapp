@@ -17,9 +17,10 @@ export interface DoctorProfileEducation {
 export type DoctorUrgentCriteria = 'VIDEO' | 'HOME';
 
 export interface UpdateDoctorProfilePayload {
-  aboutUs?: string;
   experience?: DoctorProfileExperience;
   education?: DoctorProfileEducation;
+  urgentCriteria?: DoctorUrgentCriteria[];
+  aboutUs?: string;
   subcategoryId?: number;
   feesMinute?: number;
   feesHour?: number;
@@ -37,7 +38,6 @@ export interface UpdateDoctorProfilePayload {
   clinicPlace?: string;
   latitude?: number;
   longitude?: number;
-  urgentCriteria?: DoctorUrgentCriteria[];
   occupation?: string;
   city?: string;
   country?: string;

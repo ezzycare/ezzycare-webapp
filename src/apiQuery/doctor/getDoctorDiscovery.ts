@@ -6,6 +6,7 @@ import {
 
 import { ApiResponse } from '@/apiQuery/types';
 import { axiosClient } from '@/services/axiosClient';
+import { BankAccount } from '../auth/types';
 import { ConsultationType } from '../hospital/types';
 
 export type DoctorSortBy = 'distance' | 'rating';
@@ -142,6 +143,7 @@ export type Doctor = {
   deletedAt: string | null;
   hospitalRoleId: string | null;
   userDetails: DoctorUserDetails;
+  bankAccounts?: BankAccount[];
   receivedReviews: Review[];
   account_type: string;
   account_type_label: string;

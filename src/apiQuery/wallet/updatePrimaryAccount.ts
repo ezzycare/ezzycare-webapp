@@ -8,20 +8,20 @@ import {
 } from '@tanstack/react-query';
 import axios from 'axios';
 
-interface MarkReadParams {
-  peerId: string;
+interface DeleteBankAccountParams {
+  id: number;
 }
 
-export const markChatRead = async (
-  params: MarkReadParams
+export const updatePrimaryAccount = async (
+  params: DeleteBankAccountParams
 ): Promise<ApiResponse<unknown>> => {
-  if (!params.peerId) {
-    throw new Error('peerId is required');
+  if (!params.id) {
+    throw new Error('Bank account id is required');
   }
 
   try {
     const response = await axiosClient.post<ApiResponse<unknown>>(
-      `/chat/read/${params.peerId}`
+      `/wallet/bank-accounts/${params.id}`
     );
     return response.data;
   } catch (error) {
@@ -32,17 +32,25 @@ export const markChatRead = async (
   }
 };
 
-export const useMarkChatReadMutation = (
-  options?: UseMutationOptions<ApiResponse<unknown>, unknown, MarkReadParams>
-): UseMutationResult<ApiResponse<unknown>, unknown, MarkReadParams> => {
+export const useUpdatePrimaryAccountMutation = (
+  options?: UseMutationOptions<
+    ApiResponse<unknown>,
+    unknown,
+    DeleteBankAccountParams
+  >
+): UseMutationResult<
+  ApiResponse<unknown>,
+  unknown,
+  DeleteBankAccountParams
+> => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: markChatRead,
+    mutationFn: updatePrimaryAccount,
 
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['chat', 'conversations'],
+        queryKey: ['wallet', 'bank-accounts'],
       });
     },
 

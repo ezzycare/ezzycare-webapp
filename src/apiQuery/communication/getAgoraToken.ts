@@ -4,8 +4,8 @@ import axios from 'axios';
 import { AgoraTokenData, AgoraTokenResponse } from './types';
 
 interface GetAgoraTokenParams {
-  channelName: string;
   uid: number;
+  channelName: string;
 }
 
 export const getAgoraToken = async (
@@ -39,7 +39,7 @@ export const useGetAgoraToken = (params: GetAgoraTokenParams) => {
       params.uid,
     ],
     queryFn: () => getAgoraToken(params),
-    enabled: !!params.channelName && !!params.uid,
+    enabled: !!params.channelName && params.uid > 0,
   });
 
   return {

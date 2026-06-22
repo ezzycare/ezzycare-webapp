@@ -3,16 +3,16 @@
 import { CalendarIconLocal } from '@/icons/DashboardNavIcons';
 import { cn } from '@/lib/utils';
 import {
-  Calendar,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+    Calendar,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
 } from '@heroui/react';
 import {
-  CalendarDate,
-  getLocalTimeZone,
-  today,
-  type DateValue,
+    CalendarDate,
+    getLocalTimeZone,
+    today,
+    type DateValue,
 } from '@internationalized/date';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import * as React from 'react';
@@ -137,7 +137,7 @@ export function DatePicker({
           </button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-[320px] rounded-2xl border border-gray-3 bg-white p-4 shadow-2xl">
+        <PopoverContent className="w-[320px] rounded-2xl border border-gray-3 bg-surface-card p-4 shadow-2xl">
           <div className="mb-4 text-sm font-medium text-default-500">
             {label}
           </div>

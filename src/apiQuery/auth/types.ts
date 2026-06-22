@@ -32,9 +32,15 @@ export interface BankAccount {
   bankId: string;
   name: string;
   bankName: string;
+  bankBranchName: string | null;
   accountNumber: string;
-  createdAt: string;
-  updatedAt: string;
+  ifscCode: string | null;
+  primaryAccount: boolean;
+  cardNumber: string | null;
+  expiryDate: string | null;
+  cardExpiry: string | null;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
 }
 
 export interface User {

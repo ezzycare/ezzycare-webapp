@@ -1,4 +1,5 @@
 import { ApiResponse } from '@/apiQuery/types';
+import { BankAccount } from '../auth/types';
 
 export interface Bank {
   id: number;
@@ -74,17 +75,6 @@ export interface PayoutsData {
 
 export type PayoutsResponse = ApiResponse<PayoutsData>;
 
-export interface BankAccount {
-  id: number;
-  userId: string;
-  bankId: number;
-  name: string;
-  bankName: string;
-  accountNumber: string;
-  isVerified: boolean;
-  createdAt: string;
-}
-
 export type BankAccountsResponse = ApiResponse<BankAccount[]>;
 
 export interface AddBankAccountParams {
@@ -100,9 +90,9 @@ export interface VerifyBankAccountParams {
 }
 
 export interface VerifyBankAccountData {
-  accountName: string;
-  accountNumber: string;
-  bankName: string;
+  account_name: string;
+  account_number: string;
+  bank_id: string;
 }
 
 export type VerifyBankAccountResponse = ApiResponse<VerifyBankAccountData>;

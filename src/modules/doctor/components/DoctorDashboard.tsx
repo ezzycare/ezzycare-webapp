@@ -2,6 +2,7 @@
 
 // import { redirect } from 'next/navigation';
 import { useGetDoctorAppointmentsInfiniteQuery } from '@/apiQuery/doctor/appointments/getAppointments';
+import { useGetHospitalInvitationsQuery } from '@/apiQuery/doctor/profile/getHospitalInvitations';
 import AlertBanner from '@/components/Base/AlertBanner';
 import SpiralLoader from '@/components/Base/SpiralLoader';
 import Button from '@/components/Ui/Button';
@@ -21,6 +22,8 @@ import AppointmentRequestCard from './Appointments/AppointmentRequestCard';
 import DoctorAppointmentsTable from './Appointments/DoctorAppointmentsTable';
 import SetAvailabilityModal from './Availability/SetAvailabilityModal';
 import CompleteDoctorProfileModal from './CompleteDoctorProfileModal';
+import HospitalInvitationCard from './Invitation/HospitalInvitationCard';
+import { HospitalWelcomeModal } from './Invitation/HospitalWelcomeModal';
 import UploadDoctorDocs from './UploadDoctorDocs';
 
 const DoctorDashboard = () => {
@@ -32,14 +35,27 @@ const DoctorDashboard = () => {
     React.useState(false);
   const [showPendingAppointment, setShowPendingAppointment] =
     React.useState(true);
+  const [showHospitalWelcomeModal, setShowHospitalWelcomeModal] =
+    React.useState(false);
 
-  const { appointments, isFetching: isLoadingAppointments } =
-    useGetDoctorAppointmentsInfiniteQuery({
-      limit: 10,
-    });
+  const {
+    appointments,
+    isFetching: isLoadingAppointments,
+    totalAppointments,
+  } = useGetDoctorAppointmentsInfiniteQuery({
+    limit: 20,
+  });
 
-  const pendingAppointment = useMemo(() => {
-    // return pendingAppointmentsData?.length ? pendingAppointmentsData[0] : null;
+  const upcomingEvents = useMemo(() => {
+    return appointments?.length
+      ? appointments?.filter((val) =>
+          ['UPCOMING', 'IN_PROGRESS'].includes(val.status)
+        )
+      : [];
+  }, [appointments]);
+
+  const paidAppointment = useMemo(() => {
+    // return paidAppointmentsData?.length ? paidAppointmentsData[0] : null;
     const result = appointments?.length
       ? appointments?.find((val) => val.status === 'PAID')
       : null;
@@ -49,6 +65,11 @@ const DoctorDashboard = () => {
     }
     return result;
   }, [appointments]);
+
+  const { invitations } = useGetHospitalInvitationsQuery();
+  const hospitalInvitation = useMemo(() => {
+    return invitations?.length ? invitations[0] : null;
+  }, [invitations]);
 
   useEffect(() => {
     const storedShowBalance = localStorage.getItem('showCareSeekerBalance');
@@ -60,6 +81,24 @@ const DoctorDashboard = () => {
     const value = !showBalance;
     setShowBalance(value);
     localStorage.setItem('showCareSeekerBalance', String(value));
+  };
+
+  const renderCards = () => {
+    if (hospitalInvitation) {
+      return (
+        <HospitalInvitationCard
+          invitation={hospitalInvitation}
+          onClose={() => setShowHospitalWelcomeModal(true)}
+        />
+      );
+    } else if (paidAppointment && showPendingAppointment) {
+      return (
+        <AppointmentRequestCard
+          appointment={paidAppointment}
+          onClose={() => setShowPendingAppointment(false)}
+        />
+      );
+    }
   };
 
   return (
@@ -75,12 +114,7 @@ const DoctorDashboard = () => {
           <p className="text-sm">How are you doing today? </p>
         </div>
 
-        {pendingAppointment && showPendingAppointment && (
-          <AppointmentRequestCard
-            appointment={pendingAppointment}
-            onClose={() => setShowPendingAppointment(false)}
-          />
-        )}
+        {renderCards()}
       </div>
       {user && user?.status === 'PROFILE_NOT_COMPLETE' && (
         <div className="w-full mt-5">
@@ -122,7 +156,9 @@ const DoctorDashboard = () => {
             <DoctorAppointmentsIcon />
             <div>
               <p className="text-xs text-accent-12">Appointments</p>
-              <h2 className="text-lg text-blue-12 font-semibold">105</h2>
+              <h2 className="text-lg text-blue-12 font-semibold">
+                {totalAppointments || 0}
+              </h2>
             </div>
           </div>
 
@@ -151,7 +187,7 @@ const DoctorDashboard = () => {
         )}
         {!isLoadingAppointments && (
           <div className="-mt-3">
-            {!appointments?.length && (
+            {!upcomingEvents?.length && (
               <EmptyAppointment>
                 {!user.profileCompleted && (
                   <div className="w-77 flex flex-col mx-auto space-y-3">
@@ -167,8 +203,8 @@ const DoctorDashboard = () => {
               </EmptyAppointment>
             )}
             <div className="max-w-full overflow-x-auto">
-              {!!appointments?.length && (
-                <DoctorAppointmentsTable data={appointments} />
+              {!!upcomingEvents?.length && (
+                <DoctorAppointmentsTable data={upcomingEvents} />
               )}
             </div>
           </div>
@@ -188,6 +224,14 @@ const DoctorDashboard = () => {
         open={showAvailabilityModal}
         onClose={() => setShowAvailabilityModal(false)}
         onSave={(availability) => {}}
+      />
+      <HospitalWelcomeModal
+        open={showHospitalWelcomeModal}
+        onClose={() => setShowHospitalWelcomeModal(false)}
+        onConfirm={() => {
+          setShowHospitalWelcomeModal(false);
+          setShowProfileModal(true);
+        }}
       />
     </div>
   );

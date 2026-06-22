@@ -1,3 +1,8 @@
+'use client';
+
+import { useGetNotificationsInfiniteQuery } from '@/apiQuery/notifications/getNotifications';
+import { useReadAllNotificationsMutation } from '@/apiQuery/notifications/readAllNotifications';
+import { useReadNotificationMutation } from '@/apiQuery/notifications/readNotification';
 import {
   NotificationDarkIconLocal,
   NotificationIconLocal,
@@ -5,22 +10,23 @@ import {
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import { Cross1Icon } from '@radix-ui/react-icons';
+import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { Dot } from 'lucide-react';
-import { useMemo, useState } from 'react';
-
-import { useReadAllNotificationsMutation } from '@/apiQuery/notifications/readAllNotifications';
-import { useReadNotificationMutation } from '@/apiQuery/notifications/readNotification';
-import { useNotificationsStore } from '@/stores/notificationsStore';
+import { Dot, LoaderCircle } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const Noti = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const notifications = useNotificationsStore((state) => state.notifications);
-  const markAsReadLocal = useNotificationsStore((state) => state.markAsRead);
-  const markAllAsReadLocal = useNotificationsStore(
-    (state) => state.markAllAsRead
-  );
+  const {
+    notifications,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useGetNotificationsInfiniteQuery({ limit: 20 }, { enabled: isOpen });
+  const queryClient = useQueryClient();
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const { mutate: markRead } = useReadNotificationMutation();
   const { mutate: markAllRead } = useReadAllNotificationsMutation();
@@ -30,15 +36,49 @@ const Noti = () => {
     [notifications]
   );
 
-  const handleMarkAsRead = (id: string) => {
-    markAsReadLocal(id);
-    markRead({ id });
-  };
+  const handleMarkAsRead = useCallback(
+    (id: string) => {
+      markRead(
+        { id },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: ['notifications', 'infinite'],
+            });
+          },
+        }
+      );
+    },
+    [markRead, queryClient]
+  );
 
-  const handleMarkAllAsRead = () => {
-    markAllAsReadLocal();
-    markAllRead();
-  };
+  const handleMarkAllAsRead = useCallback(() => {
+    markAllRead(undefined, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ['notifications', 'infinite'],
+        });
+      },
+    });
+  }, [markAllRead, queryClient]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const el = sentinelRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isOpen, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
@@ -79,7 +119,13 @@ const Noti = () => {
               scrollbarColor: 'var(--primary) transparent',
             }}
           >
-            {notifications.length === 0 && (
+            {isLoading && (
+              <div className="flex items-center justify-center py-8">
+                <LoaderCircle className="animate-spin text-primary" size={24} />
+              </div>
+            )}
+
+            {!isLoading && notifications.length === 0 && (
               <p className="text-center text-sm text-text-muted py-8">
                 No notifications
               </p>
@@ -109,7 +155,6 @@ const Noti = () => {
                       className="text-red-500 absolute -top-px right-0"
                     />
                   )}
-
                   <NotificationIconLocal />
                 </div>
 
@@ -119,28 +164,28 @@ const Noti = () => {
                       <span className="text-sm text-text font-medium">
                         {item.title}
                       </span>
-
                       {!item.isRead && (
-                        <span
-                          className="
-                            w-fit text-white text-xs bg-primary rounded-full
-                            py-0.5 px-1.5 flex items-center justify-center
-                          "
-                        >
+                        <span className="w-fit text-white text-xs bg-primary rounded-full py-0.5 px-1.5 flex items-center justify-center">
                           New
                         </span>
                       )}
                     </p>
-
                     <p className="text-sm text-blue-11">
                       {dayjs(item.createdAt).format('DD MMMM, YYYY')}
                     </p>
                   </div>
-
                   <p className="text-sm text-muted mt-0.5">{item.message}</p>
                 </div>
               </div>
             ))}
+
+            <div ref={sentinelRef} className="h-px" />
+
+            {isFetchingNextPage && (
+              <div className="flex items-center justify-center py-4">
+                <LoaderCircle className="animate-spin text-primary" size={20} />
+              </div>
+            )}
           </div>
         </div>
       </PopoverContent>

@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import { useMemo, useState } from 'react';
 
-interface SelectOption {
+export interface SelectOption {
   value: string;
   label: string;
   description?: string;
@@ -166,7 +166,7 @@ const Dropdown = ({
 
         <PopoverContent
           className={cn(
-            'rounded-2xl border border-gray-3 w-[320px] bg-white shadow-2xl p-0'
+            'rounded-2xl border border-gray-3 w-[320px] bg-surface-card shadow-2xl p-0'
           )}
         >
           <div className="w-full">

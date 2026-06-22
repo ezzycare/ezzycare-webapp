@@ -25,15 +25,15 @@ import {
   MapPin,
   Settings as SettingsIcon,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AccountSettings from './AccountSettings';
 import CustomerSupport from './CustomerSupport';
+import DoctorBankingDetails from './DoctorBankingDetails';
 import DoctorProfileComp from './DoctorProfile';
+import DoctorVisibility from './DoctorVisibility';
 import LogoutConfirmation from './LogoutConfirmation';
-import SeekerAddress from './SeekerAddress';
 import SeekerFavorites from './SeekerFavorites';
 import SeekerMedicalRecords from './SeekerMedicalRecords';
-import SeekerWallet from './SeekerWallet';
 import ShareApp from './ShareApp';
 
 const DoctorProfileSettings = () => {
@@ -41,12 +41,19 @@ const DoctorProfileSettings = () => {
 
   const [currentView, setCurrentView] = useState(isMobile ? '' : 'Profile');
   const { user: authUser } = useAuthStore((state: AuthStore) => state);
+  const { updateDoctorUser } = useAuthStore((state: AuthStore) => state);
   const { doctorProfile } = useGetDoctorProfileQuery();
 
   const user = (doctorProfile as unknown as User | null) ?? authUser;
   const initials = user
     ? getInitials(`${user.firstName} ${user.lastName}`)
     : '';
+
+  useEffect(() => {
+    if (doctorProfile) {
+      updateDoctorUser(doctorProfile);
+    }
+  }, [doctorProfile]);
 
   const settingsItems = [
     {
@@ -59,7 +66,7 @@ const DoctorProfileSettings = () => {
       title: 'Banking details',
       description: 'Manage your bank details',
       icon: <SettingsWalletIconLocal className="text-text-alt" />,
-      component: <SeekerWallet user={user} initials={initials} />,
+      component: <DoctorBankingDetails />,
     },
     {
       title: 'Time settings',
@@ -80,10 +87,10 @@ const DoctorProfileSettings = () => {
       component: <SeekerFavorites />,
     },
     {
-      title: 'Address',
-      description: 'Update your address',
+      title: 'Workspace visibility',
+      description: 'Update profile visibility',
       icon: <MapPin size={15} className="text-text-alt" />,
-      component: <SeekerAddress />,
+      component: <DoctorVisibility />,
     },
     {
       title: 'Settings',

@@ -92,7 +92,7 @@ const CareSeekerAppointmentsTable = ({
             value?.toLowerCase() as StatusType
           )}`}
         >
-          {value?.toLowerCase()}
+          {value?.toLowerCase()?.replace('_', ' ')}
         </div>
       ),
     },
@@ -106,9 +106,15 @@ const CareSeekerAppointmentsTable = ({
             <button
               className={`inline-flex gap-2 rounded-md px-1.5 py-1 hover:bg-gray-3a/50
                 text-xs font-medium border border-text-alt cursor-pointer`}
-              onClick={() => {
-                push(`/dashboard/appointments/${row.id}`);
-              }}
+              onClick={() =>
+                push(
+                  `/dashboard/messages?peerId=${row.clientId}&peerName=${encodeURIComponent(
+                    row.client?.firstName
+                      ? `${row.client.firstName} ${row.client.lastName}`
+                      : ''
+                  )}`
+                )
+              }
             >
               <ChatIconLocal />
               Chat

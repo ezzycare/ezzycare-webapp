@@ -1,9 +1,12 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useCancelDoctorAppointmentMutation } from '@/apiQuery/doctor/appointments/cancelAppointment';
+import { useCompleteDoctorAppointmentMutation } from '@/apiQuery/doctor/appointments/completeAppointment';
 import { useGetDoctorAppointmentQuery } from '@/apiQuery/doctor/appointments/getAppointment';
 import { useStartDoctorAppointmentMutation } from '@/apiQuery/doctor/appointments/startAppointment';
+import { useSubmitDoctorConsultationNotesMutation } from '@/apiQuery/doctor/appointments/submitConsultationNotes';
 import { DoctorAppointment } from '@/apiQuery/doctor/appointments/types';
 import {
   DoctorProfile,
@@ -21,13 +24,17 @@ import {
 } from '@/icons/DashboardNavIcons';
 import { toaster } from '@/lib/toaster';
 import CancelBookingModal from '@/modules/careseeker/components/Appointments/CancelBookingModal';
+import VideoCallOverlay from '@/modules/video/VideoCallOverlay';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { ArrowLeft, Briefcase, NotepadText, SquarePlay } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
-import React, { useMemo, useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useMemo, useState } from 'react';
 import DoctorRescheduleAppointment from './DoctorRescheduleAppointment';
+import type { ConsultationNotesFormData } from './PostConsultationNotesModal';
+import { PostConsultationNotesModal } from './PostConsultationNotesModal';
+import { StartConsultationModal } from './StartConsultationModal';
 
 const DoctorAppointmentDetails = () => {
   const router = useRouter();
@@ -71,6 +78,56 @@ const DoctorAppointmentDetails = () => {
     useStartDoctorAppointmentMutation();
 
   const [startingConsultation, setStartingConsultation] = useState(false);
+  const [showStartModal, setShowStartModal] = useState(false);
+  const [showNotesModal, setShowNotesModal] = useState(false);
+
+  const { mutate: submitNotes, isPending: isSubmittingNotes } =
+    useSubmitDoctorConsultationNotesMutation();
+  const { mutate: completeAppointment, isPending: isCompleting } =
+    useCompleteDoctorAppointmentMutation();
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('notes') === '1') {
+      setShowNotesModal(true);
+    }
+  }, [searchParams]);
+
+  const handleSubmitNotes = (data: ConsultationNotesFormData) => {
+    submitNotes(
+      {
+        id: String(id),
+        diagnostic: data.diagnostic,
+        symptomsObserved: data.symptomsObserved,
+        prescription: data.prescription,
+        followUpInstructions: data.followUpInstructions ?? '',
+      },
+      {
+        onSuccess: () => {
+          completeAppointment(
+            { id: String(id) },
+            {
+              onSuccess: () => {
+                toaster.success('Consultation completed');
+                setShowNotesModal(false);
+                queryClient.invalidateQueries({
+                  queryKey: ['doctor', 'appointments', id],
+                });
+                router.replace(`/dashboard/appointments/${id}`);
+              },
+              onError: () => {
+                toaster.error('Failed to complete appointment');
+              },
+            }
+          );
+        },
+        onError: () => {
+          toaster.error('Failed to submit notes');
+        },
+      }
+    );
+  };
 
   const handleOpenRescheduleModal = () => {
     if (openRescheduleModal) {
@@ -116,6 +173,11 @@ const DoctorAppointmentDetails = () => {
   };
 
   const handleStartConsultation = () => {
+    setShowStartModal(true);
+  };
+
+  const handleConfirmStartConsultation = () => {
+    setShowStartModal(false);
     setStartingConsultation(true);
     startConsultation(
       { id: String(appointment.id) },
@@ -132,7 +194,7 @@ const DoctorAppointmentDetails = () => {
           toaster.success('Consultation started');
 
           router.push(
-            `/dashboard/video-call?room=${encodeURIComponent(roomName)}&peerId=${appointment.clientId}&peerName=${encodeURIComponent(
+            `/dashboard/video-call?room=${encodeURIComponent(roomName)}&uid=${appointment.uid}&appointmentId=${appointment.id}&peerId=${appointment.clientId}&peerName=${encodeURIComponent(
               appointment.client?.firstName
                 ? `${appointment.client.firstName} ${appointment.client.lastName}`
                 : ''
@@ -219,7 +281,11 @@ const DoctorAppointmentDetails = () => {
                 className="min-w-38 text-sm text-text-alt! bg-gray-3a py-2! px-4! gap-2 border-none"
                 onClick={() =>
                   router.push(
-                    `/dashboard/messages?peerId=${appointment.clientId}`
+                    `/dashboard/messages?peerId=${appointment.clientId}&peerName=${encodeURIComponent(
+                      appointment.client?.firstName
+                        ? `${appointment.client.firstName} ${appointment.client.lastName}`
+                        : ''
+                    )}`
                   )
                 }
               >
@@ -350,10 +416,14 @@ const DoctorAppointmentDetails = () => {
             </div>
           </div>
           <div>
-            <p className="text-text-muted text-sm mt-3.5 mb-1">Quick links</p>
             {(appointment.status === 'UPCOMING' ||
               appointment.status === 'IN_PROGRESS') && (
-              <ChatButtons appointment={appointment} />
+              <>
+                <p className="text-text-muted text-sm mt-3.5 mb-1">
+                  Quick links
+                </p>
+                <ChatButtons appointment={appointment} />
+              </>
             )}
           </div>
           <DoctorRescheduleAppointment
@@ -367,6 +437,22 @@ const DoctorAppointmentDetails = () => {
             setOpenModal={setOpenCancelBookingModal}
             isLoading={isPending}
             action={handleCancelAppointment}
+          />
+          <StartConsultationModal
+            open={showStartModal}
+            onClose={() => setShowStartModal(false)}
+            onConfirm={handleConfirmStartConsultation}
+            isLoading={startingConsultation || isStartingConsultation}
+          />
+          <PostConsultationNotesModal
+            open={showNotesModal}
+            onClose={() => {
+              setShowNotesModal(false);
+              toaster.success('Consultation completed!');
+              router.replace(`/dashboard/appointments/${id}`);
+            }}
+            onSubmit={handleSubmitNotes}
+            isLoading={isSubmittingNotes || isCompleting}
           />
         </div>
       )}
@@ -423,17 +509,19 @@ const EditDetailsBtn = ({
 
 const ChatButtons = ({ appointment }: { appointment: DoctorAppointment }) => {
   const router = useRouter();
+  const [callOpen, setCallOpen] = useState(false);
 
   const handleJoinVideoCall = () => {
     const roomName = appointment.roomName;
     if (roomName) {
-      router.push(
-        `/dashboard/video-call?room=${encodeURIComponent(roomName)}&peerId=${appointment.clientId}&peerName=${encodeURIComponent(
-          appointment.client?.firstName
-            ? `${appointment.client.firstName} ${appointment.client.lastName}`
-            : ''
-        )}`
-      );
+      setCallOpen(true);
+      // router.push(
+      //   `/dashboard/video-call?room=${encodeURIComponent(roomName)}&peerId=${appointment.clientId}&peerName=${encodeURIComponent(
+      //     appointment.client?.firstName
+      //       ? `${appointment.client.firstName} ${appointment.client.lastName}`
+      //       : ''
+      //   )}`
+      // );
     } else {
       toaster.info('Start the consultation first to create a video room');
     }
@@ -445,7 +533,13 @@ const ChatButtons = ({ appointment }: { appointment: DoctorAppointment }) => {
         variant="outline"
         className="min-w-38 text-sm text-text-alt! bg-gray-3a py-2! px-4! gap-2 border-none"
         onClick={() =>
-          router.push(`/dashboard/messages?peerId=${appointment.clientId}`)
+          router.push(
+            `/dashboard/messages?peerId=${appointment.clientId}&peerName=${encodeURIComponent(
+              appointment.client?.firstName
+                ? `${appointment.client.firstName} ${appointment.client.lastName}`
+                : ''
+            )}`
+          )
         }
       >
         <ChatIconLocal />
@@ -459,6 +553,15 @@ const ChatButtons = ({ appointment }: { appointment: DoctorAppointment }) => {
         <SquarePlay size={16} />
         Join video call
       </Button>
+
+      <VideoCallOverlay
+        open={callOpen}
+        onClose={() => setCallOpen(false)}
+        channelName={appointment.roomName}
+        peerName={`${appointment.name}`}
+        uid={appointment.uid}
+        appointmentId={String(appointment.id)}
+      />
     </div>
   );
 };

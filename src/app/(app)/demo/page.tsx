@@ -131,7 +131,7 @@ const Page = () => {
                 },
               ]}
             >
-              <button className="h-11 rounded-xl bg-white px-4 text-sm font-medium text-black">
+              <button className="h-11 rounded-xl bg-surface-card px-4 text-sm font-medium text-black">
                 Add User
               </button>
             </BaseTable>

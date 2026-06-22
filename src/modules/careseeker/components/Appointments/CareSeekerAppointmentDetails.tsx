@@ -19,6 +19,7 @@ import {
   StethoscopeIconLocal,
 } from '@/icons/DashboardNavIcons';
 import { toaster } from '@/lib/toaster';
+import VideoCallOverlay from '@/modules/video/VideoCallOverlay';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
 import dayjs from 'dayjs';
@@ -44,6 +45,7 @@ const CareSeekerAppointmentDetails = () => {
   const [openCancelBookingModal, setOpenCancelBookingModal] =
     React.useState(false);
   const [joiningVideo, setJoiningVideo] = useState(false);
+  const [callOpen, setCallOpen] = useState(false);
   const categories = useCategoryStore(
     (state: CategoryStore) => state.categories.allCategories
   );
@@ -81,13 +83,14 @@ const CareSeekerAppointmentDetails = () => {
 
   const handleJoinVideoCall = async () => {
     if (hasRoomName) {
-      router.push(
-        `/dashboard/video-call?room=${encodeURIComponent(appointment.roomName!)}&peerId=${appointment.userId}&peerName=${encodeURIComponent(
-          appointment.user?.firstName
-            ? `${appointment.user.firstName} ${appointment.user.lastName}`
-            : ''
-        )}`
-      );
+      setCallOpen(true);
+      // router.push(
+      //   `/dashboard/video-call?room=${encodeURIComponent(appointment.roomName!)}&peerId=${appointment.userId}&peerName=${encodeURIComponent(
+      //     appointment.user?.firstName
+      //       ? `${appointment.user.firstName} ${appointment.user.lastName}`
+      //       : ''
+      //   )}`
+      // );
       return;
     }
 
@@ -97,7 +100,7 @@ const CareSeekerAppointmentDetails = () => {
 
     if (result.data?.data?.roomName) {
       router.push(
-        `/dashboard/video-call?room=${encodeURIComponent(result.data.data.roomName)}&peerId=${appointment.userId}&peerName=${encodeURIComponent(
+        `/dashboard/video-call?room=${encodeURIComponent(result.data.data.roomName)}&uid=${appointment.uid}&appointmentId=${appointment.id}&peerId=${appointment.userId}&peerName=${encodeURIComponent(
           appointment.user?.firstName
             ? `${appointment.user.firstName} ${appointment.user.lastName}`
             : ''
@@ -218,7 +221,11 @@ const CareSeekerAppointmentDetails = () => {
                   className="min-w-38 text-sm text-text-alt! bg-gray-3a py-2! px-4! gap-2 border-none"
                   onClick={() =>
                     router.push(
-                      `/dashboard/messages?peerId=${appointment.userId}`
+                      `/dashboard/messages?peerId=${appointment.userId}&peerName=${encodeURIComponent(
+                        appointment.user?.firstName
+                          ? `${appointment.user.firstName} ${appointment.user.lastName}`
+                          : ''
+                      )}`
                     )
                   }
                 >
@@ -379,6 +386,14 @@ const CareSeekerAppointmentDetails = () => {
             setOpenModal={setOpenCancelBookingModal}
             isLoading={isPending}
             action={handleCancelAppointment}
+          />
+          <VideoCallOverlay
+            open={callOpen}
+            onClose={() => setCallOpen(false)}
+            channelName={appointment.roomName}
+            peerName={`${appointment.name}`}
+            uid={appointment.uid}
+            appointmentId={String(appointment.id)}
           />
         </div>
       )}

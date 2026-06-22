@@ -54,7 +54,7 @@ const DashboardClientLayout = ({
     type: 'HOSPITAL' as CategoryType,
   });
   const { services } = useGetHospitalServices();
-  const { notifications } = useGetNotificationsInfiniteQuery({ limit: 50 });
+  const { notifications } = useGetNotificationsInfiniteQuery({ limit: 20 });
 
   useEffect(() => {
     if (doctorProfile) {

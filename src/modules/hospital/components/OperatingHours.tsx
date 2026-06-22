@@ -122,7 +122,7 @@ const DaySelect = ({ value, onChange }: DaySelectProps) => {
           rounded-lg
           border
           border-neutral-8a
-          bg-white
+          bg-surface-card
           px-4
           pr-10
           text-sm
@@ -290,7 +290,7 @@ export default function OperatingHours({
           rounded-lg
           border
           border-neutral-300
-          bg-white
+          bg-surface-card
           px-4
           py-2.5
           text-sm

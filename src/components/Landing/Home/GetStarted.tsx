@@ -135,7 +135,7 @@ const GetStarted = () => {
             <div
               key={item.title}
               className={clsx(
-                'group bg-white rounded-lg p-4 ',
+                'group bg-surface-card rounded-lg p-4 ',
                 'opacity-0 hover:bg-primary transition-color duration-300'
               )}
             >

@@ -117,6 +117,7 @@ const UploadDoctorDocs = ({
       title="Upload Certifications"
       description="This helps you get verified on EzzyCare"
       size="md"
+      persistent
     >
       <div className="mt-5 flex flex-col space-y-3">
         {docs.map((doc) => (

@@ -24,6 +24,41 @@ import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+function getInitials(first: string, last: string): string {
+  return `${first?.[0] ?? ''}${last?.[0] ?? ''}`.toUpperCase() || '?';
+}
+
+function Avatar({
+  src,
+  alt,
+  size = 'w-10 h-10',
+  textClass = 'text-xs',
+}: {
+  src: string | null | undefined;
+  alt: string;
+  size?: string;
+  textClass?: string;
+}) {
+  if (src) {
+    return (
+      <Image src={src} alt={alt} fill className="rounded-full object-cover" />
+    );
+  }
+
+  return (
+    <div
+      className={`${size} rounded-full bg-blue-3a flex items-center justify-center shrink-0`}
+    >
+      <span className={`${textClass} font-medium text-blue-12a`}>
+        {getInitials(
+          alt.split(' ')[0] ?? '',
+          alt.split(' ').slice(1).join(' ')
+        )}
+      </span>
+    </div>
+  );
+}
+
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -45,6 +80,7 @@ export default function MessagesPage() {
   const userId = useAuthStore((state: AuthStore) => state.user?.id);
   const user = useAuthStore((state: AuthStore) => state.user);
   const searchParams = useSearchParams();
+  const peerNameParam = searchParams.get('peerName');
 
   const { conversations, fetchNextPage, hasNextPage, isFetching } =
     useGetConversationsInfiniteQuery();
@@ -55,11 +91,16 @@ export default function MessagesPage() {
     isConnected,
     onlineUsers,
     typingUsers,
+    sendMessage: sendMessageSocket,
     markAsRead: markAsReadSocket,
     sendTyping,
   } = useChatSocket();
 
   const activeConversation = conversations.find((c) => c.peer.id === activeId);
+
+  const activePeerName = activeConversation
+    ? `${activeConversation.peer.firstName} ${activeConversation.peer.lastName}`
+    : peerNameParam || 'Unknown';
 
   // Open conversation from URL query param (e.g. /dashboard/messages?peerId=123)
   useEffect(() => {
@@ -131,17 +172,25 @@ export default function MessagesPage() {
     e.preventDefault();
     if (!input.trim() || !activeId) return;
 
+    const message = input.trim();
+    const sender = {
+      firstName: user?.firstName ?? '',
+      lastName: user?.lastName ?? '',
+      profileImage: user?.profileImage ?? null,
+    };
+
     sendMessage(
       {
         receiverId: Number(activeId),
-        message: input.trim(),
-        sender: {
-          firstName: user?.firstName ?? '',
-          lastName: user?.lastName ?? '',
-          profileImage: user?.profileImage ?? null,
-        },
+        message,
+        sender,
       },
-      { onSuccess: () => setInput('') }
+      {
+        onSuccess: () => {
+          setInput('');
+          sendMessageSocket(Number(activeId), message);
+        },
+      }
     );
     if (activeId) sendTyping(activeId, false);
   };
@@ -180,14 +229,9 @@ export default function MessagesPage() {
               )}
             >
               <div className="relative w-10 h-10 shrink-0">
-                <Image
-                  src={
-                    c.peer.profileImage ??
-                    `https://unsplash.it/300/300?random=${c.peer.id}`
-                  }
+                <Avatar
+                  src={c.peer.profileImage}
                   alt={`${c.peer.firstName} ${c.peer.lastName}`}
-                  fill
-                  className="rounded-full object-cover"
                 />
                 {onlineUsers[c.peer.id] && (
                   <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-10 border-2 border-surface-card rounded-full" />
@@ -238,23 +282,14 @@ export default function MessagesPage() {
         )}
 
         <div className="relative w-10 h-10 shrink-0">
-          <Image
-            src={
-              activeConversation?.peer.profileImage ??
-              `https://unsplash.it/300/300?random=${activeId}`
-            }
+          <Avatar
+            src={activeConversation?.peer.profileImage}
             alt={`${activeConversation?.peer.firstName ?? ''} ${activeConversation?.peer.lastName ?? ''}`}
-            fill
-            className="rounded-full object-cover"
           />
         </div>
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
-            <h2 className="text-sm font-bold text-text">
-              {activeConversation
-                ? `${activeConversation.peer.firstName} ${activeConversation.peer.lastName}`
-                : 'Unknown'}
-            </h2>
+            <h2 className="text-sm font-bold text-text">{activePeerName}</h2>
             <BadgeCheck className="w-4 h-4 text-green-10 fill-green-10 stroke-foreground" />
           </div>
           <p className="text-xs text-text-muted">
@@ -306,14 +341,11 @@ export default function MessagesPage() {
               >
                 {!fromMe && (
                   <div className="relative w-8 h-8 shrink-0">
-                    <Image
-                      src={
-                        m.sender?.profileImage ??
-                        `https://unsplash.it/300/300?random=${m.id}`
-                      }
-                      alt=""
-                      fill
-                      className="rounded-full object-cover"
+                    <Avatar
+                      src={m.sender?.profileImage}
+                      alt={`${m.sender?.firstName ?? ''} ${m.sender?.lastName ?? ''}`}
+                      size="w-8 h-8"
+                      textClass="text-[10px]"
                     />
                   </div>
                 )}
@@ -354,14 +386,11 @@ export default function MessagesPage() {
 
                 {fromMe && (
                   <div className="relative w-8 h-8 shrink-0">
-                    <Image
-                      src={
-                        m.sender?.profileImage ??
-                        `https://unsplash.it/300/300?random=${m.id}`
-                      }
-                      alt=""
-                      fill
-                      className="rounded-full object-cover"
+                    <Avatar
+                      src={m.sender?.profileImage}
+                      alt={`${m.sender?.firstName ?? ''} ${m.sender?.lastName ?? ''}`}
+                      size="w-8 h-8"
+                      textClass="text-[10px]"
                     />
                   </div>
                 )}

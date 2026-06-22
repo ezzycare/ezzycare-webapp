@@ -73,7 +73,7 @@ const AppointmentRequestCard = ({
 
   return (
     <>
-      <div className="relative w-full max-w-137.5 bg-white rounded-2xl p-4 px-6 shadow-sm border border-gray-2 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div className="relative w-full max-w-137.5 bg-surface-card rounded-2xl p-4 px-6 shadow-sm border border-gray-2 flex flex-col sm:flex-row items-center justify-between gap-2">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -115,7 +115,7 @@ const AppointmentRequestCard = ({
           <button
             onClick={() => setShowDeclineModal(true)}
             disabled={isDeclining || isAccepting}
-            className="px-4 py-1.5 border border-gray-4 rounded-lg text-gray-11 bg-white hover:bg-gray-2 disabled:opacity-50 transition-colors text-sm font-medium"
+            className="px-4 py-1.5 border border-gray-4 rounded-lg text-gray-11 bg-surface-card hover:bg-gray-2 disabled:opacity-50 transition-colors text-sm font-medium"
           >
             Decline
           </button>
