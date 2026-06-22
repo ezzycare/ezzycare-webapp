@@ -1,9 +1,14 @@
 'use client';
 
-import type { RemoteParticipant, RemoteTrack, Room } from 'twilio-video';
-import { connect, createLocalVideoTrack } from 'twilio-video';
 import { Mic, MicOff, SwitchCamera, Video, VideoOff, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type {
+  RemoteParticipant,
+  RemoteTrack,
+  RemoteVideoTrack,
+  Room,
+} from 'twilio-video';
+import { connect, createLocalVideoTrack } from 'twilio-video';
 
 interface VideoCallProps {
   token: string;
@@ -15,13 +20,14 @@ interface VideoCallProps {
 export default function VideoCall({
   token,
   roomName,
-  remoteName = 'Dr. Comfort Jackson',
+  remoteName = '',
   onEndCall,
 }: VideoCallProps) {
   const [room, setRoom] = useState<Room | null>(null);
   const [connected, setConnected] = useState(false);
   const [videoOn, setVideoOn] = useState(true);
   const [micOn, setMicOn] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [videoFacing, setVideoFacing] = useState<'user' | 'environment'>(
     'user'
   );
@@ -57,6 +63,7 @@ export default function VideoCall({
 
     const init = async () => {
       try {
+        setError(null);
         const r = await connect(token, {
           name: roomName,
           audio: true,
@@ -75,20 +82,12 @@ export default function VideoCall({
         const localPub = Array.from(r.localParticipant.videoTracks.values())[0];
 
         if (localPub?.track && localVideoRef.current) {
-          localVideoRef.current.srcObject = new MediaStream([
-            localPub.track.mediaStreamTrack,
-          ]);
+          localPub.track.attach(localVideoRef.current);
         }
 
         const handleRemoteTrack = (track: RemoteTrack) => {
           if (track.kind === 'video' && remoteVideoRef.current) {
-            remoteVideoRef.current.srcObject = new MediaStream([
-              (
-                track as RemoteTrack & {
-                  mediaStreamTrack: MediaStreamTrack;
-                }
-              ).mediaStreamTrack,
-            ]);
+            (track as RemoteVideoTrack).attach(remoteVideoRef.current);
           }
         };
 
@@ -109,8 +108,43 @@ export default function VideoCall({
           });
           participant.on('trackSubscribed', handleRemoteTrack);
         });
-      } catch {
-        // Connection failed — component stays in "Connecting..." state
+      } catch (err: unknown) {
+        if (cancelled) return;
+
+        const message =
+          err instanceof Error ? err.message : 'Failed to connect';
+
+        if (
+          message.includes('NotAllowedError') ||
+          message.includes('Permission denied') ||
+          message.includes('PermissionDeniedError')
+        ) {
+          setError(
+            'Camera or microphone permission was denied. Please allow access in your browser settings and try again.'
+          );
+        } else if (
+          message.includes('NotFoundError') ||
+          message.includes('DevicesNotFoundError')
+        ) {
+          setError(
+            'No camera or microphone found. Please connect a device and try again.'
+          );
+        } else if (
+          message.includes('NotReadableError') ||
+          message.includes('TrackStartError')
+        ) {
+          setError(
+            'Your camera or microphone is in use by another application. Please close other apps and try again.'
+          );
+        } else if (
+          message.includes('530') ||
+          message.includes('Signaling') ||
+          message.includes('connection')
+        ) {
+          setError('Unable to reach the video service. Please try again.');
+        } else {
+          setError(message || 'Failed to connect to video call');
+        }
       }
     };
 
@@ -129,7 +163,7 @@ export default function VideoCall({
         roomRef.current = null;
       }
     };
-  }, [token, roomName]);
+  }, [token, roomName, cleanup]);
 
   const toggleMic = () => {
     if (!room) return;
@@ -177,9 +211,7 @@ export default function VideoCall({
     await room.localParticipant.publishTrack(newTrack);
 
     if (localVideoRef.current) {
-      localVideoRef.current.srcObject = new MediaStream([
-        newTrack.mediaStreamTrack,
-      ]);
+      newTrack.attach(localVideoRef.current);
     }
   };
 
@@ -191,7 +223,20 @@ export default function VideoCall({
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
       <div className="relative w-full max-w-[280px] aspect-[9/19] rounded-3xl overflow-hidden bg-gray-12 shadow-xl">
-        {connected ? (
+        {error ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center">
+            <div className="w-16 h-16 rounded-full bg-error/20 flex items-center justify-center">
+              <X className="w-7 h-7 text-error" />
+            </div>
+            <p className="text-sm text-text-muted leading-relaxed">{error}</p>
+            <button
+              onClick={handleEndCall}
+              className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm hover:opacity-90 transition-opacity"
+            >
+              Go back
+            </button>
+          </div>
+        ) : connected ? (
           <video
             ref={remoteVideoRef}
             autoPlay
@@ -208,7 +253,7 @@ export default function VideoCall({
           </div>
         )}
 
-        {connected && !videoOn && (
+        {!error && connected && !videoOn && (
           <div className="absolute inset-0 bg-gray-12/85 flex flex-col items-center justify-center gap-3 text-foreground">
             <div className="w-20 h-20 rounded-full bg-gray-11/40 flex items-center justify-center">
               <VideoOff className="w-8 h-8" />
@@ -217,7 +262,7 @@ export default function VideoCall({
           </div>
         )}
 
-        {connected && videoOn && (
+        {!error && connected && videoOn && (
           <div className="absolute top-4 right-4 w-20 h-28 rounded-xl overflow-hidden border-2 border-white/30 shadow-lg z-10">
             <video
               ref={localVideoRef}
@@ -229,47 +274,49 @@ export default function VideoCall({
           </div>
         )}
 
-        <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-2.5">
-          <ControlButton
-            label={videoOn ? 'Turn off camera' : 'Turn on camera'}
-            onClick={toggleCamera}
-            variant="dark"
-          >
-            {videoOn ? (
-              <Video className="w-4 h-4" />
-            ) : (
-              <VideoOff className="w-4 h-4" />
-            )}
-          </ControlButton>
+        {!error && (
+          <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-2.5">
+            <ControlButton
+              label={videoOn ? 'Turn off camera' : 'Turn on camera'}
+              onClick={toggleCamera}
+              variant="dark"
+            >
+              {videoOn ? (
+                <Video className="w-4 h-4" />
+              ) : (
+                <VideoOff className="w-4 h-4" />
+              )}
+            </ControlButton>
 
-          <ControlButton
-            label={micOn ? 'Mute microphone' : 'Unmute microphone'}
-            onClick={toggleMic}
-            variant="light"
-          >
-            {micOn ? (
-              <Mic className="w-4 h-4" />
-            ) : (
-              <MicOff className="w-4 h-4" />
-            )}
-          </ControlButton>
+            <ControlButton
+              label={micOn ? 'Mute microphone' : 'Unmute microphone'}
+              onClick={toggleMic}
+              variant="light"
+            >
+              {micOn ? (
+                <Mic className="w-4 h-4" />
+              ) : (
+                <MicOff className="w-4 h-4" />
+              )}
+            </ControlButton>
 
-          <ControlButton
-            label="Flip camera"
-            onClick={flipCamera}
-            variant="light"
-          >
-            <SwitchCamera className="w-4 h-4" />
-          </ControlButton>
+            <ControlButton
+              label="Flip camera"
+              onClick={flipCamera}
+              variant="light"
+            >
+              <SwitchCamera className="w-4 h-4" />
+            </ControlButton>
 
-          <ControlButton
-            label="End call"
-            onClick={handleEndCall}
-            variant="danger"
-          >
-            <X className="w-4 h-4" strokeWidth={2.5} />
-          </ControlButton>
-        </div>
+            <ControlButton
+              label="End call"
+              onClick={handleEndCall}
+              variant="danger"
+            >
+              <X className="w-4 h-4" strokeWidth={2.5} />
+            </ControlButton>
+          </div>
+        )}
       </div>
     </div>
   );

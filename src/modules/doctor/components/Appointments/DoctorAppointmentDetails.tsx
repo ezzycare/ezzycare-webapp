@@ -3,6 +3,7 @@
 
 import { useCancelDoctorAppointmentMutation } from '@/apiQuery/doctor/appointments/cancelAppointment';
 import { useGetDoctorAppointmentQuery } from '@/apiQuery/doctor/appointments/getAppointment';
+import { useStartDoctorAppointmentMutation } from '@/apiQuery/doctor/appointments/startAppointment';
 import { DoctorAppointment } from '@/apiQuery/doctor/appointments/types';
 import {
   DoctorProfile,
@@ -21,10 +22,11 @@ import {
 import { toaster } from '@/lib/toaster';
 import CancelBookingModal from '@/modules/careseeker/components/Appointments/CancelBookingModal';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
+import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { ArrowLeft, Briefcase, NotepadText, SquarePlay } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import DoctorRescheduleAppointment from './DoctorRescheduleAppointment';
 
 const DoctorAppointmentDetails = () => {
@@ -64,6 +66,12 @@ const DoctorAppointmentDetails = () => {
   const { mutate: cancelAppointment, isPending } =
     useCancelDoctorAppointmentMutation();
 
+  const queryClient = useQueryClient();
+  const { mutate: startConsultation, isPending: isStartingConsultation } =
+    useStartDoctorAppointmentMutation();
+
+  const [startingConsultation, setStartingConsultation] = useState(false);
+
   const handleOpenRescheduleModal = () => {
     if (openRescheduleModal) {
       setOpenRescheduleModal(false);
@@ -102,6 +110,40 @@ const DoctorAppointmentDetails = () => {
         onSuccess: () => {
           toaster.success('Appointment cancelled successfully');
           setOpenCancelBookingModal(false);
+        },
+      }
+    );
+  };
+
+  const handleStartConsultation = () => {
+    setStartingConsultation(true);
+    startConsultation(
+      { id: String(appointment.id) },
+      {
+        onSuccess: (data) => {
+          queryClient.invalidateQueries({
+            queryKey: ['doctor', 'appointments', id],
+          });
+          const roomName =
+            (data as any)?.data?.data?.roomName ||
+            (data as any)?.data?.roomName ||
+            appointment.roomName;
+
+          toaster.success('Consultation started');
+
+          router.push(
+            `/dashboard/video-call?room=${encodeURIComponent(roomName)}&peerId=${appointment.clientId}&peerName=${encodeURIComponent(
+              appointment.client?.firstName
+                ? `${appointment.client.firstName} ${appointment.client.lastName}`
+                : ''
+            )}`
+          );
+        },
+        onError: () => {
+          toaster.error('Failed to start consultation');
+        },
+        onSettled: () => {
+          setStartingConsultation(false);
         },
       }
     );
@@ -147,6 +189,10 @@ const DoctorAppointmentDetails = () => {
                 appointment={appointment}
                 setOpenCancelBookingModal={setOpenCancelBookingModal}
                 setOpenRescheduleModal={setOpenRescheduleModal}
+                onStartConsultation={handleStartConsultation}
+                isStartingConsultation={
+                  startingConsultation || isStartingConsultation
+                }
               />
             )}
             {appointment.status === 'PAID' && (
@@ -305,7 +351,8 @@ const DoctorAppointmentDetails = () => {
           </div>
           <div>
             <p className="text-text-muted text-sm mt-3.5 mb-1">Quick links</p>
-            {appointment.status === 'UPCOMING' && (
+            {(appointment.status === 'UPCOMING' ||
+              appointment.status === 'IN_PROGRESS') && (
               <ChatButtons appointment={appointment} />
             )}
           </div>
@@ -333,10 +380,14 @@ const EditDetailsBtn = ({
   setOpenCancelBookingModal,
   setOpenRescheduleModal,
   appointment,
+  onStartConsultation,
+  isStartingConsultation,
 }: {
   setOpenCancelBookingModal: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenRescheduleModal: React.Dispatch<React.SetStateAction<boolean>>;
   appointment: DoctorAppointment;
+  onStartConsultation: () => void;
+  isStartingConsultation: boolean;
 }) => {
   return (
     <div className="flex items-center ml-auto gap-2">
@@ -361,9 +412,10 @@ const EditDetailsBtn = ({
       <Button
         variant="primary"
         className="py-2! px-4! text-sm"
-        onClick={() => setOpenRescheduleModal(true)}
+        onClick={onStartConsultation}
+        loading={isStartingConsultation}
       >
-        Start Consultation
+        {isStartingConsultation ? 'Starting...' : 'Start Consultation'}
       </Button>
     </div>
   );
@@ -371,6 +423,22 @@ const EditDetailsBtn = ({
 
 const ChatButtons = ({ appointment }: { appointment: DoctorAppointment }) => {
   const router = useRouter();
+
+  const handleJoinVideoCall = () => {
+    const roomName = appointment.roomName;
+    if (roomName) {
+      router.push(
+        `/dashboard/video-call?room=${encodeURIComponent(roomName)}&peerId=${appointment.clientId}&peerName=${encodeURIComponent(
+          appointment.client?.firstName
+            ? `${appointment.client.firstName} ${appointment.client.lastName}`
+            : ''
+        )}`
+      );
+    } else {
+      toaster.info('Start the consultation first to create a video room');
+    }
+  };
+
   return (
     <div className="flex items-center ml-auto gap-2">
       <Button
@@ -386,15 +454,7 @@ const ChatButtons = ({ appointment }: { appointment: DoctorAppointment }) => {
       <Button
         variant="outline"
         className="text-error! bg-error-3a py-2! px-4! gap-2 border-none"
-        onClick={() =>
-          router.push(
-            `/dashboard/video-call?peerId=${appointment.clientId}&peerName=${encodeURIComponent(
-              appointment.client?.firstName
-                ? `${appointment.client.firstName} ${appointment.client.lastName}`
-                : ''
-            )}`
-          )
-        }
+        onClick={handleJoinVideoCall}
       >
         <SquarePlay size={16} />
         Join video call

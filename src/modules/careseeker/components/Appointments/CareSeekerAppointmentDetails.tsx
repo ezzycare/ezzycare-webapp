@@ -18,6 +18,7 @@ import {
   HospitalIconLocal,
   StethoscopeIconLocal,
 } from '@/icons/DashboardNavIcons';
+import { toaster } from '@/lib/toaster';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
 import dayjs from 'dayjs';
@@ -30,7 +31,7 @@ import {
   Star,
 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import CancelBookingModal from './CancelBookingModal';
 import RescheduleAppointment from './RescheduleAppointment';
 
@@ -42,17 +43,70 @@ const CareSeekerAppointmentDetails = () => {
   const [openRescheduleModal, setOpenRescheduleModal] = React.useState(false);
   const [openCancelBookingModal, setOpenCancelBookingModal] =
     React.useState(false);
+  const [joiningVideo, setJoiningVideo] = useState(false);
   const categories = useCategoryStore(
     (state: CategoryStore) => state.categories.allCategories
   );
   const { updateBooking } = useBookAppointmentStore();
-  const { appointment: appointmentData, isFetching } = useGetAppointmentQuery({
-    id,
-  });
+  const {
+    appointment: appointmentData,
+    isFetching,
+    refetch,
+  } = useGetAppointmentQuery({ id });
 
   const appointment = useMemo(() => {
     return appointmentData ? appointmentData : ({} as GetSingleAppointmentType);
   }, [appointmentData]);
+
+  const shouldPoll =
+    appointmentData?.status === 'UPCOMING' &&
+    !appointmentData?.roomName &&
+    appointmentData?.appointmentType === 'VIDEO';
+
+  useEffect(() => {
+    if (!shouldPoll) return;
+    const interval = setInterval(() => {
+      refetch();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [shouldPoll, refetch]);
+
+  const hasRoomName = !!appointment.roomName;
+  const isVideoAppointment = appointment.appointmentType === 'VIDEO';
+  const canJoinVideo =
+    (appointment.status === 'UPCOMING' ||
+      appointment.status === 'IN_PROGRESS') &&
+    isVideoAppointment;
+  const canShowEditButton = appointment.status === 'PENDING';
+
+  const handleJoinVideoCall = async () => {
+    if (hasRoomName) {
+      router.push(
+        `/dashboard/video-call?room=${encodeURIComponent(appointment.roomName!)}&peerId=${appointment.userId}&peerName=${encodeURIComponent(
+          appointment.user?.firstName
+            ? `${appointment.user.firstName} ${appointment.user.lastName}`
+            : ''
+        )}`
+      );
+      return;
+    }
+
+    setJoiningVideo(true);
+    const result = await refetch();
+    setJoiningVideo(false);
+
+    if (result.data?.data?.roomName) {
+      router.push(
+        `/dashboard/video-call?room=${encodeURIComponent(result.data.data.roomName)}&peerId=${appointment.userId}&peerName=${encodeURIComponent(
+          appointment.user?.firstName
+            ? `${appointment.user.firstName} ${appointment.user.lastName}`
+            : ''
+        )}`
+      );
+    } else {
+      toaster.info('Waiting for the doctor to start the consultation');
+    }
+  };
 
   const specialty = useMemo(() => {
     return categories.find((item) =>
@@ -150,14 +204,14 @@ const CareSeekerAppointmentDetails = () => {
                 </div>
               </div>
             </div>
-            {appointment.status !== 'UPCOMING' && (
+            {!canJoinVideo && canShowEditButton && (
               <EditDetailsBtn
                 appointment={appointment}
                 setOpenCancelBookingModal={setOpenCancelBookingModal}
                 setOpenRescheduleModal={setOpenRescheduleModal}
               />
             )}
-            {appointment.status === 'UPCOMING' && (
+            {canJoinVideo && (
               <div className="flex items-center ml-auto gap-2">
                 <Button
                   variant="outline"
@@ -171,22 +225,26 @@ const CareSeekerAppointmentDetails = () => {
                   <ChatIconLocal />
                   Chat
                 </Button>
-                <Button
-                  variant="outline"
-                  className="text-error! bg-error-3a py-2! px-4! gap-2 border-none"
-                  onClick={() =>
-                    router.push(
-                      `/dashboard/video-call?peerId=${appointment.userId}&peerName=${encodeURIComponent(
-                        appointment.user?.firstName
-                          ? `${appointment.user.firstName} ${appointment.user.lastName}`
-                          : ''
-                      )}`
-                    )
-                  }
-                >
-                  <SquarePlay size={16} />
-                  Join video call
-                </Button>
+                {hasRoomName ? (
+                  <Button
+                    variant="outline"
+                    className="text-error! bg-error-3a py-2! px-4! gap-2 border-none"
+                    onClick={handleJoinVideoCall}
+                  >
+                    <SquarePlay size={16} />
+                    Join video call
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    className="text-amber-11! bg-amber-3a py-2! px-4! gap-2 border-none"
+                    onClick={handleJoinVideoCall}
+                    loading={joiningVideo}
+                  >
+                    <SquarePlay size={16} />
+                    {joiningVideo ? 'Checking...' : 'Join video call'}
+                  </Button>
+                )}
               </div>
             )}
           </div>
@@ -303,7 +361,7 @@ const CareSeekerAppointmentDetails = () => {
               </div>
             </div>
           </div>
-          {appointment.status === 'UPCOMING' && (
+          {canJoinVideo && (
             <EditDetailsBtn
               appointment={appointment}
               setOpenCancelBookingModal={setOpenCancelBookingModal}

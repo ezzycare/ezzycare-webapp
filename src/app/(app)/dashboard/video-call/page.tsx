@@ -11,18 +11,23 @@ const VideoCallPage = () => {
   const searchParams = useSearchParams();
   const peerId = searchParams.get('peerId');
   const peerName = searchParams.get('peerName');
+  const roomParam = searchParams.get('room');
   const fallbackRoom = useRef(
     // eslint-disable-next-line react-hooks/purity
     `room_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
   );
-  const roomName =
-    searchParams.get('room') || `video_${peerId ?? fallbackRoom.current}`;
+  const roomName = roomParam || `video_${peerId ?? fallbackRoom.current}`;
 
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+
+    if (!roomParam && !peerId) {
+      setError('Missing video room information. Please go back and try again.');
+      return;
+    }
 
     const fetchToken = async () => {
       try {
@@ -41,7 +46,7 @@ const VideoCallPage = () => {
     return () => {
       cancelled = true;
     };
-  }, [roomName]);
+  }, [roomName, roomParam, peerId]);
 
   if (error) {
     return (
