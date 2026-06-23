@@ -1,15 +1,31 @@
 'use client';
 
-import type { ChatMessage } from '@/apiQuery/chat/types';
+import type {
+  ChatMessage,
+  Conversation,
+  ConversationsResponse,
+} from '@/apiQuery/chat/types';
+import { toaster } from '@/lib/toaster';
 import { getAuthToken } from '@/services/getAuthToken';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, type InfiniteData } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, type Socket } from 'socket.io-client';
 
-const SOCKET_URL = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/+$/, '');
+const CONVERSATIONS_KEY_PREFIX = ['chat', 'conversations', 'infinite'];
+
+const SOCKET_URL = (process.env.NEXT_PUBLIC_BASE_URL || '').replace(/\/+$/, '');
+
+type IncomingMessage = {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+};
 
 interface ServerToClientEvents {
-  receive_message: (data: { message: string; senderId: string }) => void;
+  receive_message: (data: IncomingMessage) => void;
   message_sent: (data: { id: string; createdAt: string }) => void;
   messages_read: (data: { peerId: string; readerId: string }) => void;
   user_online: (data: { userId: string }) => void;
@@ -23,7 +39,10 @@ interface ClientToServerEvents {
   typing: (data: { peerId: string; isTyping: boolean }) => void;
 }
 
-export const useChatSocket = () => {
+export const useChatSocket = (
+  conversations: Conversation[],
+  activePeerId: string | null
+) => {
   const [isConnected, setIsConnected] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<Record<string, boolean>>({});
   const [typingUsers, setTypingUsers] = useState<Record<string, boolean>>({});
@@ -32,16 +51,26 @@ export const useChatSocket = () => {
     ClientToServerEvents
   > | null>(null);
   const queryClient = useQueryClient();
+  const conversationsRef = useRef(conversations);
+  const activePeerIdRef = useRef(activePeerId);
 
   useEffect(() => {
-    const token = getAuthToken();
+    conversationsRef.current = conversations;
+    activePeerIdRef.current = activePeerId;
+  });
+
+  const token = getAuthToken();
+
+  useEffect(() => {
+    if (!token) return;
+
     const namespace = `${SOCKET_URL}/chat`;
 
     const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
       namespace,
       {
         auth: { token },
-        transports: ['polling', 'websocket'],
+        transports: ['websocket', 'polling'],
         autoConnect: true,
         reconnection: true,
         reconnectionAttempts: 10,
@@ -64,81 +93,102 @@ export const useChatSocket = () => {
       console.error('[chat-socket] connection error:', err.message, err);
     });
 
-    socket.on(
-      'receive_message',
-      (data: { message: string; senderId: string }) => {
-        const peerId = data.senderId;
+    socket.on('receive_message', (data: IncomingMessage) => {
+      const peerId = data.senderId;
 
-        queryClient.setQueryData<{ success: boolean; data: ChatMessage[] }>(
-          ['chat', 'history', peerId],
+      const senderPeer = conversationsRef.current.find(
+        (c) => c.peer.id === peerId
+      )?.peer;
+
+      queryClient.setQueryData<{ success: boolean; data: ChatMessage[] }>(
+        ['chat', 'history', peerId],
+        (old) => {
+          const newMsg: ChatMessage = {
+            ...data,
+            sender: senderPeer
+              ? {
+                  firstName: senderPeer.firstName,
+                  lastName: senderPeer.lastName,
+                  profileImage: senderPeer.profileImage,
+                }
+              : { firstName: '', lastName: '', profileImage: null },
+          };
+
+          if (!old) {
+            return { success: true, message: '', data: [newMsg] };
+          }
+
+          if (old.data.some((m) => m.id === data.id)) {
+            return old;
+          }
+
+          return {
+            ...old,
+            data: [...old.data, newMsg],
+          };
+        }
+      );
+
+      const results = queryClient.getQueriesData<
+        InfiniteData<ConversationsResponse>
+      >({
+        queryKey: CONVERSATIONS_KEY_PREFIX,
+        exact: false,
+      });
+
+      for (const [key] of results) {
+        queryClient.setQueryData<InfiniteData<ConversationsResponse>>(
+          key,
           (old) => {
-            const newMsg: ChatMessage = {
-              id: crypto.randomUUID(),
-              message: data.message,
-              senderId: data.senderId,
-              receiverId: '',
-              isRead: false,
-              createdAt: new Date().toISOString(),
-              sender: { firstName: '', lastName: '', profileImage: null },
-            };
-
-            if (!old) {
-              return { success: true, message: '', data: [newMsg] };
-            }
+            if (!old) return old;
             return {
               ...old,
-              data: [...old.data, newMsg],
+              pages: old.pages.map((page) => ({
+                ...page,
+                data: page.data
+                  ? {
+                      ...page.data,
+                      items: page.data.items.map((c) =>
+                        c.peer.id === peerId
+                          ? {
+                              ...c,
+                              lastMessage: {
+                                id: data.id,
+                                senderId: data.senderId,
+                                receiverId: data.receiverId,
+                                message: data.message,
+                                isRead: data.isRead,
+                                createdAt: data.createdAt,
+                              },
+                              unreadCount:
+                                ((c as { unreadCount?: number }).unreadCount ??
+                                  0) + 1,
+                            }
+                          : c
+                      ),
+                    }
+                  : page.data,
+              })),
             };
           }
         );
-
-        queryClient.setQueryData<{
-          pages: {
-            data?: {
-              items: { peer: { id: string }; lastMessage?: object }[];
-            };
-          }[];
-        }>(['chat', 'conversations', 'infinite'], (old) => {
-          if (!old) return old;
-          return {
-            ...old,
-            pages: old.pages.map((page) => ({
-              ...page,
-              data: page.data
-                ? {
-                    ...page.data,
-                    items: page.data.items.map((c) =>
-                      c.peer.id === peerId
-                        ? {
-                            ...c,
-                            lastMessage: {
-                              id: crypto.randomUUID(),
-                              senderId: data.senderId,
-                              receiverId: '',
-                              message: data.message,
-                              isRead: false,
-                              createdAt: new Date().toISOString(),
-                            },
-                            unreadCount:
-                              ((c as { unreadCount?: number }).unreadCount ??
-                                0) + 1,
-                          }
-                        : c
-                    ),
-                  }
-                : page.data,
-            })),
-          };
-        });
-
-        if (document.hidden && Notification.permission === 'granted') {
-          new Notification('New message', {
-            body: data.message,
-            tag: data.senderId,
-          });
-        }
       }
-    );
+
+      if (activePeerIdRef.current !== peerId) {
+        const senderName = senderPeer
+          ? `${senderPeer.firstName} ${senderPeer.lastName}`
+          : 'Someone';
+
+        toaster.info(data.message, senderName);
+      }
+
+      if (document.hidden && Notification.permission === 'granted') {
+        new Notification('New message', {
+          body: data.message,
+          tag: data.senderId,
+        });
+      }
+    });
 
     socket.on('messages_read', ({ peerId, readerId }) => {
       queryClient.setQueryData<{ success: boolean; data: ChatMessage[] }>(
@@ -175,7 +225,7 @@ export const useChatSocket = () => {
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [queryClient]);
+  }, [queryClient, token]);
 
   const sendMessage = useCallback((receiverId: number, message: string) => {
     socketRef.current?.emit('send_message', { receiverId, message });

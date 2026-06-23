@@ -94,7 +94,7 @@ export default function MessagesPage() {
     sendMessage: sendMessageSocket,
     markAsRead: markAsReadSocket,
     sendTyping,
-  } = useChatSocket();
+  } = useChatSocket(conversations, activeId);
 
   const activeConversation = conversations.find((c) => c.peer.id === activeId);
 
