@@ -86,9 +86,7 @@ import { initializePayment } from '@/apiQuery/payment/initiatePayment';
 import { payWithWallet } from '@/apiQuery/payment/payWithWallet';
 import { getProfile } from '@/apiQuery/users/getProfile';
 import { updateProfile as updateUserProfile } from '@/apiQuery/users/updateProfile';
-import {
-  addBankAccount,
-} from '@/apiQuery/wallet/addBankAccount';
+import { addBankAccount } from '@/apiQuery/wallet/addBankAccount';
 import { getBankAccounts } from '@/apiQuery/wallet/getBankAccounts';
 import { updatePrimaryAccount } from '@/apiQuery/wallet/updatePrimaryAccount';
 import { deleteBankAccount } from '@/apiQuery/wallet/deleteBankAccount';
