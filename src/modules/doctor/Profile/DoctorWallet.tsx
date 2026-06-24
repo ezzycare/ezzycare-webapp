@@ -1,4 +1,5 @@
 'use client';
+import { useGetWalletTransactionsInfiniteQuery } from '@/apiQuery/wallet/getWalletTransactions';
 import { WalletTransaction } from '@/apiQuery/wallet/types';
 import SpiralLoader from '@/components/Base/SpiralLoader';
 import Button from '@/components/Ui/Button';
@@ -16,16 +17,10 @@ import { Dot, EyeIcon, EyeOffIcon, SearchIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 
-interface DoctorWalletProps {
-  transactions: WalletTransaction[];
-  isFetching: boolean;
-}
-
-const DoctorWallet = ({
-  transactions: allTransactions,
-  isFetching,
-}: DoctorWalletProps) => {
+const DoctorWallet = () => {
   const user = useAuthStore((state) => state.doctorUser);
+  const { transactions: allTransactions, isFetching } =
+    useGetWalletTransactionsInfiniteQuery();
 
   const [showBalance, setShowBalance] = useState(false);
   const [showTopUpModal, setShowTopUpModal] = useState(false);

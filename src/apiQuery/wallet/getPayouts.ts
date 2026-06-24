@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-query';
 import axios from 'axios';
 import { useMemo } from 'react';
-import { Payout, PayoutsData, PayoutsResponse } from './types';
+import { Payout, PayoutsResponse } from './types';
 
 interface GetPayoutsParams {
   page?: number;
@@ -39,13 +39,21 @@ export const useGetPayoutsInfiniteQuery = (
       readonly unknown[],
       number
     >,
-    'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam'
+    | 'queryKey'
+    | 'queryFn'
+    | 'initialPageParam'
+    | 'getNextPageParam'
+    | 'getPreviousPageParam'
   >
 ) => {
   const result = useInfiniteQuery({
     queryKey: ['wallet', 'payouts', 'infinite', params],
     queryFn: ({ pageParam }) => getPayouts({ ...params, page: pageParam }),
     initialPageParam: 1,
+    getPreviousPageParam: (firstPage) => {
+      const meta = firstPage.data?.meta;
+      return meta?.hasPreviousPage ? meta.page - 1 : undefined;
+    },
     getNextPageParam: (lastPage) => {
       const meta = lastPage.data?.meta;
       return meta?.hasNextPage ? meta.page + 1 : undefined;

@@ -14,12 +14,13 @@ export interface DoctorProfileEducation {
   endDate: string;
 }
 
-export type DoctorUrgentCriteria = 'VIDEO' | 'HOME';
+export type DoctorUrgentCriteria = 'VIDEO' | 'HOME' | 'CLINIC';
 
 export interface UpdateDoctorProfilePayload {
   experience?: DoctorProfileExperience;
   education?: DoctorProfileEducation;
   urgentCriteria?: DoctorUrgentCriteria[];
+  urgent?: 0 | 1;
   aboutUs?: string;
   subcategoryId?: number;
   feesMinute?: number;

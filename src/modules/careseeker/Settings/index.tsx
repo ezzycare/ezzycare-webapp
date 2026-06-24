@@ -26,9 +26,9 @@ import {
   Settings as SettingsIcon,
 } from 'lucide-react';
 import { useState } from 'react';
-import AccountSettings from './AccountSettings';
 import CustomerSupport from './CustomerSupport';
 import LogoutConfirmation from './LogoutConfirmation';
+import SeekerAccountSettings from './SeekerAccountSettings';
 import SeekerAddress from './SeekerAddress';
 import SeekerFavorites from './SeekerFavorites';
 import SeekerMedicalRecords from './SeekerMedicalRecords';
@@ -57,7 +57,7 @@ const CareSeekerSettings = () => {
       title: 'My wallet',
       description: 'Manage your wallet',
       icon: <SettingsWalletIconLocal className="text-text-alt" />,
-      component: <SeekerWallet user={user} initials={initials} />,
+      component: <SeekerWallet />,
     },
     {
       title: 'Medical records',
@@ -87,7 +87,7 @@ const CareSeekerSettings = () => {
       title: 'Settings',
       description: 'Manage your account',
       icon: <SettingsIcon size={15} className="text-text-alt" />,
-      component: <AccountSettings />,
+      component: <SeekerAccountSettings />,
     },
     {
       title: 'Share App',

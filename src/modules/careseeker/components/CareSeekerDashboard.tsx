@@ -23,7 +23,7 @@ import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
 import { debounce, formatCurrency } from '@/utils/helper';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import AppointmentFilterModal from './Appointments/AppointmentFilterModal';
 import CareSeekerAppointmentsTable from './Appointments/CareSeekerAppointmentsTable';
 import BioDetailsModal from './BioDetailsModal';
@@ -45,7 +45,6 @@ const CareSeekerDashboard = () => {
     status?: AppointmentStatus;
   }>({
     search: '',
-    status: 'UPCOMING',
   });
 
   const debouncedSetFilters = useRef(
@@ -70,6 +69,12 @@ const CareSeekerDashboard = () => {
       limit: 10,
       ...filters,
     });
+
+  const upcomingAppointments = useMemo(() => {
+    return appointments.filter((appointment) => {
+      return ['UPCOMING', 'IN_PROGRESS'].includes(appointment.status);
+    });
+  }, [appointments]);
 
   useEffect(() => {
     const storedShowBalance = localStorage.getItem('showCareSeekerBalance');
@@ -190,14 +195,14 @@ const CareSeekerDashboard = () => {
         )}
         {!isLoadingAppointments && (
           <div className="-mt-3">
-            {!appointments?.length && (
+            {!upcomingAppointments?.length && (
               <EmptyAppointment>
                 <Button variant="primary">Book Appointment</Button>
               </EmptyAppointment>
             )}
             <div className="max-w-full overflow-x-auto">
-              {!!appointments?.length && (
-                <CareSeekerAppointmentsTable data={appointments} />
+              {!!upcomingAppointments?.length && (
+                <CareSeekerAppointmentsTable data={upcomingAppointments} />
               )}
             </div>
           </div>

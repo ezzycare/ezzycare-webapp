@@ -20,17 +20,6 @@ import { createTwilioRoom } from '@/apiQuery/communication/createRoom';
 import { sendSms } from '@/apiQuery/communication/createSms';
 import { getAgoraToken } from '@/apiQuery/communication/getAgoraToken';
 import { getTwilioToken } from '@/apiQuery/communication/getToken';
-import { getDoctorsDiscovery } from '@/apiQuery/doctor/getDoctorDiscovery';
-import { getSingleDoctor as getSingleDoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
-import { getDoctorProfile } from '@/apiQuery/doctor/profile/getProfile';
-import { updateDoctorProfile } from '@/apiQuery/doctor/profile/updateProfile';
-import { uploadDoctorCertification } from '@/apiQuery/doctor/profile/uploadCertification';
-import { getHospitalInvitations } from '@/apiQuery/doctor/profile/getHospitalInvitations';
-import { acceptHospitalInvitation } from '@/apiQuery/doctor/profile/acceptHospitalInvitation';
-import { getDoctorAvailability } from '@/apiQuery/doctor/availability/getAvailability';
-import { createAvailabilitySlot } from '@/apiQuery/doctor/availability/createAvailability';
-import { deleteAvailabilitySlot } from '@/apiQuery/doctor/availability/deleteAvailability';
-import { updateAvailabilitySettings } from '@/apiQuery/doctor/availability/updateSettings';
 import { acceptDoctorAppointment } from '@/apiQuery/doctor/appointments/acceptAppointment';
 import { cancelDoctorAppointment } from '@/apiQuery/doctor/appointments/cancelAppointment';
 import { completeDoctorAppointment } from '@/apiQuery/doctor/appointments/completeAppointment';
@@ -41,6 +30,16 @@ import { getDoctorAppointmentStats } from '@/apiQuery/doctor/appointments/getApp
 import { rescheduleDoctorAppointment } from '@/apiQuery/doctor/appointments/rescheduleAppointment';
 import { startDoctorAppointment } from '@/apiQuery/doctor/appointments/startAppointment';
 import { submitDoctorConsultationNotes } from '@/apiQuery/doctor/appointments/submitConsultationNotes';
+import { createAvailabilitySlot } from '@/apiQuery/doctor/availability/createAvailability';
+import { deleteAvailabilitySlot } from '@/apiQuery/doctor/availability/deleteAvailability';
+import { getDoctorAvailability } from '@/apiQuery/doctor/availability/getAvailability';
+import { updateAvailabilitySettings } from '@/apiQuery/doctor/availability/updateSettings';
+import { getDoctorsDiscovery } from '@/apiQuery/doctor/getDoctorDiscovery';
+import { getSingleDoctor as getSingleDoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
+import { acceptHospitalInvitation } from '@/apiQuery/doctor/profile/acceptHospitalInvitation';
+import { getHospitalInvitations } from '@/apiQuery/doctor/profile/getHospitalInvitations';
+import { getDoctorProfile } from '@/apiQuery/doctor/profile/getProfile';
+import { updateDoctorProfile } from '@/apiQuery/doctor/profile/updateProfile';
 import { getAppointments } from '@/apiQuery/healthcareAppointments/get/getAppointments';
 import { getAppointment } from '@/apiQuery/healthcareAppointments/get/getSingleAppointment';
 import { cancelAppointment } from '@/apiQuery/healthcareAppointments/patch/cancelAppointment';
@@ -87,15 +86,16 @@ import { payWithWallet } from '@/apiQuery/payment/payWithWallet';
 import { getProfile } from '@/apiQuery/users/getProfile';
 import { updateProfile as updateUserProfile } from '@/apiQuery/users/updateProfile';
 import { addBankAccount } from '@/apiQuery/wallet/addBankAccount';
-import { getBankAccounts } from '@/apiQuery/wallet/getBankAccounts';
-import { updatePrimaryAccount } from '@/apiQuery/wallet/updatePrimaryAccount';
 import { deleteBankAccount } from '@/apiQuery/wallet/deleteBankAccount';
+import { getBankAccounts } from '@/apiQuery/wallet/getBankAccounts';
 import { getBanks } from '@/apiQuery/wallet/getBanks';
 import { getPayouts } from '@/apiQuery/wallet/getPayouts';
 import { getWalletBalance } from '@/apiQuery/wallet/getWalletBalance';
 import { getWalletTransactions } from '@/apiQuery/wallet/getWalletTransactions';
+import { updatePrimaryAccount } from '@/apiQuery/wallet/updatePrimaryAccount';
 import { verifyBankAccount } from '@/apiQuery/wallet/verifyBankAccount';
 
+import { DoctorUrgentCriteria } from '@/apiQuery/doctor/profile/types';
 import Button from '@/components/Ui/Button';
 import Dropdown from '@/components/Ui/Dropdown';
 import { cn } from '@/lib/utils';
@@ -1209,10 +1209,9 @@ const executeApi = async (callKey: string, params: Record<string, string>) => {
         latitude: Number(params.latitude),
         longitude: Number(params.longitude),
         urgentCriteria:
-          (params.urgentCriteria?.split(',').map((s: string) => s.trim()) as (
-            | 'VIDEO'
-            | 'HOME'
-          )[]) || [],
+          (params.urgentCriteria
+            ?.split(',')
+            .map((s: string) => s.trim()) as DoctorUrgentCriteria[]) || [],
       });
     case 'doctor_Upload Certification':
       return {

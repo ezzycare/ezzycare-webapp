@@ -26,15 +26,16 @@ import {
   Settings as SettingsIcon,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import AccountSettings from './AccountSettings';
 import CustomerSupport from './CustomerSupport';
+import DoctorAccountSettings from './DoctorAccountSettings';
 import DoctorBankingDetails from './DoctorBankingDetails';
 import DoctorProfileComp from './DoctorProfile';
 import DoctorVisibility from './DoctorVisibility';
 import LogoutConfirmation from './LogoutConfirmation';
-import SeekerFavorites from './SeekerFavorites';
-import SeekerMedicalRecords from './SeekerMedicalRecords';
+import PayoutHistory from './PayoutHistory';
 import ShareApp from './ShareApp';
+import TimeSettings from './TimeSettings';
+import UrgentRequests from './UrgentRequests';
 
 const DoctorProfileSettings = () => {
   const isMobile = useIsMobile();
@@ -72,19 +73,19 @@ const DoctorProfileSettings = () => {
       title: 'Time settings',
       description: 'Manage time sessions',
       icon: <MedicalRecordsIconLocal className="text-text-alt" />,
-      component: <SeekerMedicalRecords />,
+      component: <TimeSettings />,
     },
     {
       title: 'Payout history',
       description: 'View payment history',
       icon: <MedicalRecordsIconLocal className="text-text-alt" />,
-      component: <SeekerMedicalRecords />,
+      component: <PayoutHistory />,
     },
     {
       title: 'Urgent requests',
       description: 'Set criteria for urgent requests',
       icon: <HeartIcon className="text-text-alt" />,
-      component: <SeekerFavorites />,
+      component: <UrgentRequests />,
     },
     {
       title: 'Workspace visibility',
@@ -96,7 +97,7 @@ const DoctorProfileSettings = () => {
       title: 'Settings',
       description: 'Manage your account',
       icon: <SettingsIcon size={15} className="text-text-alt" />,
-      component: <AccountSettings />,
+      component: <DoctorAccountSettings />,
     },
     {
       title: 'Share App',

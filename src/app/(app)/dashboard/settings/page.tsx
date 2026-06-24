@@ -2,7 +2,8 @@
 
 import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
 import { useGetAccountType } from '@/hooks/useGetAccountType';
-import CareSeekerSettings from '@/modules/careseeker/Settings';
+import SeekerAccountSettings from '@/modules/careseeker/Settings/SeekerAccountSettings';
+import DoctorAccountSettings from '@/modules/doctor/Profile/DoctorAccountSettings';
 import HospitalSettings from '@/modules/hospital/components/Settings';
 import { JSX } from 'react';
 
@@ -13,10 +14,10 @@ const SettingsPage = () => {
     ADMIN: <div>Settings</div>,
     HOSPITAL: <HospitalSettings />,
     AGENT: <div>Settings</div>,
-    DOCTOR: <div>Settings</div>,
-    SEEKER: <CareSeekerSettings />,
+    DOCTOR: <DoctorAccountSettings />,
+    SEEKER: <SeekerAccountSettings />,
   };
-  return <>{settings[accountType]}</>;
+  return <div className="p-7.5 min-h-[90vh]">{settings[accountType]}</div>;
 };
 
 export default SettingsPage;

@@ -101,6 +101,7 @@ export const useAuthStore = create<AuthStore>()(
         if (isBrowser) {
           sessionStorage.removeItem(general.TOKEN);
           localStorage.removeItem(general.USER);
+          localStorage.removeItem(general.DOCTOR_USER);
         }
       },
 

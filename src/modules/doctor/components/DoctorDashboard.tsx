@@ -27,10 +27,10 @@ import { HospitalWelcomeModal } from './Invitation/HospitalWelcomeModal';
 import UploadDoctorDocs from './UploadDoctorDocs';
 
 const DoctorDashboard = () => {
-  const user = useAuthStore((state: AuthStore) => state.user);
+  const user = useAuthStore((state: AuthStore) => state.doctorUser);
   const [showBalance, setShowBalance] = useState(true);
   const [showProfileModal, setShowProfileModal] = React.useState(false);
-  const [showUploadDocsModal, setShowUploadDocsModal] = React.useState(true);
+  const [showUploadDocsModal, setShowUploadDocsModal] = React.useState(false);
   const [showAvailabilityModal, setShowAvailabilityModal] =
     React.useState(false);
   const [showPendingAppointment, setShowPendingAppointment] =
@@ -116,7 +116,7 @@ const DoctorDashboard = () => {
 
         {renderCards()}
       </div>
-      {user && user?.status === 'PROFILE_NOT_COMPLETE' && (
+      {user && !user?.profileCompleted && (
         <div className="w-full mt-5">
           <AlertBanner
             type="info"
@@ -189,17 +189,25 @@ const DoctorDashboard = () => {
           <div className="-mt-3">
             {!upcomingEvents?.length && (
               <EmptyAppointment>
-                {!user.profileCompleted && (
+                <>
                   <div className="w-77 flex flex-col mx-auto space-y-3">
-                    <Button variant="primary">Get verified</Button>
+                    {!user.profileCompleted && (
+                      <Button
+                        variant="primary"
+                        onClick={() => setShowProfileModal(true)}
+                      >
+                        Get verified
+                      </Button>
+                    )}
                     <Button
                       variant="outline"
                       className="border-blue-11! text-blue-11!"
+                      onClick={() => setShowAvailabilityModal(true)}
                     >
                       Set Availability
                     </Button>
                   </div>
-                )}
+                </>
               </EmptyAppointment>
             )}
             <div className="max-w-full overflow-x-auto">
@@ -212,7 +220,10 @@ const DoctorDashboard = () => {
       </div>
       <CompleteDoctorProfileModal
         openModal={showProfileModal}
-        setOpenModal={setShowProfileModal}
+        setOpenModal={() => {
+          setShowProfileModal(false);
+          setShowUploadDocsModal(true);
+        }}
         data={user}
       />
       <UploadDoctorDocs

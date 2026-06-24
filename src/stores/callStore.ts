@@ -1,6 +1,7 @@
+import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
 import { create } from 'zustand';
 
-type CallRole = 'doctor' | 'seeker';
+type CallRole = ACCOUNT_TYPE;
 
 interface CallState {
   active: boolean;
@@ -35,7 +36,7 @@ export const useCallStore = create<CallState>((set) => ({
   setIncomingCall: (data) =>
     set({
       active: true,
-      role: data.role ?? 'seeker', // 👈 FIXED
+      role: data.role ?? 'SEEKER',
       roomName: data.roomName,
       token: data.token,
       uid: Number(data.uid),

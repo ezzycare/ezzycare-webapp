@@ -26,7 +26,7 @@ import { toaster } from '@/lib/toaster';
 import CancelBookingModal from '@/modules/careseeker/components/Appointments/CancelBookingModal';
 import VideoCallModal from '@/modules/video/VideoCallModal';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
-import { useCallStore } from '@/stores/call-store';
+import { useCallStore } from '@/stores/callStore';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { ArrowLeft, Briefcase, NotepadText, SquarePlay } from 'lucide-react';
@@ -220,7 +220,7 @@ const DoctorAppointmentDetails = () => {
               token: token,
               uid,
               callerName: doctorPeerName,
-              role: 'doctor', // 👈 IMPORTANT
+              role: 'DOCTOR',
             });
           } else {
             refetch().then((result) => {
@@ -232,7 +232,7 @@ const DoctorAppointmentDetails = () => {
                   token: d.doctorToken,
                   uid: d.uid,
                   callerName: doctorPeerName,
-                  role: 'doctor',
+                  role: 'DOCTOR',
                 });
               } else {
                 toaster.info('Video room is being created...');
@@ -576,7 +576,7 @@ const ChatButtons = ({
         token: token,
         uid: appointment.uid,
         callerName: peerName,
-        role: 'doctor',
+        role: 'DOCTOR',
       });
     } else {
       toaster.info('Start the consultation first to create a video room');

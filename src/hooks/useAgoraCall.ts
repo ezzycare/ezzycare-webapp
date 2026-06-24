@@ -239,19 +239,21 @@ export const useAgoraCall = (appId: string) => {
     setIsCameraEnabled(nextState);
   }, []);
 
+  const cameraFacingRef = useRef<'user' | 'environment'>('user');
+
   const switchCamera = useCallback(async () => {
     const track = localVideoRef.current;
 
     if (!track) return;
 
+    const nextFacing =
+      cameraFacingRef.current === 'user' ? 'environment' : 'user';
+    cameraFacingRef.current = nextFacing;
+
     try {
-      // @ts-expect-error Agora types may not expose switchDevice
-      await track.switchDevice({
-        facingMode: track.getCurrentFacingMode?.() === 'user' ? 'environment' : 'user',
-      });
-    } catch {
-      // fallback: switch via the built-in method
-      await track.switchCamera?.();
+      await track.setDevice({ facingMode: nextFacing });
+    } catch (err) {
+      console.warn('Camera switch failed:', err);
     }
   }, []);
 

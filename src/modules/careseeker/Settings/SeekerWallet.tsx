@@ -1,5 +1,4 @@
 'use client';
-import { User } from '@/apiQuery/auth/types';
 import { useGetWalletTransactionsInfiniteQuery } from '@/apiQuery/wallet/getWalletTransactions';
 import { WalletTransaction } from '@/apiQuery/wallet/types';
 import SpiralLoader from '@/components/Base/SpiralLoader';
@@ -9,15 +8,21 @@ import { TextInput } from '@/components/Ui/TextInput';
 import { BoldWalletIcon } from '@/icons/DashboardIcons';
 import { TopUpIconLocal } from '@/icons/SettingsIcons';
 import { cn } from '@/lib/utils';
-import { formatCurrency } from '@/utils/helper';
+import { useAuthStore } from '@/stores/authStore';
+import { formatCurrency, getInitials } from '@/utils/helper';
 import dayjs from 'dayjs';
 import { Dot, EyeIcon, EyeOffIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
-const SeekerWallet = ({ user, initials }: { user: User; initials: string }) => {
+const SeekerWallet = () => {
+  const user = useAuthStore((state) => state.user);
   const [showBalance, setShowBalance] = useState(false);
   const [showTopUpModal, setShowTopUpModal] = useState(false);
+
+  const initials = user
+    ? getInitials(`${user.firstName}, ${user.lastName}`)
+    : '';
 
   const { transactions, isFetching } = useGetWalletTransactionsInfiniteQuery();
 

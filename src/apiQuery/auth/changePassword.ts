@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import axios from 'axios';
+import { axiosClient } from '@/services/axiosClient';
 import { baseURL } from '../baseUrl';
 
 export interface ChangePasswordPayload {
@@ -16,7 +16,7 @@ export const changePassword = async (
   payload: ChangePasswordPayload
 ): Promise<ChangePasswordResponse> => {
   try {
-    const response = await axios.post(
+    const response = await axiosClient.post(
       `${baseURL}/auth/change-password`,
       payload
     );

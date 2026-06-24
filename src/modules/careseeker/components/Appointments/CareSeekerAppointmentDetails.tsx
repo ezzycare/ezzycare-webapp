@@ -21,7 +21,7 @@ import {
 import { toaster } from '@/lib/toaster';
 import VideoCallModal from '@/modules/video/VideoCallModal';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
-import { useCallStore } from '@/stores/call-store';
+import { useCallStore } from '@/stores/callStore';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
 import dayjs from 'dayjs';
 import {
@@ -95,7 +95,7 @@ const CareSeekerAppointmentDetails = () => {
         roomName: appointment.roomName!,
         token: appointment.seekerToken!,
         uid: appointment.seekerUid ?? appointment.userId,
-        role: 'seeker',
+        role: 'SEEKER',
         callerName: peerName,
       });
       return;
@@ -110,9 +110,9 @@ const CareSeekerAppointmentDetails = () => {
     if (data?.roomName && data?.seekerToken) {
       setIncomingCall({
         roomName: data.roomName,
-        token: data.seekerToken, // ✅ now aligned
+        token: data.seekerToken,
         uid: data.seekerUid ?? appointment.userId,
-        role: 'seeker',
+        role: 'SEEKER',
         callerName: peerName,
       });
     } else {

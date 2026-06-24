@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
+import { useGetAvailableTimeSlotsQuery } from '@/apiQuery/doctor/getAvailableTimeSlot';
 import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import { ConsultationType } from '@/apiQuery/hospital/types';
 import Button from '@/components/Ui/Button';
@@ -18,7 +19,7 @@ import { formatCurrency } from '@/utils/helper';
 import { timeSlotGenerator } from '@/utils/timeSlotsGenerator';
 import dayjs from 'dayjs';
 import { CircleDollarSign } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 const TIME_INTERVAL = 30; // minutes
 const timeSlots = [...timeSlotGenerator(8, 17, TIME_INTERVAL)];
@@ -78,12 +79,47 @@ const BookAppointmentComp = ({
     timeSlot: string;
   } | null>(null);
   const [canProceedToPayment, setCanProceedToPayment] = useState(false);
+  const [fetchDate, setFetchDate] = useState<string | null>(null);
+  const [fetchedBlockedTimes, setFetchedBlockedTimes] = useState<
+    Record<string, string[]>
+  >({});
 
   useEffect(() => {
     if (isReschedule) {
       setIsSelectingTime(true);
     }
   }, [isReschedule]);
+
+  const { data: availableSlotsData } = useGetAvailableTimeSlotsQuery(
+    fetchDate && selectedConsultationType
+      ? {
+          id: doctor.id,
+          date: fetchDate,
+          type: selectedConsultationType as 'CLINIC' | 'HOME' | 'VIDEO',
+        }
+      : null
+  );
+
+  // Merge API response into fetchedBlockedTimes
+  useEffect(() => {
+    if (!availableSlotsData?.data || !fetchDate) return;
+
+    const blockedValues = availableSlotsData.data
+      .filter((slot) => !slot.available)
+      .map((slot) => slot.time);
+
+    setFetchedBlockedTimes((prev) => {
+      if (JSON.stringify(prev[fetchDate]) === JSON.stringify(blockedValues)) {
+        return prev;
+      }
+      return { ...prev, [fetchDate]: blockedValues };
+    });
+  }, [availableSlotsData, fetchDate]);
+
+  const handleDaySelect = useCallback((date: Date) => {
+    const key = dayjs(date).format('YYYY-MM-DD');
+    setFetchDate(key);
+  }, []);
 
   useEffect(() => {
     if (selectedTimes?.appointmentDate) {
@@ -124,16 +160,26 @@ const BookAppointmentComp = ({
     [doctor.availability, selectedConsultationType]
   );
 
-  const blockedTimesByDate = useMemo(
-    () =>
-      buildBlockedTimesByDate(
-        doctor.availability ?? [],
-        timeSlots,
-        selectedConsultationType,
-        30
-      ),
-    [doctor.availability, timeSlots, selectedConsultationType]
-  );
+  const blockedTimesByDate = useMemo(() => {
+    const staticBlocked = buildBlockedTimesByDate(
+      doctor.availability ?? [],
+      timeSlots,
+      selectedConsultationType,
+      30
+    );
+
+    const merged = { ...staticBlocked };
+    for (const [dateKey, blockedValues] of Object.entries(
+      fetchedBlockedTimes
+    )) {
+      const existing = new Set(merged[dateKey] || []);
+      for (const value of blockedValues) {
+        existing.add(value);
+      }
+      merged[dateKey] = Array.from(existing);
+    }
+    return merged;
+  }, [doctor.availability, selectedConsultationType, fetchedBlockedTimes]);
 
   const handleSelectTimes = (val: { date: Date; timeSlot: string }) => {
     setCurrentSelectedTimes(val);
@@ -233,6 +279,7 @@ const BookAppointmentComp = ({
               blockedTimesByDate={blockedTimesByDate}
               defaultDate={currentSelectedTimes?.date}
               onSelect={handleSelectTimes}
+              onDaySelect={handleDaySelect}
               applyImmediately={!isReschedule}
               applyLabel={isReschedule ? 'Proceed' : 'Apply'}
             />

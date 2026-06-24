@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import Button from '@/components/Ui/Button';
@@ -6,7 +7,9 @@ import Image from 'next/image';
 
 import { User } from '@/apiQuery/auth/types';
 import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
+import { useUpdateDoctorProfileMutation } from '@/apiQuery/doctor/profile/updateProfile';
 import Tabs from '@/components/Base/Tabs';
+import { toaster } from '@/lib/toaster';
 import { Dot } from 'lucide-react';
 import { useState } from 'react';
 import ConsultationCharges from './ConsultationCharges';
@@ -21,6 +24,16 @@ const DoctorProfileComp = ({
 }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [profileValueChanged, setProfileValueChanged] = useState(false);
+  const [consultationCharges, setConsultationCharges] = useState({
+    homeConsultationCharge:
+      user?.userDetails?.homeConsultationCharge || undefined,
+    clinicConsultationCharge:
+      user?.userDetails?.clinicConsultationCharge || undefined,
+    videoConsultationCharge:
+      user?.userDetails?.videoConsultationCharge || undefined,
+  });
+
+  const { mutate, isPending } = useUpdateDoctorProfileMutation();
 
   const handleConsultationChargeChange = (
     charges: { key: string; value: string }[]
@@ -31,7 +44,33 @@ const DoctorProfileComp = ({
       ({ key, value }) => String(details?.[key] ?? '') !== value
     );
 
+    if (hasChanges) {
+      const updated: any = {};
+      charges.forEach(({ key, value }) => {
+        updated[key] = Number(value);
+      });
+      setConsultationCharges(updated);
+    }
+
     setProfileValueChanged(hasChanges);
+  };
+
+  const handleUpdateProfile = () => {
+    if (Object.values(consultationCharges)?.some((value) => value === null)) {
+      return;
+    }
+    mutate(
+      { ...consultationCharges },
+      {
+        onSuccess: () => {
+          setProfileValueChanged(false);
+          toaster.success('Profile updated successfully');
+        },
+        onError: () => {
+          toaster.error('Failed to update profile');
+        },
+      }
+    );
   };
 
   const tabs = [
@@ -79,6 +118,7 @@ const DoctorProfileComp = ({
           <Button
             className="relative ml-auto bg-blue-3a! text-blue-11! px-5! py-1.75! rounded-full!"
             disabled={!profileValueChanged}
+            onClick={handleUpdateProfile}
           >
             Save
             {profileValueChanged && (

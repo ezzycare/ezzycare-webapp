@@ -70,6 +70,7 @@ export default function DateTimePicker({
   onSelect,
   applyLabel = 'Apply',
   applyImmediately,
+  onDaySelect,
 }: {
   interval: number;
   blockedDates?: Date[];
@@ -81,6 +82,7 @@ export default function DateTimePicker({
   onSelect?: any;
   applyLabel?: string;
   applyImmediately?: boolean;
+  onDaySelect?: (date: Date) => void;
 }) {
   const today = new Date();
   const [viewYear, setViewYear] = useState(
@@ -149,6 +151,7 @@ export default function DateTimePicker({
     const d = new Date(viewYear, viewMonth, day);
     setSelectedDate(d);
     setSelectedSlot(null);
+    onDaySelect?.(d);
   };
 
   const availableSlots = useCallback(() => {
@@ -369,7 +372,7 @@ export default function DateTimePicker({
                 key={slot.value}
                 onClick={() => handleSlotClick(slot)}
                 disabled={slot.blocked}
-                className="text-sm py-1.5 px-5 font-medium border border-border2 hover:border-primary rounded-lg"
+                className="text-[13px] py-1.5 px-5 font-medium border border-border2 hover:border-primary rounded-lg"
                 style={{
                   width: '100%',
                   background: isSelectedSlot

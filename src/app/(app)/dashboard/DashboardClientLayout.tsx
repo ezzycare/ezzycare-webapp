@@ -12,6 +12,8 @@ import { useGetProfile } from '@/apiQuery/users/getProfile';
 import SideNav from '@/components/layout/SideNav';
 import TopNav from '@/components/layout/TopNav';
 import { useTrackPreviousRoute } from '@/hooks/useTrackPreviousRoute';
+import IncomingCallUI from '@/modules/video/IncomingCallUI';
+import VideoCallModal from '@/modules/video/VideoCallModal';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
 import { useNotificationsStore } from '@/stores/notificationsStore';
@@ -55,6 +57,7 @@ const DashboardClientLayout = ({
   });
   const { services } = useGetHospitalServices();
   const { notifications } = useGetNotificationsInfiniteQuery({ limit: 20 });
+  const [accepted, setAccepted] = useState(false);
 
   useEffect(() => {
     if (doctorProfile) {
@@ -101,6 +104,8 @@ const DashboardClientLayout = ({
         />
         {children}
       </div>
+      <IncomingCallUI accepted={accepted} setAccepted={setAccepted} />
+      <VideoCallModal open={accepted} onClose={() => setAccepted(false)} />
     </div>
   );
 };

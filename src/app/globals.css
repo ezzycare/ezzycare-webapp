@@ -106,6 +106,7 @@
   ========================= */
   --success: #4bb543;
   --success-600: #4bb543;
+  --success-11a: #00713FDE;
 
   --warning: #ab6400;
   --warning-2a: #f4d10016;
@@ -225,6 +226,7 @@
   /* SEMANTIC */
   --color-success: var(--success);
   --color-success-600: var(--success-600);
+  --color-success-11a: var(--success-11a);
 
   --color-warning: var(--warning);
   --color-warning-2a: var(--warning-2a);

@@ -4,8 +4,8 @@ import Modal from '@/components/Ui/Modal';
 import { useAgoraCall } from '@/hooks/useAgoraCall';
 import { useGetAccountType } from '@/hooks/useGetAccountType';
 import { cn } from '@/lib/utils';
-import { useCallStore } from '@/stores/call-store';
 import { EndConsultationModal } from '@/modules/doctor/components/Appointments/EndConsultationModal';
+import { useCallStore } from '@/stores/callStore';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import {
   MessageSquare,

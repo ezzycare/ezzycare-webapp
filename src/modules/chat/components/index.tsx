@@ -84,7 +84,8 @@ export default function MessagesPage() {
 
   const { conversations, fetchNextPage, hasNextPage, isFetching } =
     useGetConversationsInfiniteQuery();
-  const { mutate: sendMessage } = useSendMessageMutation();
+  const { mutate: sendMessage, isPending: isSending } =
+    useSendMessageMutation();
   const { mutate: markReadREST } = useMarkChatReadMutation();
 
   const {
@@ -170,7 +171,7 @@ export default function MessagesPage() {
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || !activeId) return;
+    if (!input.trim() || !activeId || isSending) return;
 
     const message = input.trim();
     const sender = {
@@ -188,7 +189,7 @@ export default function MessagesPage() {
       {
         onSuccess: () => {
           setInput('');
-          sendMessageSocket(Number(activeId), message);
+          // sendMessageSocket(Number(activeId), message);
         },
       }
     );
@@ -322,7 +323,7 @@ export default function MessagesPage() {
           </span>
         </div>
 
-        {isLoadingMessages && <BounceLoader />}
+        {/* {isLoadingMessages && <BounceLoader />} */}
 
         {messages
           ?.sort(
@@ -430,7 +431,7 @@ export default function MessagesPage() {
                 'w-5 h-5 rounded-sm bg-blue-10 flex items-center justify-center',
                 'hover:bg-blue-11 transition-colors disabled:opacity-50 cursor-pointer'
               )}
-              disabled={!input.trim()}
+              disabled={!input.trim() || isSending}
               aria-label="Send"
             >
               <Send className="w-3 h-3 text-foreground" />
