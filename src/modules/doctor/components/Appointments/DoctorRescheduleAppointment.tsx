@@ -1,12 +1,13 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { useRescheduleDoctorAppointmentMutation } from '@/apiQuery/doctor/appointments/rescheduleAppointment';
 import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
-import { useRescheduleAppointmentMutation } from '@/apiQuery/healthcareAppointments/patch/rescheduleAppointment';
 import { ConsultationType } from '@/apiQuery/hospital/types';
 import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { RadioItem } from '@/components/Ui/RadioGroup';
+import { useGetAccountType } from '@/hooks/useGetAccountType';
 import ArrowLeft from '@/icons/ArrowLeft';
 import { toaster } from '@/lib/toaster';
 import { careModes } from '@/modules/careseeker/components/BookAppointment';
@@ -50,7 +51,7 @@ const DoctorRescheduleAppointment = ({
   const consultationTypes = careModes.map((item) => item.name);
 
   const { mutate: rescheduleBooking, isPending } =
-    useRescheduleAppointmentMutation();
+    useRescheduleDoctorAppointmentMutation();
 
   useEffect(() => {
     updateBooking({ state: 'book-appointment' });
@@ -71,13 +72,9 @@ const DoctorRescheduleAppointment = ({
       id: Number(appointment?.id),
       appointmentDate: selectedTimes?.appointmentDate ?? '',
       appointmentTime: selectedTimes?.appointmentTime ?? '',
-      appointmentEndTime: selectedTimes?.appointmentEndTime ?? '',
     };
     rescheduleBooking(payload, {
       onSuccess: (res) => {
-        if (res?.data) {
-          setCreatedAppointment(res.data);
-        }
         toaster.success(res.message || 'Appointment rescheduled successfully');
         handleCloseModal();
       },
@@ -168,6 +165,9 @@ const DoctorAppRescheduleComp = ({
 }: BookAppointmentCompParams) => {
   const { createdAppointment } = useBookAppointmentStore();
 
+  const { accountType } = useGetAccountType();
+  const isDoctor = accountType === 'DOCTOR';
+
   const [isSelectingTime, setIsSelectingTime] = useState(false);
   const [currentSelectedTimes, setCurrentSelectedTimes] = useState<{
     date: Date;
@@ -196,19 +196,26 @@ const DoctorAppRescheduleComp = ({
 
   const blockedDates = useMemo(
     () =>
-      buildBlockedDates(doctor.availability ?? [], selectedConsultationType),
-    [doctor.availability, selectedConsultationType]
+      isDoctor
+        ? []
+        : buildBlockedDates(
+            doctor.availability ?? [],
+            selectedConsultationType
+          ),
+    [doctor.availability, selectedConsultationType, isDoctor]
   );
 
   const blockedTimesByDate = useMemo(
     () =>
-      buildBlockedTimesByDate(
-        doctor.availability ?? [],
-        timeSlots,
-        selectedConsultationType,
-        30
-      ),
-    [doctor.availability, timeSlots, selectedConsultationType]
+      isDoctor
+        ? {}
+        : buildBlockedTimesByDate(
+            doctor.availability ?? [],
+            timeSlots,
+            selectedConsultationType,
+            30
+          ),
+    [doctor.availability, selectedConsultationType, isDoctor]
   );
 
   const handleSelectTimes = (val: { date: Date; timeSlot: string }) => {

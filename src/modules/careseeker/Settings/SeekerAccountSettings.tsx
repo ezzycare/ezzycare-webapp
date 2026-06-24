@@ -90,7 +90,7 @@ const SeekerAccountSettings = () => {
   };
 
   return (
-    <div className="bg-surface-card rounded-[10px] p-7.5 flex flex-col gap-7">
+    <div className="bg-surface-card rounded-[10px] p-7.5 flex flex-col gap-7 max-w-300 mx-auto min-h-[80vh]">
       <div className="flex items-center justify-between">
         <p className="text-text">Notifications</p>
         <Toggle value={notifications} onChange={handleNotificationToggle} />

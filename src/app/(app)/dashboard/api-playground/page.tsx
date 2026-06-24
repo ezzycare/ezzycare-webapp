@@ -1263,7 +1263,7 @@ const executeApi = async (callKey: string, params: Record<string, string>) => {
       });
     case 'doctorAppointments_Reschedule':
       return rescheduleDoctorAppointment({
-        id: params.id,
+        id: Number(params.id),
         appointmentDate: params.appointmentDate,
         appointmentTime: params.appointmentTime,
       });

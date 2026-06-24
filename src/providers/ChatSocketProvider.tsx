@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
@@ -48,6 +49,9 @@ interface ServerToClientEvents {
   user_offline: (data: { userId: string }) => void;
   typing: (data: { peerId: string; isTyping: boolean; userId: string }) => void;
   incoming_call: (data: IncomingCallData) => void;
+  incoming_appointment: (data: any) => void;
+  incoming_appointments: (data: any) => void;
+  incoming_appointment_call: (data: any) => void;
 }
 
 interface ClientToServerEvents {
@@ -138,6 +142,8 @@ export function ChatSocketProvider({
 
     socket.on('receive_message', (data: IncomingMessage) => {
       const peerId = data.senderId;
+
+      console.log({ incomingMessage: data });
 
       const senderPeer = conversationsRef.current.find(
         (c) => c.peer.id === peerId
@@ -268,6 +274,16 @@ export function ChatSocketProvider({
         callerName: data.callerName,
         appointmentId: data.appointmentId,
       });
+    });
+
+    socket.on('incoming_appointment', (data: any) => {
+      console.log({ incomingAppointment: data });
+    });
+    socket.on('incoming_appointments', (data: any) => {
+      console.log({ incomingAppointment: data });
+    });
+    socket.on('incoming_appointment_call', (data: any) => {
+      console.log({ incomingAppointmentCall: data });
     });
 
     if (Notification.permission === 'default') {

@@ -158,7 +158,7 @@ export interface SubmitConsultationNotesParams {
 }
 
 export interface RescheduleAppointmentParams {
-  id: string;
+  id: number;
   appointmentDate: string;
   appointmentTime: string;
 }

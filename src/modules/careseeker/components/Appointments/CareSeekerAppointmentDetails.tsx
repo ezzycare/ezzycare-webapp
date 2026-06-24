@@ -55,7 +55,7 @@ const CareSeekerAppointmentDetails = () => {
   const categories = useCategoryStore(
     (state: CategoryStore) => state.categories.allCategories
   );
-  const { active: callOpen, setIncomingCall, clearCall } = useCallStore();
+  const { active: callOpen, setCallDetails, clearCall } = useCallStore();
   const { updateBooking } = useBookAppointmentStore();
   const {
     appointment: appointmentData,
@@ -96,7 +96,7 @@ const CareSeekerAppointmentDetails = () => {
 
   const handleJoinVideoCall = async () => {
     if (hasRoomName && hasToken) {
-      setIncomingCall({
+      setCallDetails({
         roomName: appointment.roomName!,
         token: appointment.seekerToken!,
         uid: appointment.seekerUid ?? appointment.userId,
@@ -114,7 +114,7 @@ const CareSeekerAppointmentDetails = () => {
     const data = result.data?.data;
 
     if (data?.roomName && data?.seekerToken) {
-      setIncomingCall({
+      setCallDetails({
         roomName: data.roomName,
         token: data.seekerToken,
         uid: data.seekerUid ?? appointment!.userId,

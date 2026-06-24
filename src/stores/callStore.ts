@@ -23,6 +23,15 @@ interface CallState {
     appointmentId: number;
   }) => void;
 
+  setCallDetails: (data: {
+    roomName: string;
+    token: string;
+    uid: number;
+    role?: CallRole;
+    callerName?: string;
+    appointmentId: number;
+  }) => void;
+
   clearCall: () => void;
 }
 
@@ -39,6 +48,17 @@ export const useCallStore = create<CallState>((set) => ({
   setIncomingCall: (data) =>
     set({
       active: true,
+      role: data.role ?? 'SEEKER',
+      roomName: data.roomName,
+      token: data.token,
+      uid: Number(data.uid),
+      callerName: data.callerName,
+      appointmentId: data.appointmentId,
+    }),
+
+  setCallDetails: (data) =>
+    set({
+      active: false,
       role: data.role ?? 'SEEKER',
       roomName: data.roomName,
       token: data.token,

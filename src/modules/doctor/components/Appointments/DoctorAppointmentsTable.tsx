@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { useCancelDoctorAppointmentMutation } from '@/apiQuery/doctor/appointments/cancelAppointment';
 import {
   DoctorAppointment,
   DoctorAppointmentClient,
 } from '@/apiQuery/doctor/appointments/types';
-import { useCancelAppointmentMutation } from '@/apiQuery/healthcareAppointments/patch/cancelAppointment';
 import BaseTable from '@/components/Base/Table';
 import { ChatIconLocal } from '@/icons/DashboardIcons';
 import { toaster } from '@/lib/toaster';
@@ -14,6 +14,7 @@ import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
 import { BaseTableProps, Column } from '@/types/table';
 import { statusColor, StatusType } from '@/utils/helper';
 import { EyeOpenIcon } from '@radix-ui/react-icons';
+import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -37,7 +38,9 @@ const CareSeekerAppointmentsTable = ({
     useState<boolean>(false);
 
   const { mutate: cancelAppointment, isPending } =
-    useCancelAppointmentMutation();
+    useCancelDoctorAppointmentMutation();
+
+  const queryClient = useQueryClient();
 
   const handleCancelAppointment = (reason: string) => {
     if (!currentRow?.id) return;
@@ -48,6 +51,9 @@ const CareSeekerAppointmentsTable = ({
       },
       {
         onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ['doctor', 'appointments'],
+          });
           setOpenCancelBookingModal(false);
           toaster.success('Appointment cancelled successfully');
         },

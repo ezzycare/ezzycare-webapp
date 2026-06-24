@@ -184,7 +184,7 @@ const DoctorDashboard = () => {
           )}
         </div>
         {isLoadingAppointments && (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-[60vh] flex items-center justify-center">
             <SpiralLoader />
           </div>
         )}

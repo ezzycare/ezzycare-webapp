@@ -97,7 +97,7 @@ const DoctorAppointmentDetails = () => {
     token,
     uid,
     callerName,
-    setIncomingCall,
+    setCallDetails,
     clearCall,
   } = useCallStore();
 
@@ -216,7 +216,7 @@ const DoctorAppointmentDetails = () => {
           const uid = responseData?.uid || appointment!.uid;
 
           if (roomName && token) {
-            setIncomingCall({
+            setCallDetails({
               roomName,
               token: token,
               uid,
@@ -229,7 +229,7 @@ const DoctorAppointmentDetails = () => {
               const d = result.data?.data;
 
               if (d?.roomName && d?.doctorToken) {
-                setIncomingCall({
+                setCallDetails({
                   roomName: d.roomName,
                   token: d.doctorToken,
                   uid: d.uid,
@@ -256,7 +256,7 @@ const DoctorAppointmentDetails = () => {
   return (
     <>
       {isFetching && (
-        <div className="w-full h-[60vh] flex items-center justify-center">
+        <div className="w-full h-[50vh] flex items-center justify-center">
           <SpiralLoader />
         </div>
       )}
@@ -361,22 +361,34 @@ const DoctorAppointmentDetails = () => {
               </Button>
             )}
             {appointment?.status === 'COMPLETED' && (
-              <Button
-                variant="outline"
-                className="min-w-38 text-sm text-text-alt! bg-gray-3a py-2! px-4! gap-2 border-none"
-                onClick={() =>
-                  router.push(
-                    `/dashboard/messages?peerId=${appointment.clientId}&peerName=${encodeURIComponent(
-                      appointment.client?.firstName
-                        ? `${appointment.client.firstName} ${appointment.client.lastName}`
-                        : ''
-                    )}`
-                  )
-                }
-              >
-                <ChatIconLocal />
-                Follow-up
-              </Button>
+              <div className="flex items-center gap-3">
+                {!appointment?.consultNotes && (
+                  <Button
+                    variant="primary"
+                    className="min-w-38 text-sm py-2! px-4! gap-2 border-none"
+                    onClick={() => setShowNotesModal(true)}
+                  >
+                    <NotepadText className="w-4 h-4" />
+                    Add Notes
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  className="min-w-38 text-sm text-text-alt! bg-gray-3a py-2! px-4! gap-2 border-none"
+                  onClick={() =>
+                    router.push(
+                      `/dashboard/messages?peerId=${appointment.clientId}&peerName=${encodeURIComponent(
+                        appointment.client?.firstName
+                          ? `${appointment.client.firstName} ${appointment.client.lastName}`
+                          : ''
+                      )}`
+                    )
+                  }
+                >
+                  <ChatIconLocal />
+                  Follow-up
+                </Button>
+              </div>
             )}
           </div>
 
@@ -618,14 +630,14 @@ const ChatButtons = ({
   peerName: string;
 }) => {
   const router = useRouter();
-  const { active, roomName, token, uid, setIncomingCall, clearCall } =
+  const { active, roomName, token, uid, setCallDetails, clearCall } =
     useCallStore();
 
   const doctorToken = appointment.doctorToken;
 
   const handleJoinVideoCall = () => {
     if (roomName && token) {
-      setIncomingCall({
+      setCallDetails({
         roomName,
         token: token ?? doctorToken,
         uid: appointment.uid,

@@ -6,6 +6,7 @@ import { getInitials } from '@/utils/helper';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { Calendar, Clock, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import DeclineAppointmentModal from './DeclineAppointmentModal';
 
@@ -18,6 +19,7 @@ const AppointmentRequestCard = ({
   appointment,
   onClose,
 }: AppointmentRequestCardProps) => {
+  const { push } = useRouter();
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const queryClient = useQueryClient();
 
@@ -43,6 +45,7 @@ const AppointmentRequestCard = ({
         onSuccess: () => {
           invalidateAppointments();
           toaster.success('Appointment accepted successfully');
+          push(`/dashboard/appointments/${appointment.id}`);
           onClose?.();
         },
         onError: (error: unknown) => {
@@ -115,14 +118,14 @@ const AppointmentRequestCard = ({
           <button
             onClick={() => setShowDeclineModal(true)}
             disabled={isDeclining || isAccepting}
-            className="px-4 py-1.5 border border-gray-4 rounded-lg text-gray-11 bg-surface-card hover:bg-gray-2 disabled:opacity-50 transition-colors text-sm font-medium"
+            className="px-4 py-1.5 border border-gray-4 rounded-lg text-gray-11 bg-surface-card hover:bg-gray-2 disabled:opacity-50 transition-colors text-sm font-medium cursor-pointer"
           >
             Decline
           </button>
           <button
             onClick={handleAccept}
             disabled={isAccepting || isDeclining}
-            className="px-5 py-1.5 bg-blue-11 text-white rounded-lg hover:bg-blue-12 disabled:opacity-50 transition-colors text-sm font-medium"
+            className="px-5 py-1.5 bg-blue-11 text-white rounded-lg hover:bg-blue-12 disabled:opacity-50 transition-colors text-sm font-medium cursor-pointer"
           >
             {isAccepting ? 'Accepting...' : 'Accept'}
           </button>
