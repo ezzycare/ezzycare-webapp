@@ -4,12 +4,12 @@
 import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import { useCancelAppointmentMutation } from '@/apiQuery/healthcareAppointments/patch/cancelAppointment';
 import BaseTable from '@/components/Base/Table';
+import StatusText from '@/components/Ui/StatusText';
 import { ChatIconLocal } from '@/icons/DashboardIcons';
 import { toaster } from '@/lib/toaster';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
 import { CareSeekerAppointmentType } from '@/types/appointments';
 import { BaseTableProps, Column } from '@/types/table';
-import { statusColor, StatusType } from '@/utils/helper';
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
@@ -99,15 +99,7 @@ const CareSeekerAppointmentsTable = ({
     {
       field: 'status',
       label: 'Status',
-      render: (value: string) => (
-        <div
-          className={`inline-flex rounded-full px-3 py-1 text-xs capitalize font-medium ${statusColor(
-            value?.toLowerCase() as StatusType
-          )}`}
-        >
-          {value?.toLowerCase()}
-        </div>
-      ),
+      render: (value: string) => <StatusText value={value} />,
     },
     {
       field: 'actions',
@@ -120,7 +112,13 @@ const CareSeekerAppointmentsTable = ({
               className={`inline-flex gap-2 rounded-md px-1.5 py-1 hover:bg-gray-3a/50
                 text-xs font-medium border border-text-alt cursor-pointer`}
               onClick={() => {
-                push(`/dashboard/appointments/${row.id}`);
+                push(
+                  `/dashboard/messages?peerId=${row.userId}&peerName=${encodeURIComponent(
+                    row.client?.firstName
+                      ? `${row.client.firstName} ${row.client.lastName}`
+                      : ''
+                  )}`
+                );
               }}
             >
               <ChatIconLocal />

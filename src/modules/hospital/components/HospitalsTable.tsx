@@ -1,10 +1,10 @@
 'use client';
 
 import BaseTable from '@/components/Base/Table';
+import StatusText from '@/components/Ui/StatusText';
 import { cn } from '@/lib/utils';
 import { HospitalType } from '@/types/hospitals';
 import { BaseTableProps, Column } from '@/types/table';
-import { statusColor, StatusType } from '@/utils/helper';
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
@@ -46,15 +46,7 @@ const HospitalsTable = ({
       field: 'status',
       label: 'Status',
       // sortable: true,
-      render: (value: string) => (
-        <div
-          className={`inline-flex rounded-full px-3 py-1 text-xs capitalize font-medium ${statusColor(
-            value as StatusType
-          )}`}
-        >
-          {value}
-        </div>
-      ),
+      render: (value: string) => <StatusText value={value} />,
     },
 
     {

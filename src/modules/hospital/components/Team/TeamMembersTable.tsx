@@ -1,14 +1,10 @@
 'use client';
 
 import BaseTable from '@/components/Base/Table';
+import StatusText from '@/components/Ui/StatusText';
 import { BaseTableProps, Column } from '@/types/table';
 import { type TeamMemberType } from '@/types/team';
-import {
-  roleColor,
-  RoleColorType,
-  statusColor,
-  StatusType,
-} from '@/utils/helper';
+import { roleColor, RoleColorType } from '@/utils/helper';
 import { EllipsisVertical } from 'lucide-react';
 import { useState } from 'react';
 import EditTeamMemberModal from './EditTeamMemberModal';
@@ -53,15 +49,7 @@ const TeamMembersTable = ({
     {
       field: 'status',
       label: 'Status',
-      render: (value: string) => (
-        <div
-          className={`inline-flex rounded-full px-3 py-1 text-xs capitalize font-medium ${statusColor(
-            value as StatusType
-          )}`}
-        >
-          {value}
-        </div>
-      ),
+      render: (value: string) => <StatusText value={value} />,
     },
     {
       field: 'lastActive',

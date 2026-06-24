@@ -12,10 +12,10 @@ const StatusText = ({
   return (
     <p
       className={`inline-flex rounded-full px-3 py-1 text-xs capitalize font-medium ${statusColor(
-        value as StatusType
+        value?.toLowerCase() as StatusType
       )} ${className}`}
     >
-      {text || value}
+      {text || value?.toLowerCase()?.replace('_', ' ')}
     </p>
   );
 };

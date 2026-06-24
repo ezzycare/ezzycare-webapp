@@ -24,8 +24,9 @@ import {
 } from '@/icons/DashboardNavIcons';
 import { toaster } from '@/lib/toaster';
 import CancelBookingModal from '@/modules/careseeker/components/Appointments/CancelBookingModal';
-import VideoCallOverlay from '@/modules/video/VideoCallOverlay';
+import VideoCallModal from '@/modules/video/VideoCallModal';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
+import { useCallStore } from '@/stores/call-store';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { ArrowLeft, Briefcase, NotepadText, SquarePlay } from 'lucide-react';
@@ -46,10 +47,11 @@ const DoctorAppointmentDetails = () => {
     React.useState(false);
 
   const { updateBooking } = useBookAppointmentStore();
-  const { appointment: appointmentData, isFetching } =
-    useGetDoctorAppointmentQuery({
-      id,
-    });
+  const {
+    appointment: appointmentData,
+    isFetching,
+    refetch,
+  } = useGetDoctorAppointmentQuery({ id });
 
   const appointment = useMemo(() => {
     return appointmentData ? appointmentData : ({} as DoctorAppointment);
@@ -80,6 +82,17 @@ const DoctorAppointmentDetails = () => {
   const [startingConsultation, setStartingConsultation] = useState(false);
   const [showStartModal, setShowStartModal] = useState(false);
   const [showNotesModal, setShowNotesModal] = useState(false);
+
+  const {
+    active,
+    role,
+    roomName,
+    token,
+    uid,
+    callerName,
+    setIncomingCall,
+    clearCall,
+  } = useCallStore();
 
   const { mutate: submitNotes, isPending: isSubmittingNotes } =
     useSubmitDoctorConsultationNotesMutation();
@@ -176,6 +189,12 @@ const DoctorAppointmentDetails = () => {
     setShowStartModal(true);
   };
 
+  const doctorPeerName = useMemo(() => {
+    const first = appointment?.client?.firstName ?? '';
+    const last = appointment?.client?.lastName ?? '';
+    return `${first} ${last}`.trim() || 'Unknown';
+  }, [appointment]);
+
   const handleConfirmStartConsultation = () => {
     setShowStartModal(false);
     setStartingConsultation(true);
@@ -186,20 +205,40 @@ const DoctorAppointmentDetails = () => {
           queryClient.invalidateQueries({
             queryKey: ['doctor', 'appointments', id],
           });
-          const roomName =
-            (data as any)?.data?.data?.roomName ||
-            (data as any)?.data?.roomName ||
-            appointment.roomName;
-
           toaster.success('Consultation started');
 
-          router.push(
-            `/dashboard/video-call?room=${encodeURIComponent(roomName)}&uid=${appointment.uid}&appointmentId=${appointment.id}&peerId=${appointment.clientId}&peerName=${encodeURIComponent(
-              appointment.client?.firstName
-                ? `${appointment.client.firstName} ${appointment.client.lastName}`
-                : ''
-            )}`
-          );
+          // Extract room info from response, then open VideoCallOverlay inline
+          const responseData = (data as any)?.data?.data ?? (data as any)?.data;
+          const roomName = responseData?.roomName || appointment.roomName || '';
+          const token =
+            responseData?.doctorToken || appointment.doctorToken || '';
+          const uid = responseData?.uid || appointment.uid;
+
+          if (roomName && token) {
+            setIncomingCall({
+              roomName,
+              token: token,
+              uid,
+              callerName: doctorPeerName,
+              role: 'doctor', // 👈 IMPORTANT
+            });
+          } else {
+            refetch().then((result) => {
+              const d = result.data?.data;
+
+              if (d?.roomName && d?.doctorToken) {
+                setIncomingCall({
+                  roomName: d.roomName,
+                  token: d.doctorToken,
+                  uid: d.uid,
+                  callerName: doctorPeerName,
+                  role: 'doctor',
+                });
+              } else {
+                toaster.info('Video room is being created...');
+              }
+            });
+          }
         },
         onError: () => {
           toaster.error('Failed to start consultation');
@@ -422,7 +461,11 @@ const DoctorAppointmentDetails = () => {
                 <p className="text-text-muted text-sm mt-3.5 mb-1">
                   Quick links
                 </p>
-                <ChatButtons appointment={appointment} />
+                <ChatButtons
+                  appointment={appointment}
+                  refetch={refetch}
+                  peerName={doctorPeerName}
+                />
               </>
             )}
           </div>
@@ -454,6 +497,10 @@ const DoctorAppointmentDetails = () => {
             onSubmit={handleSubmitNotes}
             isLoading={isSubmittingNotes || isCompleting}
           />
+          {/* Video call opened from Start Consultation flow */}
+          {active && roomName && token && uid && (
+            <VideoCallModal open={active} onClose={() => clearCall()} />
+          )}
         </div>
       )}
     </>
@@ -507,21 +554,30 @@ const EditDetailsBtn = ({
   );
 };
 
-const ChatButtons = ({ appointment }: { appointment: DoctorAppointment }) => {
+const ChatButtons = ({
+  appointment,
+  refetch,
+  peerName,
+}: {
+  appointment: DoctorAppointment;
+  refetch: () => Promise<any>;
+  peerName: string;
+}) => {
   const router = useRouter();
-  const [callOpen, setCallOpen] = useState(false);
+  const { active, roomName, token, uid, setIncomingCall, clearCall } =
+    useCallStore();
+
+  const doctorToken = appointment.doctorToken;
 
   const handleJoinVideoCall = () => {
-    const roomName = appointment.roomName;
-    if (roomName) {
-      setCallOpen(true);
-      // router.push(
-      //   `/dashboard/video-call?room=${encodeURIComponent(roomName)}&peerId=${appointment.clientId}&peerName=${encodeURIComponent(
-      //     appointment.client?.firstName
-      //       ? `${appointment.client.firstName} ${appointment.client.lastName}`
-      //       : ''
-      //   )}`
-      // );
+    if (roomName && token) {
+      setIncomingCall({
+        roomName,
+        token: token,
+        uid: appointment.uid,
+        callerName: peerName,
+        role: 'doctor',
+      });
     } else {
       toaster.info('Start the consultation first to create a video room');
     }
@@ -554,14 +610,9 @@ const ChatButtons = ({ appointment }: { appointment: DoctorAppointment }) => {
         Join video call
       </Button>
 
-      <VideoCallOverlay
-        open={callOpen}
-        onClose={() => setCallOpen(false)}
-        channelName={appointment.roomName}
-        peerName={`${appointment.name}`}
-        uid={appointment.uid}
-        appointmentId={String(appointment.id)}
-      />
+      {active && roomName && token && uid && (
+        <VideoCallModal open={active} onClose={clearCall} />
+      )}
     </div>
   );
 };

@@ -1,10 +1,10 @@
 'use client';
 
 import BaseTable from '@/components/Base/Table';
+import StatusText from '@/components/Ui/StatusText';
 import { BookingType } from '@/types/bookings';
 import { DoctorType } from '@/types/doctors';
 import { BaseTableProps, Column } from '@/types/table';
-import { statusColor, StatusType } from '@/utils/helper';
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -48,15 +48,7 @@ const BookingTable = ({
     {
       field: 'status',
       label: 'Status',
-      render: (value: string) => (
-        <div
-          className={`inline-flex rounded-full px-3 py-1 text-xs capitalize font-medium ${statusColor(
-            value as StatusType
-          )}`}
-        >
-          {value}
-        </div>
-      ),
+      render: (value: string) => <StatusText value={value} />,
     },
     {
       field: 'actions',

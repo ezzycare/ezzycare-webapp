@@ -19,8 +19,9 @@ import {
   StethoscopeIconLocal,
 } from '@/icons/DashboardNavIcons';
 import { toaster } from '@/lib/toaster';
-import VideoCallOverlay from '@/modules/video/VideoCallOverlay';
+import VideoCallModal from '@/modules/video/VideoCallModal';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
+import { useCallStore } from '@/stores/call-store';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
 import dayjs from 'dayjs';
 import {
@@ -45,10 +46,10 @@ const CareSeekerAppointmentDetails = () => {
   const [openCancelBookingModal, setOpenCancelBookingModal] =
     React.useState(false);
   const [joiningVideo, setJoiningVideo] = useState(false);
-  const [callOpen, setCallOpen] = useState(false);
   const categories = useCategoryStore(
     (state: CategoryStore) => state.categories.allCategories
   );
+  const { active: callOpen, setIncomingCall, clearCall } = useCallStore();
   const { updateBooking } = useBookAppointmentStore();
   const {
     appointment: appointmentData,
@@ -74,6 +75,7 @@ const CareSeekerAppointmentDetails = () => {
   }, [shouldPoll, refetch]);
 
   const hasRoomName = !!appointment.roomName;
+  const hasToken = !!appointment.seekerToken;
   const isVideoAppointment = appointment.appointmentType === 'VIDEO';
   const canJoinVideo =
     (appointment.status === 'UPCOMING' ||
@@ -81,16 +83,21 @@ const CareSeekerAppointmentDetails = () => {
     isVideoAppointment;
   const canShowEditButton = appointment.status === 'PENDING';
 
+  const peerName = useMemo(() => {
+    const first = appointment?.user?.firstName ?? '';
+    const last = appointment?.user?.lastName ?? '';
+    return `${first} ${last}`.trim() || 'Unknown';
+  }, [appointment]);
+
   const handleJoinVideoCall = async () => {
-    if (hasRoomName) {
-      setCallOpen(true);
-      // router.push(
-      //   `/dashboard/video-call?room=${encodeURIComponent(appointment.roomName!)}&peerId=${appointment.userId}&peerName=${encodeURIComponent(
-      //     appointment.user?.firstName
-      //       ? `${appointment.user.firstName} ${appointment.user.lastName}`
-      //       : ''
-      //   )}`
-      // );
+    if (hasRoomName && hasToken) {
+      setIncomingCall({
+        roomName: appointment.roomName!,
+        token: appointment.seekerToken!,
+        uid: appointment.seekerUid ?? appointment.userId,
+        role: 'seeker',
+        callerName: peerName,
+      });
       return;
     }
 
@@ -98,14 +105,16 @@ const CareSeekerAppointmentDetails = () => {
     const result = await refetch();
     setJoiningVideo(false);
 
-    if (result.data?.data?.roomName) {
-      router.push(
-        `/dashboard/video-call?room=${encodeURIComponent(result.data.data.roomName)}&uid=${appointment.uid}&appointmentId=${appointment.id}&peerId=${appointment.userId}&peerName=${encodeURIComponent(
-          appointment.user?.firstName
-            ? `${appointment.user.firstName} ${appointment.user.lastName}`
-            : ''
-        )}`
-      );
+    const data = result.data?.data;
+
+    if (data?.roomName && data?.seekerToken) {
+      setIncomingCall({
+        roomName: data.roomName,
+        token: data.seekerToken, // ✅ now aligned
+        uid: data.seekerUid ?? appointment.userId,
+        role: 'seeker',
+        callerName: peerName,
+      });
     } else {
       toaster.info('Waiting for the doctor to start the consultation');
     }
@@ -387,14 +396,9 @@ const CareSeekerAppointmentDetails = () => {
             isLoading={isPending}
             action={handleCancelAppointment}
           />
-          <VideoCallOverlay
-            open={callOpen}
-            onClose={() => setCallOpen(false)}
-            channelName={appointment.roomName}
-            peerName={`${appointment.name}`}
-            uid={appointment.uid}
-            appointmentId={String(appointment.id)}
-          />
+          {callOpen && hasRoomName && hasToken && (
+            <VideoCallModal open={callOpen} onClose={clearCall} />
+          )}
         </div>
       )}
     </>
