@@ -1,3 +1,4 @@
+import { Doctor } from '@/apiQuery/doctor/getDoctorDiscovery';
 import { HospitalDiscoveryItem } from '@/apiQuery/hospital/discovery/getHospitalDiscovery';
 import { HospitalProfileType } from '@/apiQuery/hospital/discovery/getSingleHospital';
 
@@ -27,8 +28,7 @@ interface AllHospitalsCompParams {
   setClickedHospital: React.Dispatch<
     React.SetStateAction<HospitalDiscoveryItem | null>
   >;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  action: any;
+  action: (doctor?: Doctor) => void;
   openFilter: () => void;
   goBack: () => void;
 }
@@ -241,7 +241,7 @@ const AllHospitalsComp = ({
       {clickedHospital && selectedHospital && !isLoading && (
         <HospitalProfileComp
           hospital={selectedHospital}
-          bookAppointment={() => action()}
+          bookAppointment={(doctor) => action(doctor)}
         />
       )}
     </div>

@@ -5,7 +5,7 @@ const StatusText = ({
   text,
   className = '',
 }: {
-  value: string;
+  value?: string;
   text?: string;
   className?: string;
 }) => {

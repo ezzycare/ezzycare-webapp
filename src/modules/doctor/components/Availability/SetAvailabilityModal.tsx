@@ -1,43 +1,14 @@
 'use client';
 
 import Modal from '@/components/Ui/Modal';
-import SetAvailability from './SetAvailability';
+import SetAvailability, { type AvailabilityByDay } from './SetAvailability';
 
-export type DayKey =
-  | 'monday'
-  | 'tuesday'
-  | 'wednesday'
-  | 'thursday'
-  | 'friday'
-  | 'saturday'
-  | 'sunday';
-
-export type ConsultationType = 'video' | 'home' | 'clinic';
-
-export interface Session {
-  id: string;
-  consultationType: ConsultationType;
-  startTime: string;
-  endTime: string;
-}
-
-export type AvailabilityByDay = Record<DayKey, Session[]>;
-
-const DAYS: { key: DayKey; label: string }[] = [
-  { key: 'monday', label: 'Monday' },
-  { key: 'tuesday', label: 'Tuesday' },
-  { key: 'wednesday', label: 'Wednesday' },
-  { key: 'thursday', label: 'Thursday' },
-  { key: 'friday', label: 'Friday' },
-  { key: 'saturday', label: 'Saturday' },
-  { key: 'sunday', label: 'Sunday' },
-];
-
-const CONSULTATION_LABELS: Record<ConsultationType, string> = {
-  video: 'Video consultation',
-  home: 'Home consultation',
-  clinic: 'Clinic consultation',
-};
+export type {
+  DayKey,
+  ConsultationType,
+  Session,
+  AvailabilityByDay,
+} from './SetAvailability';
 
 interface SetAvailabilityModalProps {
   open: boolean;
@@ -46,20 +17,10 @@ interface SetAvailabilityModalProps {
   onSave?: (availability: AvailabilityByDay) => void;
 }
 
-const emptyAvailability: AvailabilityByDay = {
-  monday: [],
-  tuesday: [],
-  wednesday: [],
-  thursday: [],
-  friday: [],
-  saturday: [],
-  sunday: [],
-};
-
 export default function SetAvailabilityModal({
   open,
   onClose,
-  initialAvailability = emptyAvailability,
+  initialAvailability,
   onSave,
 }: SetAvailabilityModalProps) {
   return (
@@ -73,6 +34,7 @@ export default function SetAvailabilityModal({
         className="max-h-[95vh] overflow-y-auto"
       >
         <SetAvailability
+          open={open}
           initialAvailability={initialAvailability}
           onClose={onClose}
           onSave={onSave}

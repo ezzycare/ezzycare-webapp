@@ -1,9 +1,10 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
+import { useAcceptDoctorAppointmentMutation } from '@/apiQuery/doctor/appointments/acceptAppointment';
 import { useCancelDoctorAppointmentMutation } from '@/apiQuery/doctor/appointments/cancelAppointment';
-import { useCompleteDoctorAppointmentMutation } from '@/apiQuery/doctor/appointments/completeAppointment';
+import { useDeclineDoctorAppointmentMutation } from '@/apiQuery/doctor/appointments/declineAppointment';
 import { useGetDoctorAppointmentQuery } from '@/apiQuery/doctor/appointments/getAppointment';
 import { useStartDoctorAppointmentMutation } from '@/apiQuery/doctor/appointments/startAppointment';
 import { useSubmitDoctorConsultationNotesMutation } from '@/apiQuery/doctor/appointments/submitConsultationNotes';
@@ -33,6 +34,7 @@ import { ArrowLeft, Briefcase, NotepadText, SquarePlay } from 'lucide-react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 import DoctorRescheduleAppointment from './DoctorRescheduleAppointment';
+import { EndConsultationModal } from './EndConsultationModal';
 import type { ConsultationNotesFormData } from './PostConsultationNotesModal';
 import { PostConsultationNotesModal } from './PostConsultationNotesModal';
 import { StartConsultationModal } from './StartConsultationModal';
@@ -41,6 +43,12 @@ const DoctorAppointmentDetails = () => {
   const router = useRouter();
   const params = useParams();
   const id = Number(params.id);
+
+  useEffect(() => {
+    if (Number.isNaN(id)) {
+      router.replace('/dashboard/appointments');
+    }
+  }, [id, router]);
 
   const [openRescheduleModal, setOpenRescheduleModal] = React.useState(false);
   const [openCancelBookingModal, setOpenCancelBookingModal] =
@@ -53,27 +61,25 @@ const DoctorAppointmentDetails = () => {
     refetch,
   } = useGetDoctorAppointmentQuery({ id });
 
-  const appointment = useMemo(() => {
-    return appointmentData ? appointmentData : ({} as DoctorAppointment);
-  }, [appointmentData]);
+  const appointment: DoctorAppointment | null | undefined = appointmentData;
 
   const { doctor: doctorData, isFetching: loadingSingleDoctor } =
     useGetSingleDoctorQuery({
-      id: appointment?.userId,
+      id: appointment?.userId ?? null,
     });
 
-  const doctor = useMemo(() => {
-    return doctorData ? doctorData : ({} as DoctorProfile);
-  }, [doctorData]);
+  const doctor: DoctorProfile | null | undefined = doctorData;
 
   const { hospital } = useGetSingleHospital({
-    id: appointment?.hospitalId,
+    id: appointment?.hospitalId ?? null,
   });
-
-  console.log({ hospital });
 
   const { mutate: cancelAppointment, isPending } =
     useCancelDoctorAppointmentMutation();
+  const { mutate: acceptAppointment, isPending: isAccepting } =
+    useAcceptDoctorAppointmentMutation();
+  const { mutate: declineAppointment, isPending: isDeclining } =
+    useDeclineDoctorAppointmentMutation();
 
   const queryClient = useQueryClient();
   const { mutate: startConsultation, isPending: isStartingConsultation } =
@@ -81,6 +87,7 @@ const DoctorAppointmentDetails = () => {
 
   const [startingConsultation, setStartingConsultation] = useState(false);
   const [showStartModal, setShowStartModal] = useState(false);
+  const [showEndModal, setShowEndModal] = useState(false);
   const [showNotesModal, setShowNotesModal] = useState(false);
 
   const {
@@ -96,8 +103,6 @@ const DoctorAppointmentDetails = () => {
 
   const { mutate: submitNotes, isPending: isSubmittingNotes } =
     useSubmitDoctorConsultationNotesMutation();
-  const { mutate: completeAppointment, isPending: isCompleting } =
-    useCompleteDoctorAppointmentMutation();
 
   const searchParams = useSearchParams();
 
@@ -118,22 +123,12 @@ const DoctorAppointmentDetails = () => {
       },
       {
         onSuccess: () => {
-          completeAppointment(
-            { id: String(id) },
-            {
-              onSuccess: () => {
-                toaster.success('Consultation completed');
-                setShowNotesModal(false);
-                queryClient.invalidateQueries({
-                  queryKey: ['doctor', 'appointments', id],
-                });
-                router.replace(`/dashboard/appointments/${id}`);
-              },
-              onError: () => {
-                toaster.error('Failed to complete appointment');
-              },
-            }
-          );
+          toaster.success('Notes submitted');
+          setShowNotesModal(false);
+          queryClient.invalidateQueries({
+            queryKey: ['doctor', 'appointments', id],
+          });
+          router.replace(`/dashboard/appointments/${id}`);
         },
         onError: () => {
           toaster.error('Failed to submit notes');
@@ -171,15 +166,20 @@ const DoctorAppointmentDetails = () => {
   };
 
   const handleCancelAppointment = (reason: string) => {
+    if (!appointment?.id) return;
     cancelAppointment(
       {
-        id: appointment.id!,
+        id: appointment.id,
         reason,
       },
       {
         onSuccess: () => {
           toaster.success('Appointment cancelled successfully');
           setOpenCancelBookingModal(false);
+        },
+        onError: (error: unknown) => {
+          const err = error as { message?: string };
+          toaster.error(err?.message || 'Failed to cancel appointment');
         },
       }
     );
@@ -196,6 +196,7 @@ const DoctorAppointmentDetails = () => {
   }, [appointment]);
 
   const handleConfirmStartConsultation = () => {
+    if (!appointment?.id) return;
     setShowStartModal(false);
     setStartingConsultation(true);
     startConsultation(
@@ -207,12 +208,12 @@ const DoctorAppointmentDetails = () => {
           });
           toaster.success('Consultation started');
 
-          // Extract room info from response, then open VideoCallOverlay inline
           const responseData = (data as any)?.data?.data ?? (data as any)?.data;
-          const roomName = responseData?.roomName || appointment.roomName || '';
+          const roomName =
+            responseData?.roomName || appointment!.roomName || '';
           const token =
-            responseData?.doctorToken || appointment.doctorToken || '';
-          const uid = responseData?.uid || appointment.uid;
+            responseData?.doctorToken || appointment!.doctorToken || '';
+          const uid = responseData?.uid || appointment!.uid;
 
           if (roomName && token) {
             setIncomingCall({
@@ -221,6 +222,7 @@ const DoctorAppointmentDetails = () => {
               uid,
               callerName: doctorPeerName,
               role: 'DOCTOR',
+              appointmentId: id,
             });
           } else {
             refetch().then((result) => {
@@ -233,6 +235,7 @@ const DoctorAppointmentDetails = () => {
                   uid: d.uid,
                   callerName: doctorPeerName,
                   role: 'DOCTOR',
+                  appointmentId: id,
                 });
               } else {
                 toaster.info('Video room is being created...');
@@ -285,9 +288,9 @@ const DoctorAppointmentDetails = () => {
                 </div>
               </div>
             </div>
-            {appointment.status === 'UPCOMING' && (
+            {appointment?.status === 'UPCOMING' && (
               <EditDetailsBtn
-                appointment={appointment}
+                appointment={appointment!}
                 setOpenCancelBookingModal={setOpenCancelBookingModal}
                 setOpenRescheduleModal={setOpenRescheduleModal}
                 onStartConsultation={handleStartConsultation}
@@ -296,25 +299,68 @@ const DoctorAppointmentDetails = () => {
                 }
               />
             )}
-            {appointment.status === 'PAID' && (
+            {appointment?.status === 'PAID' && (
               <div className="flex items-center ml-auto gap-2">
                 <Button
                   variant="outline"
                   className="min-w-38 text-sm text-blue-11! border-primary! py-2! px-4!"
-                  onClick={() => {}}
+                  onClick={() =>
+                    declineAppointment(
+                      { id: appointment!.id, reason: '' },
+                      {
+                        onSuccess: () => {
+                          toaster.success('Appointment declined');
+                          queryClient.invalidateQueries({
+                            queryKey: ['doctor', 'appointments'],
+                          });
+                        },
+                        onError: () => {
+                          toaster.error('Failed to decline appointment');
+                        },
+                      }
+                    )
+                  }
+                  disabled={isDeclining || isAccepting}
+                  loading={isDeclining}
                 >
                   Decline
                 </Button>
                 <Button
                   variant="primary"
                   className="min-w-38 py-2! px-4! border-none"
-                  onClick={() => {}}
+                  onClick={() =>
+                    acceptAppointment(
+                      { id: String(appointment.id) },
+                      {
+                        onSuccess: () => {
+                          toaster.success('Appointment accepted');
+                          queryClient.invalidateQueries({
+                            queryKey: ['doctor', 'appointments'],
+                          });
+                        },
+                        onError: () => {
+                          toaster.error('Failed to accept appointment');
+                        },
+                      }
+                    )
+                  }
+                  disabled={isDeclining || isAccepting}
+                  loading={isAccepting}
                 >
                   Accept
                 </Button>
               </div>
             )}
-            {appointment.status === 'COMPLETED' && (
+            {appointment?.status === 'IN_PROGRESS' && (
+              <Button
+                variant="primary"
+                className="min-w-38 py-2! px-4! border-none"
+                onClick={() => setShowEndModal(true)}
+              >
+                End Consultation
+              </Button>
+            )}
+            {appointment?.status === 'COMPLETED' && (
               <Button
                 variant="outline"
                 className="min-w-38 text-sm text-text-alt! bg-gray-3a py-2! px-4! gap-2 border-none"
@@ -335,7 +381,7 @@ const DoctorAppointmentDetails = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5 items-start">
-            <div className="rounded-xl border border-gray-5 p-5">
+            <div className="rounded-xl border border-gray-5 p-5 h-full">
               <div className="flex items-center gap-1.5 mt-1.5">
                 <CalendarIconLocal className="text-text-alt " />
                 <h3 className="text-text text-lg font-medium">
@@ -382,7 +428,7 @@ const DoctorAppointmentDetails = () => {
                   <div className="flex items-center gap-1.5 mt-1.5">
                     <NotepadText size={18} className="text-text-muted " />
                     <p className="text-text-muted capitalize">
-                      {appointment.appointmentType?.toLowerCase()} consultation
+                      {appointment?.appointmentType?.toLowerCase()} consultation
                     </p>
                   </div>
                 </div>
@@ -455,14 +501,14 @@ const DoctorAppointmentDetails = () => {
             </div>
           </div>
           <div>
-            {(appointment.status === 'UPCOMING' ||
-              appointment.status === 'IN_PROGRESS') && (
+            {(appointment?.status === 'UPCOMING' ||
+              appointment?.status === 'IN_PROGRESS') && (
               <>
                 <p className="text-text-muted text-sm mt-3.5 mb-1">
                   Quick links
                 </p>
                 <ChatButtons
-                  appointment={appointment}
+                  appointment={appointment!}
                   refetch={refetch}
                   peerName={doctorPeerName}
                 />
@@ -470,8 +516,8 @@ const DoctorAppointmentDetails = () => {
             )}
           </div>
           <DoctorRescheduleAppointment
-            appointment={appointment}
-            doctor={doctor}
+            appointment={appointment!}
+            doctor={doctor!}
             openModal={openRescheduleModal}
             setOpenModal={handleOpenRescheduleModal}
           />
@@ -480,6 +526,15 @@ const DoctorAppointmentDetails = () => {
             setOpenModal={setOpenCancelBookingModal}
             isLoading={isPending}
             action={handleCancelAppointment}
+          />
+          <EndConsultationModal
+            open={showEndModal}
+            onClose={() => setShowEndModal(false)}
+            onConfirm={() => {
+              setShowEndModal(false);
+              setShowNotesModal(true);
+            }}
+            appointmentId={id}
           />
           <StartConsultationModal
             open={showStartModal}
@@ -491,11 +546,10 @@ const DoctorAppointmentDetails = () => {
             open={showNotesModal}
             onClose={() => {
               setShowNotesModal(false);
-              toaster.success('Consultation completed!');
               router.replace(`/dashboard/appointments/${id}`);
             }}
             onSubmit={handleSubmitNotes}
-            isLoading={isSubmittingNotes || isCompleting}
+            isLoading={isSubmittingNotes}
           />
           {/* Video call opened from Start Consultation flow */}
           {active && roomName && token && uid && (
@@ -573,10 +627,11 @@ const ChatButtons = ({
     if (roomName && token) {
       setIncomingCall({
         roomName,
-        token: token,
+        token: token ?? doctorToken,
         uid: appointment.uid,
         callerName: peerName,
         role: 'DOCTOR',
+        appointmentId: appointment.id,
       });
     } else {
       toaster.info('Start the consultation first to create a video room');

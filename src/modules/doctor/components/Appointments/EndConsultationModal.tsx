@@ -1,57 +1,83 @@
 'use client';
 
+import { useCompleteDoctorAppointmentMutation } from '@/apiQuery/doctor/appointments/completeAppointment';
 import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
-import { InfoInvertedIconLocal } from '@/icons/DashboardIcons';
+import { toaster } from '@/lib/toaster';
+import { useQueryClient } from '@tanstack/react-query';
+import { Info } from 'lucide-react';
 
 interface EndConsultationModalProps {
   open: boolean;
+  isLoading?: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  isLoading?: boolean;
+  appointmentId?: number;
 }
 
 export const EndConsultationModal = ({
   open,
+  isLoading = false,
   onClose,
   onConfirm,
-  isLoading,
+  appointmentId,
 }: EndConsultationModalProps) => {
+  const queryClient = useQueryClient();
+  const { mutate: completeAppointment, isPending } =
+    useCompleteDoctorAppointmentMutation();
+
+  const handleConfirm = () => {
+    if (!appointmentId) {
+      onConfirm();
+      return;
+    }
+    completeAppointment(
+      { id: String(appointmentId) },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ['doctor', 'appointments'],
+          });
+          onConfirm();
+        },
+        onError: () => {
+          toaster.error('Failed to end consultation');
+        },
+      }
+    );
+  };
+
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      showCloseButton={false}
-      size="sm"
-      persistent
-    >
+    <Modal open={open} onClose={onClose} size="md" persistent>
       <div className="text-center">
-        <span className="w-16 h-16 inline-flex items-center justify-center bg-error-3a rounded-full">
-          <InfoInvertedIconLocal className="text-error" />
+        <span className="w-18.5 h-18.5 inline-flex items-center justify-center bg-error-3a rounded-full">
+          <Info size={32} className="text-error rotate-180" />
         </span>
 
-        <h2 className="text-2xl mt-8 text-text font-medium">End session?</h2>
-        <p className="text-sm text-text-alt mt-2">
+        <h2 className="text-lg mt-6 text-text font-semi-bold">End session?</h2>
+        <p className="text-sm text-text-muted mt-2 max-w-87.5 mx-auto">
           {`Are you sure you want to end this consultation? You'll be taken to the
           notes screen to document the session.`}
         </p>
 
         <div className="mt-10 flex items-center gap-3 w-full">
           <Button
-            className="w-full"
+            className="w-full h-10! text-sm"
             variant="secondary"
             onClick={onClose}
-            disabled={isLoading}
+            disabled={isPending || isLoading}
+            loading={isPending || isLoading}
           >
             Close
           </Button>
           <Button
-            className="w-full bg-error!"
+            className="w-full bg-error! h-10! text-sm"
             variant="primary"
-            onClick={onConfirm}
-            loading={isLoading}
+            onClick={handleConfirm}
+            disabled={isPending || isLoading}
+            loading={isPending || isLoading}
           >
-            {isLoading ? 'Ending...' : 'Yes, End Session'}
+            {isPending ? 'Ending...' : 'Yes'}
           </Button>
         </div>
       </div>

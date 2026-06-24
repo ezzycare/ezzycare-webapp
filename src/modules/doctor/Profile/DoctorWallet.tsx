@@ -59,7 +59,6 @@ const DoctorWallet = () => {
   };
 
   const handleTopUpWallet = () => {
-    console.log('top up wallet');
     setShowTopUpModal(false);
   };
 
@@ -112,9 +111,14 @@ const DoctorWallet = () => {
               </h2>
             </div>
 
-            <div className="ml-auto text-text mr-3" onClick={handleShowBalance}>
+            <button
+              type="button"
+              className="ml-auto text-text mr-3"
+              onClick={handleShowBalance}
+              aria-label={showBalance ? 'Hide balance' : 'Show balance'}
+            >
               {showBalance ? <EyeOffIcon size={24} /> : <EyeIcon size={24} />}
-            </div>
+            </button>
           </div>
         </div>
         <div className="w-full sm:w-1/2 p-2 bg-blue-3a rounded-lg">
@@ -129,9 +133,14 @@ const DoctorWallet = () => {
               </h2>
             </div>
 
-            <div className="ml-auto text-text mr-3" onClick={handleShowBalance}>
+            <button
+              type="button"
+              className="ml-auto text-text mr-3"
+              onClick={handleShowBalance}
+              aria-label={showBalance ? 'Hide balance' : 'Show balance'}
+            >
               {showBalance ? <EyeOffIcon size={24} /> : <EyeIcon size={24} />}
-            </div>
+            </button>
           </div>
         </div>
       </div>

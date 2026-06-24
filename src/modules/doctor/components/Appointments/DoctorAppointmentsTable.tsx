@@ -61,7 +61,7 @@ const CareSeekerAppointmentsTable = ({
       label: 'Patient Name',
       sortable: false,
       render: (value: DoctorAppointmentClient) => (
-        <span>{`Dr. ${value.firstName} ${value.lastName}`}</span>
+        <span>{`${value.firstName} ${value.lastName}`}</span>
       ),
     },
 

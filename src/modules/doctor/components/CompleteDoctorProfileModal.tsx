@@ -91,13 +91,19 @@ const CompleteDoctorProfileModal = ({
     const details = data?.userDetails;
 
     reset({
-      university: data.education ? data.education[0]?.collegeName : '',
+      university:
+        data.education && data.education?.length
+          ? data.education[0]?.collegeName
+          : '',
       yearsOfExperience: details?.totalExperienceYear
         ? String(details.totalExperienceYear)
         : '',
       address: details?.address ?? '',
       specialty: data?.subcategoryId ?? '',
-      yearGraduated: stringToCalendarDate(data.education[0]?.endYear || ''),
+      yearGraduated:
+        data.education && data.education?.length
+          ? stringToCalendarDate(data.education[0]?.endYear)
+          : '',
       licenseExpiry: stringToCalendarDate(details?.practicingLicenceDate),
     });
   }, [data, reset]);

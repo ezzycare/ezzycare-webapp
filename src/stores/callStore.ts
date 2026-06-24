@@ -12,6 +12,7 @@ interface CallState {
   uid: number | null;
 
   callerName?: string;
+  appointmentId: number | null;
 
   setIncomingCall: (data: {
     roomName: string;
@@ -19,6 +20,7 @@ interface CallState {
     uid: number;
     role?: CallRole;
     callerName?: string;
+    appointmentId: number;
   }) => void;
 
   clearCall: () => void;
@@ -32,6 +34,7 @@ export const useCallStore = create<CallState>((set) => ({
   token: null,
   uid: null,
   callerName: undefined,
+  appointmentId: null,
 
   setIncomingCall: (data) =>
     set({
@@ -41,6 +44,7 @@ export const useCallStore = create<CallState>((set) => ({
       token: data.token,
       uid: Number(data.uid),
       callerName: data.callerName,
+      appointmentId: data.appointmentId,
     }),
 
   clearCall: () =>
@@ -51,5 +55,6 @@ export const useCallStore = create<CallState>((set) => ({
       token: null,
       uid: null,
       callerName: undefined,
+      appointmentId: null,
     }),
 }));

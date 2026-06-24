@@ -18,20 +18,18 @@ const HospitalProfileComp = ({
   bookAppointment,
 }: {
   hospital: HospitalProfileType;
-  bookAppointment: () => void;
+  bookAppointment: (doctor: Doctor) => void;
 }) => {
   const tabs = ['Doctors', 'About', 'Contact'];
   const [activeTab, setActiveTab] = useState(0);
-  const [clickedDoctor, setClickedDoctor] = useState<null | any>(null);
+  const [clickedDoctor, setClickedDoctor] = useState<Doctor | null>(null);
 
   const { updateBooking } = useBookAppointmentStore();
 
   useEffect(() => {
     if (clickedDoctor) {
       updateBooking({ clickedDoctor, isHospitalAppointment: true });
-      setTimeout(() => {
-        bookAppointment();
-      }, 300);
+      bookAppointment(clickedDoctor);
     }
   }, [clickedDoctor]);
 

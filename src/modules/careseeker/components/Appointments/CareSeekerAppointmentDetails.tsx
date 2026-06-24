@@ -42,6 +42,12 @@ const CareSeekerAppointmentDetails = () => {
   const params = useParams();
   const id = Number(params.id);
 
+  useEffect(() => {
+    if (Number.isNaN(id)) {
+      router.replace('/dashboard');
+    }
+  }, [id, router]);
+
   const [openRescheduleModal, setOpenRescheduleModal] = React.useState(false);
   const [openCancelBookingModal, setOpenCancelBookingModal] =
     React.useState(false);
@@ -57,9 +63,8 @@ const CareSeekerAppointmentDetails = () => {
     refetch,
   } = useGetAppointmentQuery({ id });
 
-  const appointment = useMemo(() => {
-    return appointmentData ? appointmentData : ({} as GetSingleAppointmentType);
-  }, [appointmentData]);
+  const appointment: GetSingleAppointmentType | null | undefined =
+    appointmentData;
 
   const shouldPoll =
     appointmentData?.status === 'UPCOMING' &&
@@ -74,14 +79,14 @@ const CareSeekerAppointmentDetails = () => {
     return () => clearInterval(interval);
   }, [shouldPoll, refetch]);
 
-  const hasRoomName = !!appointment.roomName;
-  const hasToken = !!appointment.seekerToken;
-  const isVideoAppointment = appointment.appointmentType === 'VIDEO';
+  const hasRoomName = !!appointment?.roomName;
+  const hasToken = !!appointment?.seekerToken;
+  const isVideoAppointment = appointment?.appointmentType === 'VIDEO';
   const canJoinVideo =
-    (appointment.status === 'UPCOMING' ||
-      appointment.status === 'IN_PROGRESS') &&
+    (appointment?.status === 'UPCOMING' ||
+      appointment?.status === 'IN_PROGRESS') &&
     isVideoAppointment;
-  const canShowEditButton = appointment.status === 'PENDING';
+  const canShowEditButton = appointment?.status === 'PENDING';
 
   const peerName = useMemo(() => {
     const first = appointment?.user?.firstName ?? '';
@@ -97,6 +102,7 @@ const CareSeekerAppointmentDetails = () => {
         uid: appointment.seekerUid ?? appointment.userId,
         role: 'SEEKER',
         callerName: peerName,
+        appointmentId: appointment.id,
       });
       return;
     }
@@ -111,9 +117,10 @@ const CareSeekerAppointmentDetails = () => {
       setIncomingCall({
         roomName: data.roomName,
         token: data.seekerToken,
-        uid: data.seekerUid ?? appointment.userId,
+        uid: data.seekerUid ?? appointment!.userId,
         role: 'SEEKER',
         callerName: peerName,
+        appointmentId: data.id,
       });
     } else {
       toaster.info('Waiting for the doctor to start the consultation');
@@ -128,12 +135,10 @@ const CareSeekerAppointmentDetails = () => {
 
   const { doctor: doctorData, isFetching: loadingSingleDoctor } =
     useGetSingleDoctorQuery({
-      id: appointment?.userId,
+      id: appointment?.userId ?? null,
     });
 
-  const doctor = useMemo(() => {
-    return doctorData ? doctorData : ({} as DoctorProfile);
-  }, [doctorData]);
+  const doctor: DoctorProfile | null | undefined = doctorData;
 
   const { mutate: cancelAppointment, isPending } =
     useCancelAppointmentMutation();
@@ -168,14 +173,19 @@ const CareSeekerAppointmentDetails = () => {
   };
 
   const handleCancelAppointment = (reason: string) => {
+    if (!appointment?.id) return;
     cancelAppointment(
       {
-        id: appointment.id!,
+        id: appointment.id,
         reason,
       },
       {
         onSuccess: () => {
           setOpenCancelBookingModal(false);
+        },
+        onError: (error: unknown) => {
+          const err = error as { message?: string };
+          toaster.error(err?.message || 'Failed to cancel appointment');
         },
       }
     );
@@ -216,7 +226,7 @@ const CareSeekerAppointmentDetails = () => {
                 </div>
               </div>
             </div>
-            {!canJoinVideo && canShowEditButton && (
+            {!canJoinVideo && canShowEditButton && appointment && (
               <EditDetailsBtn
                 appointment={appointment}
                 setOpenCancelBookingModal={setOpenCancelBookingModal}
@@ -230,9 +240,9 @@ const CareSeekerAppointmentDetails = () => {
                   className="min-w-38 text-sm text-text-alt! bg-gray-3a py-2! px-4! gap-2 border-none"
                   onClick={() =>
                     router.push(
-                      `/dashboard/messages?peerId=${appointment.userId}&peerName=${encodeURIComponent(
-                        appointment.user?.firstName
-                          ? `${appointment.user.firstName} ${appointment.user.lastName}`
+                      `/dashboard/messages?peerId=${appointment?.userId}&peerName=${encodeURIComponent(
+                        appointment?.user?.firstName
+                          ? `${appointment.user?.firstName} ${appointment.user?.lastName}`
                           : ''
                       )}`
                     )
@@ -313,7 +323,7 @@ const CareSeekerAppointmentDetails = () => {
                   <div className="flex items-center gap-1.5 mt-1.5">
                     <NotepadText size={18} className="text-text-muted " />
                     <p className="text-text-muted capitalize">
-                      {appointment.appointmentType?.toLowerCase()} consultation
+                      {appointment?.appointmentType?.toLowerCase()} consultation
                     </p>
                   </div>
                 </div>
@@ -377,7 +387,7 @@ const CareSeekerAppointmentDetails = () => {
               </div>
             </div>
           </div>
-          {canJoinVideo && (
+          {canJoinVideo && appointment && (
             <EditDetailsBtn
               appointment={appointment}
               setOpenCancelBookingModal={setOpenCancelBookingModal}
@@ -385,8 +395,8 @@ const CareSeekerAppointmentDetails = () => {
             />
           )}
           <RescheduleAppointment
-            appointment={appointment}
-            doctor={doctor}
+            appointment={appointment!}
+            doctor={doctor!}
             openModal={openRescheduleModal}
             setOpenModal={handleOpenRescheduleModal}
           />

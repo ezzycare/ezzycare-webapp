@@ -5,7 +5,6 @@ import AdminDashboard from '@/modules/admin/components/AdminDashboard';
 import CareSeekerDashboard from '@/modules/careseeker/components/CareSeekerDashboard';
 import DoctorDashboard from '@/modules/doctor/components/DoctorDashboard';
 import AgentAdminDashboard from '@/modules/hospital/components/Agent/AgentAdminDashboard';
-import PaymentCallback from '@/modules/hospital/components/Agent/BookAppointment/PaymentCallback';
 import HospitalAdminDashboard from '@/modules/hospital/components/HospitalAdminDashboard';
 import { JSX } from 'react';
 
@@ -24,12 +23,7 @@ const Dashboard = () => {
     return null; // or a loading spinner/skeleton
   }
 
-  return (
-    <>
-      {dashboards[accountType]}
-      <PaymentCallback />
-    </>
-  );
+  return <>{dashboards[accountType]}</>;
 };
 
 export default Dashboard;

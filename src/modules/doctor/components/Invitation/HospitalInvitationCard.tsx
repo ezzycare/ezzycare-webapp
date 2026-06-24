@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useAcceptHospitalInvitationMutation } from '@/apiQuery/doctor/profile/acceptHospitalInvitation';
+import type { HospitalInvitation } from '@/apiQuery/doctor/profile/types';
 import { InvitationIconLocal } from '@/icons/DashboardIcons';
 import { toaster } from '@/lib/toaster';
 import { useQueryClient } from '@tanstack/react-query';
@@ -8,7 +8,7 @@ import { useState } from 'react';
 import DeclineAppointmentModal from '../Appointments/DeclineAppointmentModal';
 
 interface HospitalInvitationCardProps {
-  invitation: any;
+  invitation: HospitalInvitation;
   onClose?: () => void;
 }
 
@@ -31,11 +31,6 @@ const HospitalInvitationCard = ({
   };
 
   const handleAccept = () => {
-    const TEST = true;
-    if (TEST) {
-      onClose?.();
-      return;
-    }
     acceptInvitation(
       { id: String(invitation.id) },
       {

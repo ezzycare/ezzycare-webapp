@@ -245,7 +245,7 @@ const BookAppointmentComp = ({
         <h3 className="text-base text-text-alt font-medium">
           {isReschedule ? 'Reschedule' : 'Book'} Appointment
         </h3>
-        <DoctorCard key={doctor.id} doctor={doctor} />
+        <DoctorCard key={doctor?.id} doctor={doctor} />
 
         <div>
           <p className="text-sm text-text font-semibold">Consultation type</p>

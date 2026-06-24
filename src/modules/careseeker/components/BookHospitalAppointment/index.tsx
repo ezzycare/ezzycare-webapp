@@ -8,13 +8,11 @@ import {
   HospitalProfileType,
   useGetSingleHospital,
 } from '@/apiQuery/hospital/discovery/getSingleHospital';
-import { ConsultationType } from '@/apiQuery/hospital/types';
 import Modal from '@/components/Ui/Modal';
-import { BoldWalletIcon, PaypalIconLocal } from '@/icons/DashboardIcons';
 import { useModalNavigation } from '@/modules/careseeker/hooks/useAppointmentActions';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
 import { useCategoryStore } from '@/stores/categoryStore';
-import React, { JSX, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import AllHospitalsComp from './AllHospitalsComp';
 import HospitalFilter from './HospitalFilter';
 
@@ -40,10 +38,6 @@ const BookHospitalAppointment = ({
   } = useBookAppointmentStore();
 
   const { goBack, modalClassName } = useModalNavigation(allStates);
-
-  useEffect(() => {
-    console.log({ activeHospitalFilters });
-  }, [activeHospitalFilters]);
 
   useEffect(() => {
     updateHospitalState('select-hospital');
@@ -77,9 +71,7 @@ const BookHospitalAppointment = ({
       id: Number(clickedHospital?.id) ?? undefined,
     });
 
-  const hospital = useMemo(() => {
-    return hospitalData ? hospitalData : ({} as HospitalProfileType);
-  }, [hospitalData]);
+  const hospital: HospitalProfileType | null | undefined = hospitalData;
 
   const isLoading = useMemo(() => {
     return loadingHospitals || loadingSingleHospital;
@@ -108,7 +100,7 @@ const BookHospitalAppointment = ({
     }
   };
 
-  const handleContinueAppointment = () => {
+  const handleContinueAppointment = (doctor?: any) => {
     if (continueAppointment) {
       continueAppointment();
     }
@@ -127,7 +119,7 @@ const BookHospitalAppointment = ({
                   | HospitalDiscoveryItem[]
                   | undefined
               }
-              selectedHospital={hospital}
+              selectedHospital={hospital!}
               hasNextPage={restHospitalQueries.hasNextPage}
               fetchNextPage={restHospitalQueries.fetchNextPage}
               isFetchingNextPage={restHospitalQueries.isFetchingNextPage}
@@ -151,7 +143,7 @@ const BookHospitalAppointment = ({
                 })
               }
               openFilter={() => updateHospitalState('set-filter')}
-              action={() => handleContinueAppointment()}
+              action={(doctor) => handleContinueAppointment(doctor)}
               goBack={goBack}
             />
           )}
@@ -178,42 +170,6 @@ const BookHospitalAppointment = ({
 };
 
 export default BookHospitalAppointment;
-
-export const careTypes: { id: 0 | 1; name: string }[] = [
-  { id: 0, name: 'Non-Urgent Care' },
-  { id: 1, name: 'Urgent Care' },
-];
-export const careModes: { id: number; name: ConsultationType }[] = [
-  { id: 0, name: 'VIDEO' },
-  { id: 1, name: 'HOME' },
-  { id: 2, name: 'CLINIC' },
-];
-export const appointmentTypes: { id: 0 | 1; name: string }[] = [
-  { id: 1, name: 'Self' },
-  { id: 0, name: 'Others' },
-];
-
-export type PaymentMethodType = {
-  id: number;
-  slug: string;
-  name: string;
-  icon: JSX.Element;
-};
-
-export const paymentMethods: PaymentMethodType[] = [
-  {
-    id: 0,
-    slug: 'wallet',
-    name: 'Pay from wallet',
-    icon: <BoldWalletIcon />,
-  },
-  {
-    id: 1,
-    slug: 'online',
-    name: 'Pay Online',
-    icon: <PaypalIconLocal />,
-  },
-];
 
 export interface OtherUserData {
   fullName: string | null;

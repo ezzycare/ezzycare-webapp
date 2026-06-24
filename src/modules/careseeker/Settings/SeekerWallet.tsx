@@ -33,7 +33,6 @@ const SeekerWallet = () => {
   };
 
   const handleTopUpWallet = () => {
-    console.log('top up wallet');
     setShowTopUpModal(false);
   };
 

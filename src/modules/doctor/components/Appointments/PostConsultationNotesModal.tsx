@@ -3,6 +3,7 @@
 import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import TextArea from '@/components/Ui/TextArea';
+import { TextInput } from '@/components/Ui/TextInput';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -77,11 +78,10 @@ export const PostConsultationNotesModal = ({
             <label className="text-sm font-medium text-text">
               Diagnostic <span className="text-error">*</span>
             </label>
-            <TextArea
+            <TextInput
               {...register('diagnostic')}
               placeholder="Enter diagnostic findings"
               error={errors.diagnostic?.message}
-              rows={3}
             />
           </div>
 

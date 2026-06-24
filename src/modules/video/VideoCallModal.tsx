@@ -15,6 +15,7 @@ import {
   Video,
   VideoOff,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 const AGORA_APP_ID = process.env.NEXT_PUBLIC_AGORA_APP_ID!;
@@ -25,6 +26,7 @@ interface ControlButtonProps {
   variant?: 'default' | 'danger';
   children: React.ReactNode;
   label: string;
+  disabled?: boolean;
 }
 
 const ControlButton = ({
@@ -33,6 +35,7 @@ const ControlButton = ({
   variant = 'default',
   children,
   label,
+  disabled,
 }: ControlButtonProps) => {
   const variantClasses =
     variant === 'danger'
@@ -45,10 +48,12 @@ const ControlButton = ({
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-label={label}
       className={cn(
         'rounded-full flex items-center justify-center cursor-pointer',
         'transition-all duration-200 active:scale-90 shadow-lg',
+        'disabled:opacity-50 disabled:pointer-events-none',
         variantClasses
       )}
     >
@@ -65,6 +70,7 @@ interface ControlButtonsProps {
   switchCamera: () => void;
   endCall: () => void;
   onChat: () => void;
+  ending?: boolean;
 }
 
 function ControlButtons({
@@ -75,6 +81,7 @@ function ControlButtons({
   switchCamera,
   endCall,
   onChat,
+  ending,
 }: ControlButtonsProps) {
   return (
     <>
@@ -110,7 +117,12 @@ function ControlButtons({
         <MessageSquare className="w-4 h-4" />
       </ControlButton>
 
-      <ControlButton onClick={endCall} variant="danger" label="End call">
+      <ControlButton
+        onClick={endCall}
+        variant="danger"
+        label="End call"
+        disabled={ending}
+      >
         <Cross2Icon className="w-5 h-5" />
       </ControlButton>
     </>
@@ -124,7 +136,9 @@ export default function VideoCallModal({
   open: boolean;
   onClose: () => void;
 }) {
-  const { roomName, token, uid, role, callerName, clearCall } = useCallStore();
+  const { push } = useRouter();
+  const { roomName, token, uid, callerName, appointmentId, clearCall } =
+    useCallStore();
 
   const {
     isJoined,
@@ -147,6 +161,7 @@ export default function VideoCallModal({
   const hasJoinedRef = useRef(false);
 
   const [showEndConfirm, setShowEndConfirm] = useState(false);
+  const [isEndingCall, setIsEndingCall] = useState(false);
   const { accountType } = useGetAccountType();
   const isDoctor = accountType === 'DOCTOR';
 
@@ -181,11 +196,15 @@ export default function VideoCallModal({
   }, [remoteVideoTrack]);
 
   const endCall = async () => {
-    await leave();
-    clearCall();
-    hasJoinedRef.current = false;
-    setShowEndConfirm(false);
-    onClose();
+    setIsEndingCall(true);
+    try {
+      await leave();
+    } finally {
+      clearCall();
+      hasJoinedRef.current = false;
+      onClose();
+    }
+    push(`/dashboard/appointments/${appointmentId}?notes=1`);
   };
 
   const handleEndCallClick = () => {
@@ -214,6 +233,7 @@ export default function VideoCallModal({
     onChat: () => {
       // TODO: wire up in-call chat
     },
+    ending: isEndingCall,
   };
 
   return (
@@ -318,6 +338,8 @@ export default function VideoCallModal({
       <EndConsultationModal
         open={showEndConfirm}
         onClose={() => setShowEndConfirm(false)}
+        isLoading={isEndingCall}
+        appointmentId={appointmentId || undefined}
         onConfirm={endCall}
       />
     </Modal>

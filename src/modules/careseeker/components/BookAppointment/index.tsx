@@ -16,7 +16,6 @@ import { ConsultationType } from '@/apiQuery/hospital/types';
 import { ApiResponse } from '@/apiQuery/types';
 import Modal from '@/components/Ui/Modal';
 import { useGeolocation } from '@/hooks/useGeolocation';
-import { BoldWalletIcon, PaypalIconLocal } from '@/icons/DashboardIcons';
 import { toaster } from '@/lib/toaster';
 import {
   useModalNavigation,
@@ -25,7 +24,7 @@ import {
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { useBookAppointmentStore } from '@/stores/bookAppointmentStore';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
-import React, { JSX, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import AllDoctorsComp from './AllDoctorsComp';
 import BookAppointmentComp from './BookAppointmentComp';
 import BookOthers from './BookOthers';
@@ -35,6 +34,12 @@ import SelectDoctorSpecialty from './SelectDoctorSpecialty';
 import SelectPatientCareMode from './SelectPatientCareMode';
 import SelectPatientCareType from './SelectPatientCareType';
 import SelectPaymentMethod from './SelectPaymentMethod';
+import {
+  careTypes,
+  careModes,
+  appointmentTypes,
+  paymentMethods,
+} from './constants';
 
 const allStates = [
   'select-specialty',
@@ -94,14 +99,6 @@ const BookDoctorAppointment = ({
     );
   }, [isPending, isPendingPayment, isPendingWalletPayment, isPendingCancel]);
 
-  // useEffect(() => {
-  //   console.log({ activeFilters });
-  // }, [activeFilters]);
-
-  useEffect(() => {
-    console.log({ state });
-  }, []);
-
   const showModalHeader = useMemo(
     () =>
       ![
@@ -152,9 +149,7 @@ const BookDoctorAppointment = ({
       id: clickedDoctor?.id ? Number(clickedDoctor.id) : null,
     });
 
-  const doctor = useMemo(() => {
-    return doctorData ? doctorData : ({} as DoctorProfile);
-  }, [doctorData]);
+  const doctor: DoctorProfile | null | undefined = doctorData;
 
   const isLoading = useMemo(() => {
     return loadingDoctors || loadingSingleDoctor;
@@ -230,6 +225,10 @@ const BookDoctorAppointment = ({
     otherUserData?: OtherUserData
   ): Promise<CreateAppointmentInterface> => {
     return new Promise((resolve, reject) => {
+      if (!doctor?.id) {
+        reject(new Error('No doctor selected'));
+        return;
+      }
       const hospitalDetail =
         isHospitalAppointment && hospitalId ? { hospitalId } : {};
       const payload = {
@@ -372,7 +371,7 @@ const BookDoctorAppointment = ({
                   | Doctor[]
                   | undefined
               }
-              selectedDoctor={doctor}
+              selectedDoctor={doctor!}
               hasNextPage={restDoctorQueries.hasNextPage}
               fetchNextPage={restDoctorQueries.fetchNextPage}
               isFetchingNextPage={restDoctorQueries.isFetchingNextPage}
@@ -413,7 +412,7 @@ const BookDoctorAppointment = ({
 
           {state === 'book-appointment' && (
             <BookAppointmentComp
-              doctor={doctor}
+              doctor={doctor!}
               reason={reason}
               setReason={(value) =>
                 updateBooking({
@@ -498,41 +497,13 @@ const BookDoctorAppointment = ({
 
 export default BookDoctorAppointment;
 
-export const careTypes: { id: 0 | 1; name: string }[] = [
-  { id: 0, name: 'Non-Urgent Care' },
-  { id: 1, name: 'Urgent Care' },
-];
-export const careModes: { id: number; name: ConsultationType }[] = [
-  { id: 0, name: 'VIDEO' },
-  { id: 1, name: 'HOME' },
-  { id: 2, name: 'CLINIC' },
-];
-export const appointmentTypes: { id: 0 | 1; name: string }[] = [
-  { id: 1, name: 'Self' },
-  { id: 0, name: 'Others' },
-];
-
-export type PaymentMethodType = {
-  id: number;
-  slug: string;
-  name: string;
-  icon: JSX.Element;
-};
-
-export const paymentMethods: PaymentMethodType[] = [
-  {
-    id: 0,
-    slug: 'wallet',
-    name: 'Pay from wallet',
-    icon: <BoldWalletIcon />,
-  },
-  {
-    id: 1,
-    slug: 'online',
-    name: 'Pay Online',
-    icon: <PaypalIconLocal />,
-  },
-];
+export {
+  careTypes,
+  careModes,
+  appointmentTypes,
+  paymentMethods,
+} from './constants';
+export type { PaymentMethodType } from './constants';
 
 export interface OtherUserData {
   fullName: string | null;

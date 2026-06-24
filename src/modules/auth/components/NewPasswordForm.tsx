@@ -71,7 +71,6 @@ const NewPasswordForm = ({ action }: { action: () => void }) => {
   );
 
   const onSubmit = async (data: ResetPasswordType) => {
-    console.log({ passwordResetToken });
     try {
       const res = await mutateAsync({
         newPassword: data.password,

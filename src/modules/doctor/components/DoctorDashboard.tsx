@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 // import { redirect } from 'next/navigation';
@@ -55,15 +56,9 @@ const DoctorDashboard = () => {
   }, [appointments]);
 
   const paidAppointment = useMemo(() => {
-    // return paidAppointmentsData?.length ? paidAppointmentsData[0] : null;
-    const result = appointments?.length
+    return appointments?.length
       ? appointments?.find((val) => val.status === 'PAID')
       : null;
-    if (result) {
-      // eslint-disable-next-line react-hooks/set-state-in-render
-      setShowPendingAppointment(true);
-    }
-    return result;
   }, [appointments]);
 
   const { invitations } = useGetHospitalInvitationsQuery();
@@ -72,7 +67,10 @@ const DoctorDashboard = () => {
   }, [invitations]);
 
   useEffect(() => {
-    const storedShowBalance = localStorage.getItem('showCareSeekerBalance');
+    const storedShowBalance =
+      typeof localStorage !== 'undefined'
+        ? localStorage.getItem('showCareSeekerBalance')
+        : null;
 
     setShowBalance(storedShowBalance === 'true');
   }, []);
@@ -142,9 +140,14 @@ const DoctorDashboard = () => {
               </h2>
             </div>
 
-            <div className="ml-auto text-text" onClick={handleShowBalance}>
+            <button
+              type="button"
+              className="ml-auto text-text"
+              onClick={handleShowBalance}
+              aria-label={showBalance ? 'Hide balance' : 'Show balance'}
+            >
               {showBalance ? <EyeOffIcon size={24} /> : <EyeIcon size={24} />}
-            </div>
+            </button>
           </div>
 
           <div>

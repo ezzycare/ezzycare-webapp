@@ -55,6 +55,7 @@ const CONSULTATION_LABELS: Record<ConsultationType, string> = {
 };
 
 interface SetAvailabilityProps {
+  open?: boolean;
   onClose?: () => void;
   initialAvailability?: AvailabilityByDay;
   onSave?: (availability: AvailabilityByDay) => void;
@@ -71,6 +72,7 @@ const emptyAvailability: AvailabilityByDay = {
 };
 
 export default function SetAvailability({
+  open = true,
   onClose,
   initialAvailability = emptyAvailability,
   onSave,
@@ -298,15 +300,17 @@ export default function SetAvailability({
               })}
             </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                onSave?.(availability);
-                onClose?.();
-              }}
-              className="hidden"
-              aria-hidden
-            />
+            {onClose && (
+              <button
+                type="button"
+                onClick={() => {
+                  onSave?.(availability);
+                  onClose?.();
+                }}
+                className="hidden"
+                aria-hidden
+              />
+            )}
           </div>
         )}
       </div>

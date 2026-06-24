@@ -37,6 +37,7 @@ type IncomingCallData = {
   role?: ACCOUNT_TYPE;
   callerName?: string;
   callerAvatar?: string;
+  appointmentId: number;
 };
 
 interface ServerToClientEvents {
@@ -265,6 +266,7 @@ export function ChatSocketProvider({
         uid: data.uid,
         role: accountType ?? 'SEEKER',
         callerName: data.callerName,
+        appointmentId: data.appointmentId,
       });
     });
 
