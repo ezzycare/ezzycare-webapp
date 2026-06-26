@@ -11,9 +11,12 @@ import { AppleIcon, FacebookIcon, GoogleIcon } from '@/icons/DashboardIcons'; //
 import { toaster } from '@/lib/toaster';
 import { cn } from '@/lib/utils';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
-import { APPLE_CLIENT_ID, FACEBOOK_APP_ID, GOOGLE_CLIENT_ID } from '@/utils';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useRouter } from 'next/navigation';
+
+const hasGoogleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID !== '';
+const hasFacebookAppId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID !== '';
+const hasAppleClientId = process.env.NEXT_PUBLIC_APPLE_CLIENT_ID !== '';
 
 export default function SelectAuthMode({ action }: { action: () => void }) {
   const router = useRouter();
@@ -152,7 +155,7 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
             </IconWrapper>
           }
           label="Continue with Facebook"
-          disabled={!FACEBOOK_APP_ID}
+          disabled={!hasFacebookAppId}
           action={handleFacebookSignin}
         />
 
@@ -163,7 +166,7 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
             </IconWrapper>
           }
           label="Continue with Google"
-          disabled={!GOOGLE_CLIENT_ID}
+          disabled={!hasGoogleClientId}
           action={handleGoogleSignin}
         />
 
@@ -174,7 +177,7 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
             </IconWrapper>
           }
           label="Continue with Apple"
-          disabled={!APPLE_CLIENT_ID}
+          disabled={!hasAppleClientId}
           action={handleAppleSignin}
         />
       </div>
