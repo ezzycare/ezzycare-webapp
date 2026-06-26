@@ -4,7 +4,7 @@ import { handleLogout } from '@/apiQuery/auth/logout';
 import { ACCOUNT_TYPE } from '@/apiQuery/auth/types';
 import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { LogoutIconLocal, SideBarBaseIcon } from '@/icons/DashboardNavIcons';
+import { LogoutIconLocal } from '@/icons/DashboardNavIcons';
 import FullLogo from '@/icons/FullLogo';
 import { cn } from '@/lib/utils';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
@@ -118,14 +118,14 @@ const SideNav = ({
             Logout
           </button>
         </nav>
-        <div className="w-full flex items-center gap-2 px-4 py-2.5 mt-auto">
+        {/* <div className="w-full flex items-center gap-2 px-4 py-2.5 mt-auto">
           <SideBarBaseIcon />
           <div>
             <h2 className="text-sm font-semibold">{accountType}</h2>
             <p className="text-xs text-text-muted">{email}</p>
           </div>
           <ChevronsUpDown size={18} color="gray" className="ml-auto" />
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -29,8 +29,8 @@ export default function AppleAuthProvider({
 }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isError, setIsError] = useState(false);
-  const clientId = process.env.NEXT_PUBLIC_APPLE_CLIENT_ID || '';
-  const redirectURI = process.env.NEXT_PUBLIC_APPLE_REDIRECT_URI || '';
+  const clientId = process.env.NEXT_PUBLIC_APPLE_CLIENT_ID || 'xxx';
+  const redirectURI = process.env.NEXT_PUBLIC_APPLE_REDIRECT_URI || 'xxx';
 
   useEffect(() => {
     if (!clientId) {

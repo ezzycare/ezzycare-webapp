@@ -1,18 +1,21 @@
 'use client';
 
 import { ArrowRight, Mail } from 'lucide-react';
+import { useRef } from 'react';
 
 import { useSocialLogin } from '@/apiQuery/auth/socialLogin';
 import { LoginResponse } from '@/apiQuery/auth/types';
 import Card from '@/components/Ui/Card';
 import { useAppleLogin } from '@/hooks/useAppleLogin';
 import { useFacebookLogin } from '@/hooks/useFacebookLogin';
-import { AppleIcon, FacebookIcon, GoogleIcon } from '@/icons/DashboardIcons'; // replace with yours
+import { AppleIcon, FacebookIcon, GoogleIcon } from '@/icons/DashboardIcons';
 import { toaster } from '@/lib/toaster';
 import { cn } from '@/lib/utils';
+import { socialLoginAction } from '@/serverActions/socialLogin';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
-import { useGoogleLogin } from '@react-oauth/google';
 import { useRouter } from 'next/navigation';
+
+const GOOGLE_OAUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 
 const hasGoogleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID !== '';
 const hasFacebookAppId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID !== '';
@@ -24,14 +27,15 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
 
   const { mutate: socialLogin, isPending } = useSocialLogin();
 
-  const completeLogin = (response: LoginResponse | null) => {
+  const completeLogin = async (response: LoginResponse | null) => {
     if (response?.data) {
       if (!response.data?.email_verified) {
         router.push(
-          '/auth/verify-email?resend=true&email=' + response.data?.user?.email
+          '/auth/verify-email?type=signin&email=' + response.data?.user?.email
         );
         return;
       }
+      await socialLoginAction(response);
       authStore.updateUser(response.data?.user);
       authStore.setToken(response.data.access_token);
       toaster.success('Login successful');
@@ -41,30 +45,72 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
 
   const facebookLogin = useFacebookLogin();
   const appleLogin = useAppleLogin();
+  const messageHandlerRef = useRef<((e: MessageEvent) => void) | null>(null);
 
-  const handleGoogleSignin = useGoogleLogin({
-    flow: 'implicit',
+  const handleGoogleSignin = () => {
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+    const redirectUri = `${appUrl}/auth/google-callback`;
 
-    onSuccess: async (tokenResponse) => {
-      socialLogin(
-        {
-          provider: 'google',
-          accessToken: tokenResponse.access_token,
-          idToken: '',
-        },
-        {
-          onSuccess: (data) => {
-            completeLogin(data?.data);
-            action();
+    if (!clientId) return;
+
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: 'id_token token',
+      scope: 'openid profile email',
+      nonce: crypto.randomUUID(),
+      prompt: 'select_account',
+    });
+
+    const popup = window.open(
+      `${GOOGLE_OAUTH_URL}?${params.toString()}`,
+      'google-oauth-popup',
+      `width=500,height=600`
+    );
+
+    if (!popup) return;
+
+    const handleMessage = (e: MessageEvent) => {
+      if (e.origin !== window.location.origin) return;
+      if (e.data?.type !== 'GOOGLE_OAUTH_CALLBACK') return;
+
+      if (messageHandlerRef.current) {
+        window.removeEventListener('message', messageHandlerRef.current);
+        messageHandlerRef.current = null;
+      }
+
+      if (e.data.error) {
+        console.error('Google OAuth error:', e.data.error);
+        return;
+      }
+
+      if (e.data.accessToken && e.data.idToken) {
+        socialLogin(
+          {
+            provider: 'google',
+            accessToken: e.data.accessToken,
+            idToken: e.data.idToken,
           },
-        }
-      );
-    },
+          {
+            onSuccess: (data) => {
+              completeLogin(data?.data);
+              action();
+            },
+            onError: () => {
+              console.error('Google backend auth failed');
+            },
+          }
+        );
+      }
+    };
 
-    onError: () => {
-      console.error('Google Login Failed');
-    },
-  });
+    if (messageHandlerRef.current) {
+      window.removeEventListener('message', messageHandlerRef.current);
+    }
+    messageHandlerRef.current = handleMessage;
+    window.addEventListener('message', handleMessage);
+  };
 
   const handleFacebookSignin = () => {
     facebookLogin({

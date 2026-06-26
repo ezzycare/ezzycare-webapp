@@ -75,7 +75,7 @@ const TopNav = ({
 
         <PopoverContent className="w-48 p-2">
           <div className="flex flex-col gap-1">
-            {/* <p className="text-xs text-text-muted px-3 py-1.5">Theme</p>
+            <p className="text-xs text-text-muted px-3 py-1.5">Theme</p>
             {themeOptions.map((option) => (
               <button
                 key={option.value}
@@ -97,7 +97,7 @@ const TopNav = ({
                   <span className="ml-auto w-2 h-2 rounded-full bg-blue-11a" />
                 )}
               </button>
-            ))} */}
+            ))}
           </div>
         </PopoverContent>
       </Popover>

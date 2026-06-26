@@ -33,7 +33,7 @@ export default function FacebookAuthProvider({
   });
   const [isError, setIsError] = useState(false);
   const scriptAppendedRef = useRef(false);
-  const appId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || '';
+  const appId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || 'xxx';
 
   useEffect(() => {
     if (!appId || scriptAppendedRef.current) return;
