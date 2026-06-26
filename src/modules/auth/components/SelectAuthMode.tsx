@@ -4,13 +4,16 @@ import { ArrowRight, Mail } from 'lucide-react';
 
 import { useSocialLogin } from '@/apiQuery/auth/socialLogin';
 import { LoginResponse } from '@/apiQuery/auth/types';
+import Card from '@/components/Ui/Card';
+import { useAppleLogin } from '@/hooks/useAppleLogin';
+import { useFacebookLogin } from '@/hooks/useFacebookLogin';
 import { AppleIcon, FacebookIcon, GoogleIcon } from '@/icons/DashboardIcons'; // replace with yours
 import { toaster } from '@/lib/toaster';
 import { cn } from '@/lib/utils';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
+import { APPLE_CLIENT_ID, FACEBOOK_APP_ID, GOOGLE_CLIENT_ID } from '@/utils';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useRouter } from 'next/navigation';
-import Card from '@/components/Ui/Card';
 
 export default function SelectAuthMode({ action }: { action: () => void }) {
   const router = useRouter();
@@ -20,18 +23,21 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
 
   const completeLogin = (response: LoginResponse | null) => {
     if (response?.data) {
-      authStore.updateUser(response.data?.user);
-      authStore.setToken(response.data.access_token);
       if (!response.data?.email_verified) {
         router.push(
           '/auth/verify-email?resend=true&email=' + response.data?.user?.email
         );
         return;
       }
+      authStore.updateUser(response.data?.user);
+      authStore.setToken(response.data.access_token);
       toaster.success('Login successful');
       router.push('/dashboard');
     }
   };
+
+  const facebookLogin = useFacebookLogin();
+  const appleLogin = useAppleLogin();
 
   const handleGoogleSignin = useGoogleLogin({
     flow: 'implicit',
@@ -56,6 +62,58 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
       console.error('Google Login Failed');
     },
   });
+
+  const handleFacebookSignin = () => {
+    facebookLogin({
+      onSuccess: (tokenResponse) => {
+        socialLogin(
+          {
+            provider: 'facebook',
+            accessToken: tokenResponse.accessToken,
+            idToken: '',
+          },
+          {
+            onSuccess: (data) => {
+              completeLogin(data?.data);
+              action();
+            },
+            onError: () => {
+              console.error('Facebook backend auth failed');
+            },
+          }
+        );
+      },
+      onError: (error) => {
+        console.error('Facebook Login Failed:', error.message);
+      },
+    });
+  };
+
+  const handleAppleSignin = () => {
+    appleLogin({
+      onSuccess: (tokenResponse) => {
+        socialLogin(
+          {
+            provider: 'apple',
+            accessToken: tokenResponse.authorizationCode || '',
+            idToken: tokenResponse.idToken,
+          },
+          {
+            onSuccess: (data) => {
+              completeLogin(data?.data);
+              action();
+            },
+            onError: () => {
+              console.error('Apple backend auth failed');
+            },
+          }
+        );
+      },
+      onError: (error) => {
+        console.error('Apple Login Failed:', error.message);
+      },
+    });
+  };
 
   return (
     <Card onCancel={() => router.push('/auth/signup')}>
@@ -94,6 +152,8 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
             </IconWrapper>
           }
           label="Continue with Facebook"
+          disabled={!FACEBOOK_APP_ID}
+          action={handleFacebookSignin}
         />
 
         <ContinueButton
@@ -103,6 +163,7 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
             </IconWrapper>
           }
           label="Continue with Google"
+          disabled={!GOOGLE_CLIENT_ID}
           action={handleGoogleSignin}
         />
 
@@ -113,6 +174,8 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
             </IconWrapper>
           }
           label="Continue with Apple"
+          disabled={!APPLE_CLIENT_ID}
+          action={handleAppleSignin}
         />
       </div>
     </Card>
@@ -122,16 +185,24 @@ export default function SelectAuthMode({ action }: { action: () => void }) {
 type ContinueButtonProps = {
   icon: React.ReactNode;
   label: string;
+  disabled?: boolean;
   active?: boolean;
   action?: () => void;
 };
 
-function ContinueButton({ icon, label, active, action }: ContinueButtonProps) {
+function ContinueButton({
+  icon,
+  label,
+  disabled = false,
+  active,
+  action,
+}: ContinueButtonProps) {
   return (
     <button
       className={cn(`
         group flex h-17 w-full items-center justify-between rounded-[12px] border bg-gray-1 px-2 sm:px-4 transition-all cursor-pointer
           ${active ? 'border-blue-7' : 'border-border2 hover:border-primary/40'}
+          ${disabled ? 'pointer-events-none opacity-60' : ''}
         `)}
       onClick={() => {
         action?.();

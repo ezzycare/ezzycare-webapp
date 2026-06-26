@@ -14,6 +14,7 @@ import TopNav from '@/components/layout/TopNav';
 import { useTrackPreviousRoute } from '@/hooks/useTrackPreviousRoute';
 import IncomingCallUI from '@/modules/video/IncomingCallUI';
 import VideoCallModal from '@/modules/video/VideoCallModal';
+import { ChatSocketProvider } from '@/providers/ChatSocketProvider';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
 import { CategoryStore, useCategoryStore } from '@/stores/categoryStore';
 import { useNotificationsStore } from '@/stores/notificationsStore';
@@ -89,24 +90,26 @@ const DashboardClientLayout = ({
   useTrackPreviousRoute();
 
   return (
-    <div className="relative grid grid-cols-1 lg:pl-72.5 bg-background ">
-      <SideNav
-        sidebarOpen={sidebarOpen}
-        setSideBarOpen={setSideBarOpen}
-        accountType={accountType}
-      />
-      <div className="relative pt-20">
-        <TopNav
+    <ChatSocketProvider>
+      <div className="relative grid grid-cols-1 lg:pl-72.5 bg-background ">
+        <SideNav
           sidebarOpen={sidebarOpen}
           setSideBarOpen={setSideBarOpen}
           accountType={accountType}
-          user={serverUser}
         />
-        {children}
+        <div className="relative pt-20">
+          <TopNav
+            sidebarOpen={sidebarOpen}
+            setSideBarOpen={setSideBarOpen}
+            accountType={accountType}
+            user={serverUser}
+          />
+          {children}
+        </div>
+        <IncomingCallUI accepted={accepted} setAccepted={setAccepted} />
+        <VideoCallModal open={accepted} onClose={() => setAccepted(false)} />
       </div>
-      <IncomingCallUI accepted={accepted} setAccepted={setAccepted} />
-      <VideoCallModal open={accepted} onClose={() => setAccepted(false)} />
-    </div>
+    </ChatSocketProvider>
   );
 };
 
