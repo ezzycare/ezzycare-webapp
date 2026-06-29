@@ -35,11 +35,13 @@ import SelectPatientCareMode from './SelectPatientCareMode';
 import SelectPatientCareType from './SelectPatientCareType';
 import SelectPaymentMethod from './SelectPaymentMethod';
 import {
-  careTypes,
-  careModes,
   appointmentTypes,
+  careModes,
+  careTypes,
   paymentMethods,
 } from './constants';
+
+export type { PaymentMethodType } from './constants';
 
 const allStates = [
   'select-specialty',
@@ -62,7 +64,6 @@ const BookDoctorAppointment = ({
 }) => {
   const {
     state,
-    selectedSpecialty,
     selectedCareType,
     selectedCareMode,
     reason,
@@ -410,7 +411,7 @@ const BookDoctorAppointment = ({
             />
           )}
 
-          {state === 'book-appointment' && (
+          {state === 'book-appointment' && doctor && (
             <BookAppointmentComp
               doctor={doctor!}
               reason={reason}
@@ -496,14 +497,6 @@ const BookDoctorAppointment = ({
 };
 
 export default BookDoctorAppointment;
-
-export {
-  careTypes,
-  careModes,
-  appointmentTypes,
-  paymentMethods,
-} from './constants';
-export type { PaymentMethodType } from './constants';
 
 export interface OtherUserData {
   fullName: string | null;

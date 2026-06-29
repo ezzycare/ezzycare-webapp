@@ -93,7 +93,7 @@ const BookAppointmentComp = ({
   const { data: availableSlotsData } = useGetAvailableTimeSlotsQuery(
     fetchDate && selectedConsultationType
       ? {
-          id: doctor.id,
+          id: doctor?.id,
           date: fetchDate,
           type: selectedConsultationType as 'CLINIC' | 'HOME' | 'VIDEO',
         }

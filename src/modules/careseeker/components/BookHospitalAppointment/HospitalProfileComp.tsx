@@ -29,7 +29,9 @@ const HospitalProfileComp = ({
   useEffect(() => {
     if (clickedDoctor) {
       updateBooking({ clickedDoctor, isHospitalAppointment: true });
-      bookAppointment(clickedDoctor);
+      setTimeout(() => {
+        bookAppointment(clickedDoctor);
+      }, 300);
     }
   }, [clickedDoctor]);
 
