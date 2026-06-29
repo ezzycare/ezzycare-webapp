@@ -1,9 +1,9 @@
 'use client';
 
+import { type TeamMember } from '@/apiQuery/hospital/get/getTeam';
 import BaseTable from '@/components/Base/Table';
 import StatusText from '@/components/Ui/StatusText';
 import { BaseTableProps, Column } from '@/types/table';
-import { type TeamMemberType } from '@/types/team';
 import { roleColor, RoleColorType } from '@/utils/helper';
 import { EllipsisVertical } from 'lucide-react';
 import { useState } from 'react';
@@ -14,12 +14,12 @@ const TeamMembersTable = ({
   columns,
   searchable,
   ...props
-}: Partial<BaseTableProps<TeamMemberType>> & {
-  data: TeamMemberType[];
+}: Partial<BaseTableProps<TeamMember>> & {
+  data: TeamMember[];
   searchable?: boolean;
-  columns?: Column<TeamMemberType>[];
+  columns?: Column<TeamMember>[];
 }) => {
-  const [currentRow, setCurrentRow] = useState<TeamMemberType | null>(null);
+  const [currentRow, setCurrentRow] = useState<TeamMember | null>(null);
   const localColumns = [
     {
       field: 'name',
@@ -60,7 +60,7 @@ const TeamMembersTable = ({
       field: 'actions',
       label: 'Actions',
 
-      render: (value: string, row: TeamMemberType) => (
+      render: (value: string, row: TeamMember) => (
         <>
           <button
             className={`inline-flex gap-2 rounded-full px-1.5 py-1 hover:bg-gray-3a/50
@@ -76,7 +76,7 @@ const TeamMembersTable = ({
 
   return (
     <div>
-      <BaseTable<TeamMemberType>
+      <BaseTable<TeamMember>
         data={data}
         searchable={searchable || false}
         columns={columns || localColumns}
@@ -86,7 +86,7 @@ const TeamMembersTable = ({
       </BaseTable>
 
       <EditTeamMemberModal
-        data={currentRow || ({} as TeamMemberType)}
+        data={currentRow || ({} as TeamMember)}
         openModal={!!currentRow}
         setOpenModal={() => setCurrentRow(null)}
       />

@@ -1,9 +1,9 @@
+import { type TeamMember } from '@/apiQuery/hospital/get/getTeam';
 import Toggle from '@/components/Base/Toggle';
 import Checkbox from '@/components/Ui/Checkbox';
 import Dropdown from '@/components/Ui/Dropdown';
 import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
-import { TeamMemberType } from '@/types/team';
 import React from 'react';
 
 const EditTeamMemberModal = ({
@@ -13,7 +13,7 @@ const EditTeamMemberModal = ({
 }: {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  data: TeamMemberType;
+  data: TeamMember;
 }) => {
   const permissions = [
     'Manage Patients',

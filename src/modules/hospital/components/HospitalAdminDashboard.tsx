@@ -1,24 +1,21 @@
 'use client';
 
-// import { redirect } from 'next/navigation';
 import { useGetHospitalDashboard } from '@/apiQuery/hospital';
+import { useGetHospitalAppointments } from '@/apiQuery/hospital/get/getAppointments';
 import AlertBanner from '@/components/Base/AlertBanner';
+import IconBase from '@/components/layout/IconBase';
 import {
   CalendarIconLocal,
   StethoscopeIconLocal,
   UsersIconLocal,
 } from '@/icons/DashboardNavIcons';
 import { AuthStore, useAuthStore } from '@/stores/authStore';
-import { BookingType } from '@/types/bookings';
-import { HospitalType } from '@/types/hospitals';
 import { Banknote } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
-import BookingTable from './Booking/BookingTable';
-import IconBase from '@/components/layout/IconBase';
+import React, { useMemo } from 'react';
+import HospitalAppointmentTable from './Booking/HospitalAppointmentTable';
 import EmptyAppointment from './EmptyAppointment';
 import HospitalDetailsModal from './HospitalDetailsModal';
-
 interface Totals {
   title: string;
   value: string | number;
@@ -26,18 +23,11 @@ interface Totals {
   timeRange?: string[];
 }
 
-const hospital: HospitalType = {
-  id: 1,
-  name: 'Metropolitan Health Institute',
-  email: 'Mhi@gmail.com',
-  phoneNumber: '08169192646',
-  address: 'Highlevel, Makurdi, Benue State',
-  status: 'active',
-};
-
 const HospitalAdminDashboard = () => {
   const { dashboard: dashboardData } = useGetHospitalDashboard();
-  const user = useAuthStore((state: AuthStore) => state.user);
+  const { appointments: rawAppointments, isLoading: appointmentsLoading } =
+    useGetHospitalAppointments();
+  const hospitalUser = useAuthStore((state: AuthStore) => state.hospitalUser);
 
   const [timeRange, setTimeRange] = React.useState([
     {
@@ -101,7 +91,7 @@ const HospitalAdminDashboard = () => {
     },
   ];
 
-  const [showProfileModal, setShowProfileModal] = React.useState(false);
+  const [showProfileModal, setShowProfileModal] = React.useState(true);
 
   const handleSetTimeRange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setTimeRange((time) =>
@@ -114,9 +104,14 @@ const HospitalAdminDashboard = () => {
     );
   };
 
+  const appointments = useMemo(
+    () => (rawAppointments?.length ? rawAppointments : []),
+    [rawAppointments]
+  );
+
   return (
     <div className="p-7.5 w-full">
-      {user && user?.status === 'PROFILE_NOT_COMPLETE' && (
+      {hospitalUser && !hospitalUser?.profileCompleted && (
         <AlertBanner
           type="info"
           title="Complete Hospital Profile & Brand Setup"
@@ -190,7 +185,7 @@ const HospitalAdminDashboard = () => {
         <div className="flex items-center gap-2 px-5.5 pt-6.5">
           <CalendarIconLocal className="text-text" />
           <h2 className="text-text font-semibold">Todays Appointments</h2>
-          {!!bookings?.length && (
+          {!!appointments?.length && (
             <Link href="/dashboard/appointments" className="ml-auto">
               <p className="text-primary text-sm font-medium cursor-pointer">
                 View all appointments
@@ -199,56 +194,21 @@ const HospitalAdminDashboard = () => {
           )}
         </div>
         <div className="-mt-3">
-          {!bookings?.length && <EmptyAppointment />}
-          {!!bookings?.length && <BookingTable data={bookings.slice(0, 10)} />}
+          {!appointmentsLoading && !appointments?.length && (
+            <EmptyAppointment />
+          )}
+          {!!appointments?.length && (
+            <HospitalAppointmentTable data={appointments.slice(0, 10)} />
+          )}
         </div>
       </div>
       <HospitalDetailsModal
         openModal={showProfileModal}
         setOpenModal={setShowProfileModal}
-        data={hospital}
+        data={hospitalUser}
       />
     </div>
   );
 };
 
 export default HospitalAdminDashboard;
-
-const getStatus = (): string => {
-  const rand = Math.random();
-
-  if (rand < 0.5) return 'cancelled';
-  if (rand < 0.8) return 'upcoming';
-  if (rand < 0.6) return 'active';
-  return 'completed';
-};
-
-const bookings: BookingType[] = Array.from({ length: 30 }, (_, i) => ({
-  id: i + 1,
-  bookingId: 'B001',
-  patientName: 'John Smith',
-  doctor: {
-    id: i + 1,
-    name: 'Dr. Sarah Johnson',
-    email: 'sarah.johnson@medical.com',
-    phoneNumber: '+1 (555) 123-4567',
-    assignedHospital: 'Emory',
-    experience: (i + 1) * 2 - i + ' years',
-    specialty: 'Cardiology',
-    createdAt: 'May 08, 2026 10:00 AM',
-    status: 'active',
-    address: 'Highlevel, Makurdi, Benue State',
-    medicalCertificate: 'MD',
-    practiceLicense: '12345',
-    specialtyCertificate: '12345',
-    licenseExpiryDate: '12 May 2035',
-    qualifications: ['MD', 'FAAP'],
-    university: 'University of California, San Francisco',
-    dateGraduated: '12 May 2015',
-    about: `Dr. Rodriguez is passionate about child health and development.`,
-  },
-  appointmentDate: '08069192646',
-  createdAt: '2023-01-01',
-  address: 'Highlevel, Makurdi, Benue State',
-  status: getStatus(),
-}));

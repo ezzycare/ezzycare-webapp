@@ -1,5 +1,6 @@
 import { ACCOUNT_TYPE, User } from '@/apiQuery/auth/types';
 import { DoctorProfile } from '@/apiQuery/doctor/getSingleDoctor';
+import { HospitalProfile } from '@/apiQuery/hospital/types';
 import { general } from '@/enums';
 import { getAuthToken } from '@/services/getAuthToken';
 import { create } from 'zustand';
@@ -32,12 +33,14 @@ export interface AuthStore {
   setForgotPasswordEmail: (email: string) => void;
   user: User;
   doctorUser: DoctorProfile;
+  hospitalUser: HospitalProfile;
   authToken: string | null;
   signupDetails: SignupDetails;
   passwordResetToken: string | null;
   profileCompleted?: boolean;
   updateUser: (user: User) => void;
   updateDoctorUser: (user: DoctorProfile) => void;
+  updateHospitalUser: (user: HospitalProfile) => void;
   setToken: (token: string) => void;
   removeAuth: () => void;
   updateSignupDetails: (details: Partial<SignupDetails>) => void;
@@ -89,6 +92,12 @@ export const useAuthStore = create<AuthStore>()(
         set({ doctorUser: user });
         if (isBrowser)
           localStorage.setItem(general.DOCTOR_USER, JSON.stringify(user));
+      },
+
+      updateHospitalUser: (user) => {
+        set({ hospitalUser: user });
+        if (isBrowser)
+          localStorage.setItem(general.HOSPITAL_USER, JSON.stringify(user));
       },
 
       setToken: (token) => {

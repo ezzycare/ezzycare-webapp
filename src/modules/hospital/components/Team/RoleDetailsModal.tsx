@@ -1,7 +1,7 @@
+import { type Role } from '@/apiQuery/hospital/get/getRoles';
 import Checkbox from '@/components/Ui/Checkbox';
 import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
-import { RoleType } from '@/types/team';
 import React from 'react';
 
 const RoleDetailsModal = ({
@@ -11,7 +11,7 @@ const RoleDetailsModal = ({
 }: {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  data: RoleType;
+  data: Role;
 }) => {
   const permissions = [
     'Manage Patients',

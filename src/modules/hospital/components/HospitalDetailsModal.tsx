@@ -1,5 +1,8 @@
 'use client';
 
+import { useCreateHospitalOperatingHoursMutation } from '@/apiQuery/hospital/post/createOperatingHours';
+import { useUpdateProfileMutation } from '@/apiQuery/hospital/post/updateProfile';
+import { HospitalProfile } from '@/apiQuery/hospital/types';
 import ImageUpload from '@/components/Base/ImageUpload';
 import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
@@ -7,7 +10,6 @@ import TextArea from '@/components/Ui/TextArea';
 import { TextInput } from '@/components/Ui/TextInput';
 import { toaster } from '@/lib/toaster';
 import { cn } from '@/lib/utils';
-import { HospitalType } from '@/types/hospitals';
 import { CircleX, Plus } from 'lucide-react';
 import React, { useState } from 'react';
 import OperatingHours, { OperatingHour } from './OperatingHours';
@@ -17,7 +19,7 @@ const HospitalDetailsModal = ({
   openModal,
   setOpenModal,
 }: {
-  data: HospitalType;
+  data: HospitalProfile;
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
@@ -26,9 +28,17 @@ const HospitalDetailsModal = ({
     url: string | null;
   } | null>(null);
 
+  const [description, setDescription] = useState<string>('');
   const [serviceList, setServiceList] = useState<string[]>([]);
   const [serviceText, setServiceText] = useState<string>('');
-  const [operatinghours, setOperatingHours] = useState<OperatingHour[]>([]);
+  const [operatingHours, setOperatingHours] = useState<OperatingHour[]>([]);
+
+  const { mutateAsync: updateProfile, isPending: updatingProfile } =
+    useUpdateProfileMutation();
+  const { mutateAsync: saveHours, isPending: savingHours } =
+    useCreateHospitalOperatingHoursMutation();
+
+  const isSaving = updatingProfile || savingHours;
 
   const handleAddService = (service: string) => {
     if (serviceList.includes(service)) return;
@@ -40,12 +50,46 @@ const HospitalDetailsModal = ({
     setServiceList(serviceList.filter((s) => s !== service));
   };
 
+  const handleSave = async () => {
+    try {
+      if (image?.file || description || serviceList.length) {
+        await updateProfile({
+          profileImage: image?.file as File,
+          aboutUs: description,
+          clinicHospitalName: data.userDetails?.clinicHospitalName || '',
+          address: data.userDetails?.address || '',
+          city: data.userDetails?.city || '',
+          clinicState: data.userDetails?.clinicState || '',
+          country: data.userDetails?.country || '',
+          services: serviceList,
+        });
+      }
+
+      if (operatingHours.length) {
+        await saveHours({
+          hours: operatingHours.map((h) => ({
+            day: h.day,
+            startTime: h.startTime,
+            endTime: h.endTime,
+            consultationType: 'CLINIC' as const,
+          })),
+        });
+      }
+
+      toaster.success('Hospital updated successfully');
+      setOpenModal(false);
+    } catch (e: unknown) {
+      const err = e as { message?: string };
+      toaster.error(err?.message || 'Update failed');
+    }
+  };
+
   return (
     <div>
       <Modal
         open={openModal}
         onClose={() => setOpenModal(false)}
-        title={data.name}
+        title={data.userDetails?.clinicHospitalName || 'Hospital'}
         description={data.email}
         size="lg"
         containerClassName="justify-end p-0!"
@@ -84,6 +128,8 @@ const HospitalDetailsModal = ({
 
             <TextArea
               placeholder="Enter description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               className="bg-gray-3! text-text border-none! rounded-lg!"
             />
           </div>
@@ -155,14 +201,17 @@ const HospitalDetailsModal = ({
             <Button
               variant="primary"
               className="w-full"
-              onClick={() => {
-                toaster.success('Patient Updated successfully');
-                setOpenModal(false);
-              }}
+              loading={isSaving}
+              disabled={isSaving}
+              onClick={handleSave}
             >
               Save changes
             </Button>
-            <Button className="w-full" onClick={() => setOpenModal(false)}>
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={() => setOpenModal(false)}
+            >
               Cancel
             </Button>
           </div>

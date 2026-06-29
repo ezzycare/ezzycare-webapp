@@ -1,8 +1,8 @@
 'use client';
 
+import { type Role } from '@/apiQuery/hospital/get/getRoles';
 import BaseTable from '@/components/Base/Table';
 import { BaseTableProps, Column } from '@/types/table';
-import { type RoleType } from '@/types/team';
 import { roleColor, RoleColorType } from '@/utils/helper';
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { Edit2, Trash2 } from 'lucide-react';
@@ -14,12 +14,12 @@ const RolesTable = ({
   columns,
   searchable,
   ...props
-}: Partial<BaseTableProps<RoleType>> & {
-  data: RoleType[];
+}: Partial<BaseTableProps<Role>> & {
+  data: Role[];
   searchable?: boolean;
-  columns?: Column<RoleType>[];
+  columns?: Column<Role>[];
 }) => {
-  const [currentRow, setCurrentRow] = useState<RoleType | null>(null);
+  const [currentRow, setCurrentRow] = useState<Role | null>(null);
   const localColumns = [
     {
       field: 'name',
@@ -51,7 +51,7 @@ const RolesTable = ({
       field: 'actions',
       label: 'Actions',
 
-      render: (value: string, row: RoleType) => (
+      render: (value: string, row: Role) => (
         <>
           <div className="flex items-center gap-2">
             <button
@@ -72,7 +72,7 @@ const RolesTable = ({
 
   return (
     <div>
-      <BaseTable<RoleType>
+      <BaseTable<Role>
         data={data}
         searchable={searchable || false}
         columns={columns || localColumns}
@@ -82,7 +82,7 @@ const RolesTable = ({
       </BaseTable>
 
       <RoleDetailsModal
-        data={currentRow || ({} as RoleType)}
+        data={currentRow || ({} as Role)}
         openModal={!!currentRow}
         setOpenModal={() => setCurrentRow(null)}
       />

@@ -27,13 +27,12 @@ export const getHospitalPermissions = async (): Promise<
 
 export const useGetHospitalPermissions = () => {
   const result = useQuery({
-    // change to useInfiniteQuery
     queryKey: ['hospitals', 'permissions'],
     queryFn: getHospitalPermissions,
   });
 
   return {
     ...result,
-    permissions: result.data?.data,
+    permissions: result.data?.data ?? [],
   };
 };

@@ -20,10 +20,15 @@ export const getDoctorProfile = async (): Promise<
   }
 };
 
-export const useGetDoctorProfileQuery = () => {
+export const useGetDoctorProfileQuery = ({
+  enabled = true,
+}: {
+  enabled?: boolean;
+}) => {
   const result = useQuery({
     queryKey: ['doctor', 'profile'],
     queryFn: getDoctorProfile,
+    enabled,
   });
 
   return {

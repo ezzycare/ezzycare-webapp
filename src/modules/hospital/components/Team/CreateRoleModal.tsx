@@ -1,9 +1,12 @@
+import { useGetHospitalPermissions } from '@/apiQuery/hospital/get/getPermissions';
+import { useCreateHospitalRoleMutation } from '@/apiQuery/hospital/post/createRoles';
+import Button from '@/components/Ui/Button';
 import Checkbox from '@/components/Ui/Checkbox';
 import Dropdown from '@/components/Ui/Dropdown';
-import Button from '@/components/Ui/Button';
 import Modal from '@/components/Ui/Modal';
 import { TextInput } from '@/components/Ui/TextInput';
-import React from 'react';
+import { toaster } from '@/lib/toaster';
+import React, { useState } from 'react';
 
 const CreateRoleModal = ({
   openModal,
@@ -12,26 +15,45 @@ const CreateRoleModal = ({
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const permissions = [
-    'Manage Patients',
-    'Manage Doctors',
-    'Manage Appointments',
-    'Manage Agents',
-    'Manage Settings',
-    'Access Finance',
-    'View Analytics & Dashboard',
-    'Initiate Withdrawal',
-  ];
+  const { permissions } = useGetHospitalPermissions();
 
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const { mutateAsync: createRole, isPending } =
+    useCreateHospitalRoleMutation();
 
-  const handleChange = (value: boolean, permission: string) => {
+  const [roleName, setRoleName] = useState('');
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const handleChange = (value: boolean, permissionKey: string) => {
     if (value) {
-      setSelected([...selected, permission]);
+      setSelected([...selected, permissionKey]);
     } else {
-      setSelected(selected.filter((item) => item !== permission));
+      setSelected(selected.filter((item) => item !== permissionKey));
     }
   };
+
+  const handleSubmit = async () => {
+    if (!roleName.trim()) {
+      toaster.error('Role name is required');
+
+      return;
+    }
+
+    try {
+      await createRole({
+        name: roleName,
+        permissions: selected,
+      });
+
+      toaster.success('Role created successfully');
+      setRoleName('');
+      setSelected([]);
+      setOpenModal(false);
+    } catch (e: unknown) {
+      const err = e as { message?: string };
+      toaster.error(err?.message || 'Failed to create role');
+    }
+  };
+
   return (
     <div>
       <Modal
@@ -46,6 +68,8 @@ const CreateRoleModal = ({
             <TextInput
               label="Role Name"
               placeholder="E.g. Operations Manager"
+              value={roleName}
+              onChange={(e) => setRoleName(e.target.value)}
               className="h-12!"
             />
             <Dropdown
@@ -70,26 +94,31 @@ const CreateRoleModal = ({
 
           <p className="text-sm text-text font-medium mb-1">Permissions</p>
           <div className="grid grid-cols-2">
-            {permissions.map((permission, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-start gap-2 mb-2"
-              >
-                <Checkbox
-                  onChange={(value) => {
-                    handleChange(value, permission);
-                  }}
-                />
-                <p className="text-text-alt text-[10px]">{permission}</p>
-              </div>
-            ))}
+            {permissions &&
+              permissions?.map((permission, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-start gap-2 mb-2"
+                >
+                  <Checkbox
+                    onChange={(value) => {
+                      handleChange(value, permission.key);
+                    }}
+                  />
+                  <p className="text-text-alt text-[10px]">
+                    {permission.label}
+                  </p>
+                </div>
+              ))}
           </div>
 
           <div className="flex w-full mt-6">
             <Button
               variant="primary"
               className="w-full"
-              onClick={() => setOpenModal(false)}
+              loading={isPending}
+              disabled={isPending}
+              onClick={handleSubmit}
             >
               Create Role
             </Button>

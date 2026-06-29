@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useSignUpMutation } from '@/apiQuery/auth/signup';
+import AddressAutocomplete, {
+  type PlaceDetails,
+} from '@/components/Ui/AddressAutocomplete';
 import Button from '@/components/Ui/Button';
 import Card from '@/components/Ui/Card';
 import {
@@ -15,6 +19,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { EnvelopeClosedIcon } from '@radix-ui/react-icons';
 import { MapPinIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -23,8 +28,7 @@ const HospitalRegistrationSchema = z.object({
   email: z.string().email('Enter a valid email address'),
   phone: z.string().min(7, 'Enter a valid phone number'),
   location: z.string().min(1, 'Location is required'),
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
+  adminName: z.string().min(1, 'Admin name is required'),
   password: z.string().min(8, 'Password must be at least 8 characters long'),
 });
 type HospitalRegistration = z.infer<typeof HospitalRegistrationSchema>;
@@ -36,8 +40,15 @@ const RegisterHospital = () => {
 
   const { mutateAsync, isPending } = useSignUpMutation();
 
+  const [place, setPlace] = useState<PlaceDetails | null>(null);
+
+  const handlePlaceSelect = useCallback((placeData: PlaceDetails) => {
+    setPlace(placeData);
+  }, []);
+
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isValid },
     setError,
@@ -47,13 +58,17 @@ const RegisterHospital = () => {
 
   const onSubmit = async (data: HospitalRegistration) => {
     const payload = {
-      firstName: data.firstName,
-      lastName: data.lastName,
+      firstName: data.adminName?.split(' ')[0] || '',
+      lastName: data.adminName?.split(' ')[1] || '',
       hospitalName: data.hospitalName,
       email: data.email,
       mobileNo: data.phone || undefined,
       password: data.password,
       location: data.location,
+      latitude: place?.latitude ?? undefined,
+      longitude: place?.longitude ?? undefined,
+      state: place?.state || undefined,
+      country: place?.country || undefined,
       accountType: 'HOSPITAL' as const,
     };
     try {
@@ -62,8 +77,11 @@ const RegisterHospital = () => {
       toaster.success(res.message || 'Verification code sent');
       updateSignupDetails(payload);
       router.push(`/auth/verify-email?type=signup&email=${data.email}`);
-    } catch (error) {
-      // toaster.error(error?.message || 'Registration failed');
+    } catch (error: any) {
+      toaster.error(
+        (error?.response?.data?.message ?? error?.message) ||
+          'Registration failed, please try again'
+      );
     }
   };
 
@@ -83,13 +101,15 @@ const RegisterHospital = () => {
         >
           <TextInput
             label="Hospital Name"
+            placeholder="Hospital name"
             leftIcon={<HospitalIconLocal className="text-text-muted" />}
             {...register('hospitalName')}
             error={errors.hospitalName?.message}
           />
           <TextInput
             label="Hospital Email"
-            leftIcon={<EnvelopeClosedIcon />}
+            placeholder="Email"
+            leftIcon={<EnvelopeClosedIcon className="text-text-muted" />}
             {...register('email')}
             error={errors.email?.message}
           />
@@ -98,26 +118,22 @@ const RegisterHospital = () => {
             {...register('phone')}
             error={errors.phone?.message}
           />
-          <TextInput
+          <AddressAutocomplete
+            control={control}
+            name="location"
             label="Location"
+            placeholder="Hospital address"
             leftIcon={<MapPinIcon size={18} className="text-text-muted" />}
-            {...register('location')}
             error={errors.location?.message}
+            onPlaceSelect={handlePlaceSelect}
           />
-          <div className="grid grid-cols-2 gap-2">
-            <TextInput
-              label="First Name"
-              leftIcon={<UserIconLocal className="text-text-muted" />}
-              {...register('firstName')}
-              error={errors.firstName?.message}
-            />
-            <TextInput
-              label="Last Name"
-              leftIcon={<UserIconLocal className="text-text-muted" />}
-              {...register('lastName')}
-              error={errors.lastName?.message}
-            />
-          </div>
+          <TextInput
+            label="Admin Name"
+            placeholder="Admin name"
+            leftIcon={<UserIconLocal className="text-text-muted" />}
+            {...register('adminName')}
+            error={errors.adminName?.message}
+          />
           <PasswordInput
             label="Password"
             {...register('password')}

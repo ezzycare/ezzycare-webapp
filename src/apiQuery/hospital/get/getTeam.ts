@@ -9,9 +9,18 @@ export interface TeamSummary {
   customRoles: number;
 }
 
+export interface TeamMember {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  lastActive: string;
+  status: string;
+}
+
 export interface TeamData {
   summary: TeamSummary;
-  members: unknown[];
+  members: TeamMember[];
 }
 
 export const getHospitalTeam = async (): Promise<ApiResponse<TeamData>> => {
@@ -30,7 +39,6 @@ export const getHospitalTeam = async (): Promise<ApiResponse<TeamData>> => {
 
 export const useGetHospitalTeam = () => {
   const result = useQuery({
-    // change to useInfiniteQuery
     queryKey: ['hospitals', 'team'],
     queryFn: getHospitalTeam,
   });

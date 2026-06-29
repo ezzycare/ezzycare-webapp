@@ -57,7 +57,7 @@ export const uploadCertification = async (
   }
 };
 
-export const useUploadCertificationMutation = (
+export const useUploadHospitalCertificationMutation = (
   options?: UseMutationOptions<
     ApiResponse<unknown>,
     unknown,

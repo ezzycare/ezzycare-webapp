@@ -125,12 +125,14 @@ export const getAccountNavItems = (accountType: ACCOUNT_TYPE) => {
       return [
         '',
         'doctors',
-        // 'messages', // TODO: REMOVE
         'appointments',
         'agents',
         'patients',
+        'team',
         'notifications',
         'departments',
+        'analytics',
+        'support',
         'settings',
       ].map((val) => (val?.length ? `/dashboard/${val}` : `/dashboard`));
 

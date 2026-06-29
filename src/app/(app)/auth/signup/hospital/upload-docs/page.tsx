@@ -1,10 +1,10 @@
 'use client';
 
+import { useUploadHospitalCertificationMutation } from '@/apiQuery/hospital/post/uploadCertification';
 import Button from '@/components/Ui/Button';
 import Card from '@/components/Ui/Card';
 import { toaster } from '@/lib/toaster';
 import { cn } from '@/lib/utils';
-import { ProgressBar } from '@heroui/react';
 import { CheckCircle2, Trash2, UploadIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
@@ -15,9 +15,6 @@ type DocType = {
   title: string;
   slug: DocKey;
   file: File | null;
-  progress: number;
-  uploaded: boolean;
-  uploading: boolean;
   error: string | null;
 };
 
@@ -26,43 +23,32 @@ const MAX_SIZE = 5 * 1024 * 1024;
 const UploadHospitalDocs = () => {
   const router = useRouter();
 
-  const [loading, setLoading] = useState(false);
+  const { mutate: uploadCertification, isPending } =
+    useUploadHospitalCertificationMutation();
 
   const [docs, setDocs] = useState<DocType[]>([
     {
       title: 'Upload CAC',
       slug: 'cac',
       file: null,
-      progress: 0,
-      uploaded: false,
-      uploading: false,
       error: null,
     },
     {
       title: 'Upload License',
       slug: 'license',
       file: null,
-      progress: 0,
-      uploaded: false,
-      uploading: false,
       error: null,
     },
     {
       title: 'Upload Operational Permit',
       slug: 'permit',
       file: null,
-      progress: 0,
-      uploaded: false,
-      uploading: false,
       error: null,
     },
     {
       title: 'Upload Proof of Address',
       slug: 'address',
       file: null,
-      progress: 0,
-      uploaded: false,
-      uploading: false,
       error: null,
     },
   ]);
@@ -80,8 +66,7 @@ const UploadHospitalDocs = () => {
     );
   };
 
-  const handleFileUpload = async (slug: DocKey, file: File) => {
-    // validate type
+  const handleFileSelect = (slug: DocKey, file: File) => {
     const validTypes = ['image/png', 'image/jpeg', 'application/pdf'];
 
     if (!validTypes.includes(file.type)) {
@@ -92,7 +77,6 @@ const UploadHospitalDocs = () => {
       return;
     }
 
-    // validate size
     if (file.size > MAX_SIZE) {
       updateDoc(slug, {
         error: 'File size must be less than 5MB',
@@ -103,55 +87,46 @@ const UploadHospitalDocs = () => {
 
     updateDoc(slug, {
       file,
-      uploading: true,
-      uploaded: false,
-      progress: 0,
       error: null,
     });
-
-    try {
-      // fake upload progress
-      let progress = 0;
-
-      const interval = setInterval(() => {
-        progress += 10;
-
-        updateDoc(slug, {
-          progress,
-        });
-
-        if (progress >= 100) {
-          clearInterval(interval);
-
-          updateDoc(slug, {
-            uploading: false,
-            uploaded: true,
-            progress: 100,
-          });
-        }
-      }, 200);
-    } catch (error) {
-      updateDoc(slug, {
-        uploading: false,
-        uploaded: false,
-        error: 'Upload failed',
-      });
-
-      toaster.error('Upload failed');
-    }
   };
 
   const removeFile = (slug: DocKey) => {
     updateDoc(slug, {
       file: null,
-      uploaded: false,
-      uploading: false,
-      progress: 0,
       error: null,
     });
   };
 
-  const canSubmit = docs.every((doc) => doc.uploaded);
+  const canSubmit = docs.every((doc) => doc.file && !doc.error);
+
+  const handleSubmit = () => {
+    const cac = docs.find((d) => d.slug === 'cac')?.file;
+    const license = docs.find((d) => d.slug === 'license')?.file;
+    const permit = docs.find((d) => d.slug === 'permit')?.file;
+    const proofOfAddress = docs.find((d) => d.slug === 'address')?.file;
+
+    if (!cac || !license || !permit || !proofOfAddress) return;
+
+    uploadCertification(
+      {
+        cac,
+        license,
+        permit,
+        proofOfAddress,
+      },
+      {
+        onSuccess: () => {
+          toaster.success('Documents submitted successfully');
+          router.push('/auth/signup/hospital/account-created');
+        },
+        onError: (error: unknown) => {
+          const err = error as { message?: string };
+          toaster.error(err?.message || 'Submission failed');
+        },
+      }
+    );
+  };
 
   return (
     <Card onCancel={() => router.back()}>
@@ -169,7 +144,7 @@ const UploadHospitalDocs = () => {
             <Uploader
               key={doc.slug}
               doc={doc}
-              onUpload={handleFileUpload}
+              onUpload={handleFileSelect}
               onRemove={removeFile}
             />
           ))}
@@ -177,12 +152,9 @@ const UploadHospitalDocs = () => {
           <Button
             className="mt-7 flex h-12 w-full justify-center"
             variant="primary"
-            loading={loading}
-            disabled={!canSubmit || loading}
-            onClick={() => {
-              toaster.success('Documents submitted successfully');
-              router.push('/auth/signup/hospital/account-created');
-            }}
+            loading={isPending}
+            disabled={!canSubmit || isPending}
+            onClick={handleSubmit}
           >
             Submit
           </Button>
@@ -202,6 +174,8 @@ const Uploader = ({ doc, onUpload, onRemove }: UploaderProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const formatText = 'Format png, jpg, pdf (max size: 5 mb)';
+
+  const hasFile = doc.file !== null;
 
   const openPicker = () => {
     inputRef.current?.click();
@@ -234,7 +208,7 @@ const Uploader = ({ doc, onUpload, onRemove }: UploaderProps) => {
 
       <div className="flex items-start gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-2a">
-          {doc.uploaded ? (
+          {hasFile ? (
             <CheckCircle2 size={18} className="text-green-10" />
           ) : (
             <UploadIcon size={18} className="text-blue-9" />
@@ -243,40 +217,24 @@ const Uploader = ({ doc, onUpload, onRemove }: UploaderProps) => {
 
         <div className="flex-1">
           <div className="flex items-center justify-between">
-            {doc.file ? (
+            {hasFile ? (
               <span className="max-w-30 truncate text-xs text-text-muted">
-                {doc.file.name}
+                {doc.file?.name}
               </span>
             ) : (
               <p className="text-sm font-medium text-text-alt">{doc.title}</p>
             )}
           </div>
 
-          {doc.uploading && (
-            <ProgressBar
-              aria-label="Upload Progress"
-              className="mt-2 w-full"
-              value={doc.progress}
-            >
-              <div className="flex w-full items-center gap-3">
-                <ProgressBar.Track className="flex-1">
-                  <ProgressBar.Fill className="bg-primary" />
-                </ProgressBar.Track>
-
-                <ProgressBar.Output />
-              </div>
-            </ProgressBar>
-          )}
-
           <p
             className={`mt-1.5 text-xs ${doc.error ? 'text-error' : 'text-text-alt'} `}
           >
-            {doc.uploaded && doc.file
-              ? `${(doc.file.size / (1024 * 1024)).toFixed(2)} MB`
+            {hasFile
+              ? `${(doc.file!.size / (1024 * 1024)).toFixed(2)} MB`
               : doc.error || formatText}
           </p>
 
-          {doc.uploaded && (
+          {hasFile && (
             <Trash2
               size={18}
               className="absolute right-5.5 top-1/2 -translate-y-1/2 text-error cursor-pointer"
